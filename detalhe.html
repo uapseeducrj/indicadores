@@ -1,0 +1,2977 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Dinâmico de Indicadores (Detalhe)</title>
+    <style>
+        /* Variáveis de Cores para Personalização */
+        :root {
+            --color-primary: #2196F3; /* Azul Principal */
+            --color-secondary-light: #e0f7fa; /* Ciano Claro */
+            --color-background-light: #f4f4f4;
+            --color-text-dark: #333;
+            --color-text-light: #777;
+            --color-meta-2025: #9370db; /* Roxo (Meta 2025) */
+            --color-meta-2026: #87cefa; /* Azul Claro (Meta 2026) */
+            --color-gauge-track: #dcdcdc; /* Cinza da Trilha do Gauge */
+            --color-positive: #4CAF50; /* Verde (Meta Alcançada/Dentro) */
+            --color-negative: #F44336; /* Vermelho (Abaixo do Esperado) */
+            --color-neutral: #FFC107; /* Amarelo/Laranja */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: var(--color-background-light);
+            color: var(--color-text-dark);
+            /* Importante para evitar scroll vertical em telas padrão */
+            overflow: hidden; 
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .controls {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+            display: flex; /* Adiciona Flexbox para o botão Voltar */
+            align-items: center;
+        }
+        
+        .controls a.back-button {
+            text-decoration: none;
+            color: #fff;
+            background-color: #555;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 20px;
+            transition: background-color 0.3s;
+        }
+        .controls a.back-button:hover {
+             background-color: #777;
+        }
+
+        .controls label {
+            font-weight: bold;
+            margin-right: 15px;
+            color: var(--color-primary);
+        }
+        .controls select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            min-width: 350px;
+            font-size: 14px;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 15px;
+            max-width: 100%;
+            height: calc(100% - 75px); /* Ajusta a altura total da dashboard */
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+        }
+
+        /* Título Principal Compacto */
+        .header h1 {
+            font-size: 18px;
+            margin: 0 0 3px 0;
+            font-weight: 600;
+        }
+        .header p {
+            font-size: 12px;
+            margin: 0;
+            color: var(--color-text-light);
+        }
+        
+        /* Chart Area - Otimizado para altura */
+        .chart-card {
+            flex-grow: 1; /* Ocupa o máximo de espaço vertical disponível */
+            position: relative;
+            padding: 20px 20px 30px 60px; /* Ajuste para otimizar espaço */
+        }
+
+        .chart-area {        
+            position: relative;
+            height: 100%; 
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Eixos e Linhas */
+        .y-axis-label {
+            position: absolute;
+            left: -55px;
+            font-size: 11px;
+            color: var(--color-text-light);
+            text-align: right;
+            width: 40px;
+            transition: top 0.5s;
+        }
+        .y-axis-label.y-axis-title {
+            left: -85px;
+            top: 40%;
+            transform: rotate(-90deg);
+            width: 80px;
+            text-align: center;
+        }
+        .grid-line {
+            position: absolute;
+            border-top: 1px dashed #eee;
+            width: 100%;
+            left: 0;
+            transition: top 0.5s;
+        }
+
+        .data-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.4) 100%);
+            border: 2px solid var(--color-primary);
+            border-bottom: none;
+            clip-path: polygon(0% 100%, 100% 100%, 100% 100%);
+            transition: clip-path 1.5s ease-out; 
+        }
+
+        .x-axis-labels {
+            position: absolute;
+            bottom: -20px;
+            left: 60px;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding-right: 2px;
+            font-size: 11px;
+            color: var(--color-text-light);
+        }
+        .x-axis-labels div {
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        /* Seção Inferior - Metas e Gauge */
+        .lower-section {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr; /* Gráfico de barras menor, Detalhes maior */
+            gap: 15px;
+            flex-shrink: 0; /* Impede o encolhimento, garantindo espaço mínimo */
+            height: 190px; /* Altura fixa para caber na tela */
+        }
+        
+        .metrics-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ----------------------------------------------------------------- */
+        /* NOVO: Gráfico de Barras de Progresso */
+        /* ----------------------------------------------------------------- */
+        .progress-bar-chart {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            max-width: 250px; /* Para manter o visual compacto */
+        }
+
+        .bar-container {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bar-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--color-text-dark);
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bar-wrapper {
+            width: 100%;
+            height: 12px;
+            background-color: var(--color-gauge-track);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%; /* Inicia em zero para a animação */
+            border-radius: 6px;
+            transition: width 1.5s ease-out;
+            background-color: var(--color-primary);
+        }
+        
+        /* Marcadores de Metas */
+        .meta-marker {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: #fff;
+            box-shadow: 0 0 0 1px #555; /* Contorno para visibilidade */
+            z-index: 10;
+            transition: left 1.5s ease-out;
+        }
+        .meta-marker.meta-2025 {
+            background-color: var(--color-meta-2025);
+            box-shadow: 0 0 0 1px var(--color-meta-2025); 
+        }
+        .meta-marker.meta-2026 {
+            background-color: var(--color-meta-2026);
+            box-shadow: 0 0 0 1px var(--color-meta-2026);
+        }
+
+        .bar-value {
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .bar-title {
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: var(--color-text-dark);
+            font-weight: 600;
+        }
+        /* ----------------------------------------------------------------- */
+
+        /* Caixas de Metas e Detalhes */
+        .indicator-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .indicator-detail {
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            color: #fff;
+        }
+        .indicator-detail .label {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+        }
+        .indicator-detail .value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+        
+        /* Estilos específicos das caixas */
+        .box-polaridade { background-color: var(--color-primary); } 
+        .box-grandeza { background-color: var(--color-neutral); color: var(--color-text-dark);} 
+        .box-periodicidade { background-color: #87cefa; color: var(--color-text-dark);} 
+        
+        .box-grandeza .label, .box-periodicidade .label { color: var(--color-text-dark); }
+        .box-grandeza .value, .box-periodicidade .value { color: var(--color-text-dark); }
+
+        .metric-box {
+            padding: 8px; /* Reduzido */
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+            flex: 1;
+            margin-top: 5px;
+        }
+        
+        .metric-value {
+            font-size: 28px; /* Reduzido */
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .metric-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .box-meta-2025 { 
+            background-color: var(--color-meta-2025);
+            color: #fff;
+        }
+        .box-meta-2026 { 
+            background-color: var(--color-meta-2026);
+            color: var(--color-text-dark);
+        }
+        .box-meta-2026 .metric-label { color: var(--color-text-dark); }
+
+        /* Right Panel Cards - Mais compactos */
+        .info-card {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            flex-shrink: 0; /* Impede que encolham demais */
+        }
+
+        .info-card .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+            margin-top: 5px;
+            display: block;
+            border-top: 1px solid #eee;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        .info-card .status-title {
+            font-size: 18px; /* Reduzido */
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+            padding-top: 5px;
+        }
+        
+        .formula-card .content {
+            font-size: 14px; /* Reduzido */
+            line-height: 1.4;
+            text-align: justify;
+            margin: 0;
+        }
+        
+        .info-card p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .footer-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0;
+        }
+        .footer-detail {
+            text-align: center;
+        }
+
+        .footer-detail .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+            margin-top: 2px;
+            padding-top: 0;
+            border-top: none;
+        }
+        .footer-detail .value {
+            font-size: 11px; /* Reduzido */
+            font-weight: bold;
+            line-height: 1.3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <a href="index.html" class="back-button">← Voltar para Resumo</a>
+        <label for="indicator-select">Selecione o Indicador:</label>
+        <select id="indicator-select" onchange="loadIndicatorData(this.value)"></select>
+    </div>
+
+    <div class="dashboard-container">
+        
+        <div class="left-panel">
+            <div class="header card">
+                <h1 id="indicator-name">Selecione um Indicador Acima 👆</h1>
+                <p id="indicator-description">Visão detalhada da série histórica e metas.</p>
+            </div>
+
+            <div class="card chart-card">
+                <p style="font-size: 12px; margin: 0 0 5px 0; color: var(--color-text-light);">Série Histórica do Indicador</p>
+                <div id="y-axis-container">
+                    <div class="y-axis-label y-axis-title">Valores</div>
+                </div>
+                
+                <div class="chart-area">
+                    <div id="grid-lines-container">
+                    </div>
+                    <div class="data-line" id="chart-data-line" style="clip-path: polygon(0% 100%, 100% 100%, 100% 100%);"></div>
+                </div>
+
+                <div class="x-axis-labels" id="x-axis-labels-container">
+                    <div>2019</div>
+                    <div>2020</div>
+                    <div>2021</div>
+                    <div>2022</div>
+                    <div>2023</div>
+                </div>
+            </div>
+
+            <div class="lower-section">
+                
+                <div class="card metrics-section">
+                    <p class="bar-title">Situação Atual em Relação às Metas</p>
+                    
+                    <div class="progress-bar-chart" id="progress-bar-chart">
+                        <div class="bar-container">
+                            <div class="bar-label">
+                                <span>Resultado Recente: <span id="current-result-bar-label">--</span></span>
+                                <span id="max-bar-label">Max: --</span>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="progress-bar" id="progress-bar"></div>
+                                <div class="meta-marker meta-2025" id="meta-2025-marker" style="left: 0%;"></div>
+                                <div class="meta-marker meta-2026" id="meta-2026-marker" style="left: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; width: 100%; justify-content: center; margin-top: 10px;">
+                        <div class="metric-box box-meta-2025">
+                            <div class="metric-value" id="meta-2025-value-box">N/A</div>
+                            <div class="metric-label">Meta 2025</div>
+                        </div>
+                        <div class="metric-box box-meta-2026">
+                            <div class="metric-value" id="meta-2026-value-box">N/A</div>
+                            <div class="metric-label">Meta 2026</div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 8px;">
+                    <p class="gauge-title">Detalhes e Metas de Referência</p>
+                    <div class="indicator-details">
+                        <div class="indicator-detail box-polaridade">
+                            <div class="value" id="detail-polaridade">--</div>
+                            <div class="label">Polaridade</div>
+                        </div>
+                        <div class="indicator-detail box-grandeza">
+                            <div class="value" id="detail-grandeza">--</div>
+                            <div class="label">Grandeza</div>
+                        </div>
+                        <div class="indicator-detail box-periodicidade">
+                            <div class="value" id="detail-periodicidade">--</div>
+                            <div class="label">Periocidade</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            
+            <div class="info-card" id="status-card" style="border-top: 5px solid var(--color-text-light);">
+                <p class="status-title" id="status-value" style="color: var(--color-text-light);">--</p>
+                <span class="label">Status</span>
+            </div>
+
+            <div class="info-card" style="flex-grow: 1;">
+                <p style="font-weight: bold; margin: 0; text-align: justify;" id="objetivo-estrategico">Selecione um indicador para ver os detalhes completos, como Objetivo, Referencial, Fórmula e Fonte dos Dados.</p>
+                <span class="label">Objetivo Estratégico</span>
+            </div>
+
+            <div class="info-card" style="flex-grow: 1;">
+                <p id="referencial-meta">--</p>
+                <span class="label">Referencial da Meta</span>
+            </div>
+
+            <div class="info-card formula-card" style="flex-grow: 1;">
+                <p class="content" id="formula-content">--</p>
+                <span class="label">Fórmula</span>
+            </div>
+
+            <div class="info-card" style="padding: 10px;">
+                <div class="footer-details">
+                    <div class="footer-detail">
+                        <div class="value" id="fonte-dados">--</div>
+                        <span class="label">Fonte dos Dados</span>
+                    </div>
+                    <div class="footer-detail">
+                        <div class="value" id="responsavel">--</div>
+                        <span class="label">Responsável</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BASE DE DADOS INTEGRADA (DEVE SER IDÊNTICA AO arquivo index.html)
+        const rawData = [
+    {
+        "OBJETIVO ESTRATÉGICO":"Acesso à Educação",
+        "#":1.1,
+        "INDICADORES":"Taxa líquida de matrícula do ensino médio regular no ERJ",
+        "FÓRMULA":"% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
+        "FONTE DOS DADOS":"PNADC",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Trimestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista e pactuada pelo PNE 2014-2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Se o indicador é trimestral, conseguimos um número atualizado?",
+        "valor":0.739,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.3,
+        "INDICADORES":"Percentual de Escolas com Acessibilidade Física",
+        "FÓRMULA":null,
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUBAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê aumento em p.p. de 6,1 (melhor cresimento histórico - 2019-2020)",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.098,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.1,
+        "INDICADORES":"Taxa de abandono EM",
+        "FÓRMULA":"Matrículas que abandonaram a escola durante o ano letivo \/ Total de matrículas no final do ano na situação Aprovado, Reprovado, Abandono * 100",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera o indicador de rendimento pactuado para o Ideb 2025 ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.074,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.2,
+        "INDICADORES":"Distorção idade-série EM",
+        "FÓRMULA":"Matrículas em atraso escolar \/ Total de matrículas",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a previsão de impacto do Segunda Chance",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.414,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.1,
+        "INDICADORES":"IDEB",
+        "FÓRMULA":"Taxa de Aprovação x Média de Desempenho",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Bianual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê um aumento de 10 pontos na escala Saeb de LP e MT e aumentos diferenciados nas taxas de aprovação das etapas do ensino médio \n",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"São 10 pontos mesmo, considerando nota 4?",
+        "valor":3.4,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.2,
+        "INDICADORES":"ENEM",
+        "FÓRMULA":"Média de Desempenho da Rede Estadual no ENEM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 1% a nota referente ao ano anterior. Meta 2025 considera 2% acima, considerando o resultado não divulgado de 2024 até o momento.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Dado de 2024 solicitado para quem?",
+        "valor":500.01,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.3,
+        "INDICADORES":"Taxa de Aprovação Ensino Médio",
+        "FÓRMULA":"Nº de Alunos Aprovados no EM  \/ Nº de Alunos Matriculados no EM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta pactuada pela rede para 2025, mantendo o resultado em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.781,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.4,
+        "INDICADORES":"Número de premiações da rede em Olimpíadas escolares",
+        "FÓRMULA":"Nº de Premiações recebidas pela rede",
+        "FONTE DOS DADOS":"Olimpiando",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 5% o número de premiações por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Repensar periodicidade",
+        "valor":527.0,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.2,
+        "INDICADORES":"Escolas com salas de AEE",
+        "FÓRMULA":"(Nº de Escolas com salas AEE \/ Nº total de Escolas ) * 100",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera a implementação e entrega de 50 salas AEE por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos um dado prévio com o time do Daniel Bove?",
+        "valor":0.1529875246,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.2,
+        "INDICADORES":"Esforço docente",
+        "FÓRMULA":"% de docentes do Ensino Médio  da rede Estadual classificados nos Níveis 1 e 2 (até 150 alunos)",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a manutenção da média de variação histórica (+2,95%) por ano",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.11,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.3,
+        "INDICADORES":"Alfabetização na idade certa",
+        "FÓRMULA":"Σ de estudantes alfabetizados na idade certa \/ Σ de estudantes da rede estadual",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPIR",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista pelo CNCA",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":0.49,
+        "tipo_dado":"VALOR",
+        "ano":2019
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.3,
+        "INDICADORES":"Percentual de Escolas com Acessibilidade Física",
+        "FÓRMULA":null,
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUBAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê aumento em p.p. de 6,1 (melhor cresimento histórico - 2019-2020)",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.159,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.1,
+        "INDICADORES":"Taxa de abandono EM",
+        "FÓRMULA":"Matrículas que abandonaram a escola durante o ano letivo \/ Total de matrículas no final do ano na situação Aprovado, Reprovado, Abandono * 100",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera o indicador de rendimento pactuado para o Ideb 2025 ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.004,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.2,
+        "INDICADORES":"Distorção idade-série EM",
+        "FÓRMULA":"Matrículas em atraso escolar \/ Total de matrículas",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a previsão de impacto do Segunda Chance",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.372,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.1,
+        "INDICADORES":"IDEB",
+        "FÓRMULA":"Taxa de Aprovação x Média de Desempenho",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Bianual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê um aumento de 10 pontos na escala Saeb de LP e MT e aumentos diferenciados nas taxas de aprovação das etapas do ensino médio \n",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"São 10 pontos mesmo, considerando nota 4?",
+        "valor":3.9,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.2,
+        "INDICADORES":"ENEM",
+        "FÓRMULA":"Média de Desempenho da Rede Estadual no ENEM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 1% a nota referente ao ano anterior. Meta 2025 considera 2% acima, considerando o resultado não divulgado de 2024 até o momento.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Dado de 2024 solicitado para quem?",
+        "valor":501.07,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.3,
+        "INDICADORES":"Taxa de Aprovação Ensino Médio",
+        "FÓRMULA":"Nº de Alunos Aprovados no EM  \/ Nº de Alunos Matriculados no EM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta pactuada pela rede para 2025, mantendo o resultado em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.924,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.2,
+        "INDICADORES":"Escolas com salas de AEE",
+        "FÓRMULA":"(Nº de Escolas com salas AEE \/ Nº total de Escolas ) * 100",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera a implementação e entrega de 50 salas AEE por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos um dado prévio com o time do Daniel Bove?",
+        "valor":0.1749837978,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.3,
+        "INDICADORES":"Taxa de estudantes autodeclarados",
+        "FÓRMULA":"Σ Alunos autodeclarados negros \/ Total de alunos",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPED",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Manter a média de variação histórica (5,07%) por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.53,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.1,
+        "INDICADORES":"Profissionais da educação com formação continuada",
+        "FÓRMULA":"Profissionais da educação com fomarção continuada \/ Total de Profissionais da Educação",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê para 2025, aumentar 10% referente a 2024. Para 2026, aumentar 15% em relação a 2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":14787.0,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.2,
+        "INDICADORES":"Esforço docente",
+        "FÓRMULA":"% de docentes do Ensino Médio  da rede Estadual classificados nos Níveis 1 e 2 (até 150 alunos)",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a manutenção da média de variação histórica (+2,95%) por ano",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.11,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.2,
+        "INDICADORES":"Formações Municipais",
+        "FÓRMULA":"Número de formações oferecidas para os municípios",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta definida pela SUPDP, de acordo com planejamento de formações.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":3.0,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.3,
+        "INDICADORES":"Alfabetização na idade certa",
+        "FÓRMULA":"Σ de estudantes alfabetizados na idade certa \/ Σ de estudantes da rede estadual",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPIR",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista pelo CNCA",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":0.27,
+        "tipo_dado":"VALOR",
+        "ano":2021
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Acesso à Educação",
+        "#":1.1,
+        "INDICADORES":"Taxa líquida de matrícula do ensino médio regular no ERJ",
+        "FÓRMULA":"% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
+        "FONTE DOS DADOS":"PNADC",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Trimestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista e pactuada pelo PNE 2014-2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Se o indicador é trimestral, conseguimos um número atualizado?",
+        "valor":0.791,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.1,
+        "INDICADORES":"Salas de aula climatizadas",
+        "FÓRMULA":"Percentual de salas de aula utilizadas climatizadas na rede",
+        "FONTE DOS DADOS":"Censo escolar \/ Conexão",
+        "RESPONSÁVEL":"SUPIE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":0.91,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Prevê atingir 100% de escolas climatizadas em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Atualizado!",
+        "valor":0.68,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.3,
+        "INDICADORES":"Percentual de Escolas com Acessibilidade Física",
+        "FÓRMULA":null,
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUBAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê aumento em p.p. de 6,1 (melhor cresimento histórico - 2019-2020)",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.157,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.4,
+        "INDICADORES":"Percentual de salas de aula utilizadas",
+        "FÓRMULA":"Total de salas utilizadas por turno na escola \/ total de salas de aula por turno na escola * 100",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Considera o cálculo por turno de funcionamento da escola",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.683,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.1,
+        "INDICADORES":"Taxa de abandono EM",
+        "FÓRMULA":"Matrículas que abandonaram a escola durante o ano letivo \/ Total de matrículas no final do ano na situação Aprovado, Reprovado, Abandono * 100",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera o indicador de rendimento pactuado para o Ideb 2025 ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.023,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.2,
+        "INDICADORES":"Distorção idade-série EM",
+        "FÓRMULA":"Matrículas em atraso escolar \/ Total de matrículas",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a previsão de impacto do Segunda Chance",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.34,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.2,
+        "INDICADORES":"ENEM",
+        "FÓRMULA":"Média de Desempenho da Rede Estadual no ENEM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 1% a nota referente ao ano anterior. Meta 2025 considera 2% acima, considerando o resultado não divulgado de 2024 até o momento.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Dado de 2024 solicitado para quem?",
+        "valor":510.45,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.3,
+        "INDICADORES":"Taxa de Aprovação Ensino Médio",
+        "FÓRMULA":"Nº de Alunos Aprovados no EM  \/ Nº de Alunos Matriculados no EM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta pactuada pela rede para 2025, mantendo o resultado em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.799,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.2,
+        "INDICADORES":"Escolas com salas de AEE",
+        "FÓRMULA":"(Nº de Escolas com salas AEE \/ Nº total de Escolas ) * 100",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera a implementação e entrega de 50 salas AEE por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos um dado prévio com o time do Daniel Bove?",
+        "valor":0.21105919,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.1,
+        "INDICADORES":"Profissionais da educação com formação continuada",
+        "FÓRMULA":"Profissionais da educação com fomarção continuada \/ Total de Profissionais da Educação",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê para 2025, aumentar 10% referente a 2024. Para 2026, aumentar 15% em relação a 2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":9736.0,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.2,
+        "INDICADORES":"Esforço docente",
+        "FÓRMULA":"% de docentes do Ensino Médio  da rede Estadual classificados nos Níveis 1 e 2 (até 150 alunos)",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a manutenção da média de variação histórica (+2,95%) por ano",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.106,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.2,
+        "INDICADORES":"Formações Municipais",
+        "FÓRMULA":"Número de formações oferecidas para os municípios",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta definida pela SUPDP, de acordo com planejamento de formações.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":6.0,
+        "tipo_dado":"VALOR",
+        "ano":2022
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Acesso à Educação",
+        "#":1.1,
+        "INDICADORES":"Taxa líquida de matrícula do ensino médio regular no ERJ",
+        "FÓRMULA":"% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
+        "FONTE DOS DADOS":"PNADC",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Trimestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista e pactuada pelo PNE 2014-2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Se o indicador é trimestral, conseguimos um número atualizado?",
+        "valor":0.77,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.1,
+        "INDICADORES":"Salas de aula climatizadas",
+        "FÓRMULA":"Percentual de salas de aula utilizadas climatizadas na rede",
+        "FONTE DOS DADOS":"Censo escolar \/ Conexão",
+        "RESPONSÁVEL":"SUPIE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":0.91,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Prevê atingir 100% de escolas climatizadas em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Atualizado!",
+        "valor":0.73,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.3,
+        "INDICADORES":"Percentual de Escolas com Acessibilidade Física",
+        "FÓRMULA":null,
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUBAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê aumento em p.p. de 6,1 (melhor cresimento histórico - 2019-2020)",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.164,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.4,
+        "INDICADORES":"Percentual de salas de aula utilizadas",
+        "FÓRMULA":"Total de salas utilizadas por turno na escola \/ total de salas de aula por turno na escola * 100",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Considera o cálculo por turno de funcionamento da escola",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.683,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.1,
+        "INDICADORES":"Taxa de abandono EM",
+        "FÓRMULA":"Matrículas que abandonaram a escola durante o ano letivo \/ Total de matrículas no final do ano na situação Aprovado, Reprovado, Abandono * 100",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera o indicador de rendimento pactuado para o Ideb 2025 ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.065,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.2,
+        "INDICADORES":"Distorção idade-série EM",
+        "FÓRMULA":"Matrículas em atraso escolar \/ Total de matrículas",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a previsão de impacto do Segunda Chance",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.328,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.1,
+        "INDICADORES":"IDEB",
+        "FÓRMULA":"Taxa de Aprovação x Média de Desempenho",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Bianual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê um aumento de 10 pontos na escala Saeb de LP e MT e aumentos diferenciados nas taxas de aprovação das etapas do ensino médio \n",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"São 10 pontos mesmo, considerando nota 4?",
+        "valor":3.3,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.2,
+        "INDICADORES":"ENEM",
+        "FÓRMULA":"Média de Desempenho da Rede Estadual no ENEM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 1% a nota referente ao ano anterior. Meta 2025 considera 2% acima, considerando o resultado não divulgado de 2024 até o momento.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Dado de 2024 solicitado para quem?",
+        "valor":502.62,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.3,
+        "INDICADORES":"Taxa de Aprovação Ensino Médio",
+        "FÓRMULA":"Nº de Alunos Aprovados no EM  \/ Nº de Alunos Matriculados no EM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta pactuada pela rede para 2025, mantendo o resultado em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.805,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.4,
+        "INDICADORES":"Número de premiações da rede em Olimpíadas escolares",
+        "FÓRMULA":"Nº de Premiações recebidas pela rede",
+        "FONTE DOS DADOS":"Olimpiando",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 5% o número de premiações por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Repensar periodicidade",
+        "valor":248.0,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.1,
+        "INDICADORES":"Profissionais formados na EE",
+        "FÓRMULA":"Σ Docentes e Profissionais com Formação na Educação Especial (120h)",
+        "FONTE DOS DADOS":"LabEaD",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê 90% de conclusão da carga horária nos inscritos em 2 cursos para 2025, além de um incremento de 20% em 2026.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Coletar dados atualizados!",
+        "valor":185.0,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.2,
+        "INDICADORES":"Escolas com salas de AEE",
+        "FÓRMULA":"(Nº de Escolas com salas AEE \/ Nº total de Escolas ) * 100",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera a implementação e entrega de 50 salas AEE por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos um dado prévio com o time do Daniel Bove?",
+        "valor":0.2199687988,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.3,
+        "INDICADORES":"Taxa de estudantes autodeclarados",
+        "FÓRMULA":"Σ Alunos autodeclarados negros \/ Total de alunos",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPED",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Manter a média de variação histórica (5,07%) por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.59,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.1,
+        "INDICADORES":"Profissionais da educação com formação continuada",
+        "FÓRMULA":"Profissionais da educação com fomarção continuada \/ Total de Profissionais da Educação",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê para 2025, aumentar 10% referente a 2024. Para 2026, aumentar 15% em relação a 2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":7206.0,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.2,
+        "INDICADORES":"Esforço docente",
+        "FÓRMULA":"% de docentes do Ensino Médio  da rede Estadual classificados nos Níveis 1 e 2 (até 150 alunos)",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a manutenção da média de variação histórica (+2,95%) por ano",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.113,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.2,
+        "INDICADORES":"Formações Municipais",
+        "FÓRMULA":"Número de formações oferecidas para os municípios",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta definida pela SUPDP, de acordo com planejamento de formações.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":26.0,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.3,
+        "INDICADORES":"Alfabetização na idade certa",
+        "FÓRMULA":"Σ de estudantes alfabetizados na idade certa \/ Σ de estudantes da rede estadual",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPIR",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista pelo CNCA",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":0.52,
+        "tipo_dado":"VALOR",
+        "ano":2023
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Acesso à Educação",
+        "#":1.1,
+        "INDICADORES":"Taxa líquida de matrícula do ensino médio regular no ERJ",
+        "FÓRMULA":"% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
+        "FONTE DOS DADOS":"PNADC",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Trimestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista e pactuada pelo PNE 2014-2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Se o indicador é trimestral, conseguimos um número atualizado?",
+        "valor":0.773,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.1,
+        "INDICADORES":"Salas de aula climatizadas",
+        "FÓRMULA":"Percentual de salas de aula utilizadas climatizadas na rede",
+        "FONTE DOS DADOS":"Censo escolar \/ Conexão",
+        "RESPONSÁVEL":"SUPIE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":0.91,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Prevê atingir 100% de escolas climatizadas em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Atualizado!",
+        "valor":0.765,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.2,
+        "INDICADORES":"Percentual de Escolas com velocidade de Internet adequada",
+        "FÓRMULA":"[∑{se [(Velocidade da Internet contratada \/ Máx(número de matrículas por turno))​≥1 Mbps] então 1 senão 0}]\/1198*100",
+        "FONTE DOS DADOS":"SUPTI",
+        "RESPONSÁVEL":"SUPTI",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê atingir 75% das escolas com velocidade adequada em 2025, chegando a totalidade em 2026. Desconsidera escola DIESP.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Mesmo racional que o indicador anterior, será que conseguimos um número parcial?",
+        "valor":0.6828046745,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.3,
+        "INDICADORES":"Percentual de Escolas com Acessibilidade Física",
+        "FÓRMULA":null,
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUBAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê aumento em p.p. de 6,1 (melhor cresimento histórico - 2019-2020)",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.173,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.4,
+        "INDICADORES":"Percentual de salas de aula utilizadas",
+        "FÓRMULA":"Total de salas utilizadas por turno na escola \/ total de salas de aula por turno na escola * 100",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Considera o cálculo por turno de funcionamento da escola",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.693,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.1,
+        "INDICADORES":"Taxa de abandono EM",
+        "FÓRMULA":"Matrículas que abandonaram a escola durante o ano letivo \/ Total de matrículas no final do ano na situação Aprovado, Reprovado, Abandono * 100",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera o indicador de rendimento pactuado para o Ideb 2025 ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.053,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.2,
+        "INDICADORES":"Distorção idade-série EM",
+        "FÓRMULA":"Matrículas em atraso escolar \/ Total de matrículas",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a previsão de impacto do Segunda Chance",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.325,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.3,
+        "INDICADORES":"Taxa de Aprovação Ensino Médio",
+        "FÓRMULA":"Nº de Alunos Aprovados no EM  \/ Nº de Alunos Matriculados no EM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta pactuada pela rede para 2025, mantendo o resultado em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.81,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.4,
+        "INDICADORES":"Número de premiações da rede em Olimpíadas escolares",
+        "FÓRMULA":"Nº de Premiações recebidas pela rede",
+        "FONTE DOS DADOS":"Olimpiando",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 5% o número de premiações por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Repensar periodicidade",
+        "valor":1804.0,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.1,
+        "INDICADORES":"Profissionais formados na EE",
+        "FÓRMULA":"Σ Docentes e Profissionais com Formação na Educação Especial (120h)",
+        "FONTE DOS DADOS":"LabEaD",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê 90% de conclusão da carga horária nos inscritos em 2 cursos para 2025, além de um incremento de 20% em 2026.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Coletar dados atualizados!",
+        "valor":622.0,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.2,
+        "INDICADORES":"Escolas com salas de AEE",
+        "FÓRMULA":"(Nº de Escolas com salas AEE \/ Nº total de Escolas ) * 100",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera a implementação e entrega de 50 salas AEE por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos um dado prévio com o time do Daniel Bove?",
+        "valor":0.25,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.3,
+        "INDICADORES":"Taxa de estudantes autodeclarados",
+        "FÓRMULA":"Σ Alunos autodeclarados negros \/ Total de alunos",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPED",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Manter a média de variação histórica (5,07%) por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.61,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.1,
+        "INDICADORES":"Profissionais da educação com formação continuada",
+        "FÓRMULA":"Profissionais da educação com fomarção continuada \/ Total de Profissionais da Educação",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê para 2025, aumentar 10% referente a 2024. Para 2026, aumentar 15% em relação a 2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":26348.0,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.2,
+        "INDICADORES":"Esforço docente",
+        "FÓRMULA":"% de docentes do Ensino Médio  da rede Estadual classificados nos Níveis 1 e 2 (até 150 alunos)",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a manutenção da média de variação histórica (+2,95%) por ano",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.123,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.3,
+        "INDICADORES":"Número de professores migrados de 18h para 30h",
+        "FÓRMULA":"Σ professores migrados para 30h",
+        "FONTE DOS DADOS":"RH SEEDUC",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Meta definida e divulgada pela Secretaria",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":5000.0,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.2,
+        "INDICADORES":"Formações Municipais",
+        "FÓRMULA":"Número de formações oferecidas para os municípios",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta definida pela SUPDP, de acordo com planejamento de formações.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":8.0,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.3,
+        "INDICADORES":"Alfabetização na idade certa",
+        "FÓRMULA":"Σ de estudantes alfabetizados na idade certa \/ Σ de estudantes da rede estadual",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPIR",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista pelo CNCA",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":0.5525,
+        "tipo_dado":"VALOR",
+        "ano":2024
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Acesso à Educação",
+        "#":1.1,
+        "INDICADORES":"Taxa líquida de matrícula do ensino médio regular no ERJ",
+        "FÓRMULA":"% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
+        "FONTE DOS DADOS":"PNADC",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Trimestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista e pactuada pelo PNE 2014-2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Se o indicador é trimestral, conseguimos um número atualizado?",
+        "valor":0.8,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.1,
+        "INDICADORES":"Salas de aula climatizadas",
+        "FÓRMULA":"Percentual de salas de aula utilizadas climatizadas na rede",
+        "FONTE DOS DADOS":"Censo escolar \/ Conexão",
+        "RESPONSÁVEL":"SUPIE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":0.91,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Prevê atingir 100% de escolas climatizadas em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Atualizado!",
+        "valor":0.88,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.2,
+        "INDICADORES":"Percentual de Escolas com velocidade de Internet adequada",
+        "FÓRMULA":"[∑{se [(Velocidade da Internet contratada \/ Máx(número de matrículas por turno))​≥1 Mbps] então 1 senão 0}]\/1198*100",
+        "FONTE DOS DADOS":"SUPTI",
+        "RESPONSÁVEL":"SUPTI",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê atingir 75% das escolas com velocidade adequada em 2025, chegando a totalidade em 2026. Desconsidera escola DIESP.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Mesmo racional que o indicador anterior, será que conseguimos um número parcial?",
+        "valor":0.75,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.3,
+        "INDICADORES":"Percentual de Escolas com Acessibilidade Física",
+        "FÓRMULA":null,
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUBAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê aumento em p.p. de 6,1 (melhor cresimento histórico - 2019-2020)",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.2,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.4,
+        "INDICADORES":"Percentual de salas de aula utilizadas",
+        "FÓRMULA":"Total de salas utilizadas por turno na escola \/ total de salas de aula por turno na escola * 100",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Considera o cálculo por turno de funcionamento da escola",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.691,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.1,
+        "INDICADORES":"Taxa de abandono EM",
+        "FÓRMULA":"Matrículas que abandonaram a escola durante o ano letivo \/ Total de matrículas no final do ano na situação Aprovado, Reprovado, Abandono * 100",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera o indicador de rendimento pactuado para o Ideb 2025 ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.038,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.2,
+        "INDICADORES":"Distorção idade-série EM",
+        "FÓRMULA":"Matrículas em atraso escolar \/ Total de matrículas",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a previsão de impacto do Segunda Chance",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.3,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.1,
+        "INDICADORES":"IDEB",
+        "FÓRMULA":"Taxa de Aprovação x Média de Desempenho",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Bianual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê um aumento de 10 pontos na escala Saeb de LP e MT e aumentos diferenciados nas taxas de aprovação das etapas do ensino médio \n",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"São 10 pontos mesmo, considerando nota 4?",
+        "valor":4.0,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.2,
+        "INDICADORES":"ENEM",
+        "FÓRMULA":"Média de Desempenho da Rede Estadual no ENEM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 1% a nota referente ao ano anterior. Meta 2025 considera 2% acima, considerando o resultado não divulgado de 2024 até o momento.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Dado de 2024 solicitado para quem?",
+        "valor":520.66,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.3,
+        "INDICADORES":"Taxa de Aprovação Ensino Médio",
+        "FÓRMULA":"Nº de Alunos Aprovados no EM  \/ Nº de Alunos Matriculados no EM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta pactuada pela rede para 2025, mantendo o resultado em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.9,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.4,
+        "INDICADORES":"Número de premiações da rede em Olimpíadas escolares",
+        "FÓRMULA":"Nº de Premiações recebidas pela rede",
+        "FONTE DOS DADOS":"Olimpiando",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 5% o número de premiações por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Repensar periodicidade",
+        "valor":1894.0,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.1,
+        "INDICADORES":"Profissionais formados na EE",
+        "FÓRMULA":"Σ Docentes e Profissionais com Formação na Educação Especial (120h)",
+        "FONTE DOS DADOS":"LabEaD",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê 90% de conclusão da carga horária nos inscritos em 2 cursos para 2025, além de um incremento de 20% em 2026.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Coletar dados atualizados!",
+        "valor":148.0,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.2,
+        "INDICADORES":"Escolas com salas de AEE",
+        "FÓRMULA":"(Nº de Escolas com salas AEE \/ Nº total de Escolas ) * 100",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera a implementação e entrega de 50 salas AEE por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos um dado prévio com o time do Daniel Bove?",
+        "valor":0.3006482982,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.3,
+        "INDICADORES":"Taxa de estudantes autodeclarados",
+        "FÓRMULA":"Σ Alunos autodeclarados negros \/ Total de alunos",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPED",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Manter a média de variação histórica (5,07%) por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.65,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.1,
+        "INDICADORES":"Profissionais da educação com formação continuada",
+        "FÓRMULA":"Profissionais da educação com fomarção continuada \/ Total de Profissionais da Educação",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê para 2025, aumentar 10% referente a 2024. Para 2026, aumentar 15% em relação a 2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":28983.0,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.2,
+        "INDICADORES":"Esforço docente",
+        "FÓRMULA":"% de docentes do Ensino Médio  da rede Estadual classificados nos Níveis 1 e 2 (até 150 alunos)",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a manutenção da média de variação histórica (+2,95%) por ano",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.1266,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.3,
+        "INDICADORES":"Número de professores migrados de 18h para 30h",
+        "FÓRMULA":"Σ professores migrados para 30h",
+        "FONTE DOS DADOS":"RH SEEDUC",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Meta definida e divulgada pela Secretaria",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":5000.0,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.2,
+        "INDICADORES":"Formações Municipais",
+        "FÓRMULA":"Número de formações oferecidas para os municípios",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta definida pela SUPDP, de acordo com planejamento de formações.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":23.0,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.3,
+        "INDICADORES":"Alfabetização na idade certa",
+        "FÓRMULA":"Σ de estudantes alfabetizados na idade certa \/ Σ de estudantes da rede estadual",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPIR",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista pelo CNCA",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":0.61,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Gestão Estratégica",
+        "#":8.1,
+        "INDICADORES":"Percentual de Diretorias Regionais alcançando suas metas de aprendizagem",
+        "FÓRMULA":"Número de Diretorias Regionais com metas alcançadas",
+        "FONTE DOS DADOS":"SGA",
+        "RESPONSÁVEL":"UAP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Indicador sem dados",
+        "REFERENCIAL DA META":"Considera a curva de maturação da gestão por resultados através do EGPP",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.8,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Gestão Estratégica",
+        "#":8.2,
+        "INDICADORES":"Percentual de escolas alcançando suas metas de aprendizagem",
+        "FÓRMULA":"Percentual de escolas alcançando as metas pedagógicas do plano de intervenção no período de referência.",
+        "FONTE DOS DADOS":"SGA",
+        "RESPONSÁVEL":"UAP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Indicador sem dados",
+        "REFERENCIAL DA META":"Considera a curva de maturação da gestão por resultados através do EGPP",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Teremos dados periódicos a partir da próxima semana, via Thais Delpupo",
+        "valor":0.8,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Gestão Estratégica",
+        "#":8.3,
+        "INDICADORES":"Taxa de alcance da meta dos projetos estratégicos (referente ao Escritório de Projetos)",
+        "FÓRMULA":"Número de projetos estratégicos alcançando a meta projetada \/ Total de projetos * 100",
+        "FONTE DOS DADOS":"Interno",
+        "RESPONSÁVEL":"UAP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Indicador sem dados",
+        "REFERENCIAL DA META":"Considera a curva de maturação da gestão por resultados através do EGPP",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Teremos dados periódicos a partir da próxima semana, via Thais Delpupo",
+        "valor":0.8,
+        "tipo_dado":"META",
+        "ano":2025
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Acesso à Educação",
+        "#":1.1,
+        "INDICADORES":"Taxa líquida de matrícula do ensino médio regular no ERJ",
+        "FÓRMULA":"% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
+        "FONTE DOS DADOS":"PNADC",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Trimestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista e pactuada pelo PNE 2014-2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Se o indicador é trimestral, conseguimos um número atualizado?",
+        "valor":0.85,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.1,
+        "INDICADORES":"Salas de aula climatizadas",
+        "FÓRMULA":"Percentual de salas de aula utilizadas climatizadas na rede",
+        "FONTE DOS DADOS":"Censo escolar \/ Conexão",
+        "RESPONSÁVEL":"SUPIE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":0.91,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Prevê atingir 100% de escolas climatizadas em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Atualizado!",
+        "valor":1.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.2,
+        "INDICADORES":"Percentual de Escolas com velocidade de Internet adequada",
+        "FÓRMULA":"[∑{se [(Velocidade da Internet contratada \/ Máx(número de matrículas por turno))​≥1 Mbps] então 1 senão 0}]\/1198*100",
+        "FONTE DOS DADOS":"SUPTI",
+        "RESPONSÁVEL":"SUPTI",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê atingir 75% das escolas com velocidade adequada em 2025, chegando a totalidade em 2026. Desconsidera escola DIESP.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Mesmo racional que o indicador anterior, será que conseguimos um número parcial?",
+        "valor":1.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Infraestrutura",
+        "#":2.3,
+        "INDICADORES":"Percentual de Escolas com Acessibilidade Física",
+        "FÓRMULA":null,
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUBAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê aumento em p.p. de 6,1 (melhor cresimento histórico - 2019-2020)",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.293,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.1,
+        "INDICADORES":"Taxa de abandono EM",
+        "FÓRMULA":"Matrículas que abandonaram a escola durante o ano letivo \/ Total de matrículas no final do ano na situação Aprovado, Reprovado, Abandono * 100",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera o indicador de rendimento pactuado para o Ideb 2025 ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.023,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Permanência",
+        "#":3.2,
+        "INDICADORES":"Distorção idade-série EM",
+        "FÓRMULA":"Matrículas em atraso escolar \/ Total de matrículas",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPLAN ",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a previsão de impacto do Segunda Chance",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.25,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.2,
+        "INDICADORES":"ENEM",
+        "FÓRMULA":"Média de Desempenho da Rede Estadual no ENEM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 1% a nota referente ao ano anterior. Meta 2025 considera 2% acima, considerando o resultado não divulgado de 2024 até o momento.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Dado de 2024 solicitado para quem?",
+        "valor":525.87,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.3,
+        "INDICADORES":"Taxa de Aprovação Ensino Médio",
+        "FÓRMULA":"Nº de Alunos Aprovados no EM  \/ Nº de Alunos Matriculados no EM",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta pactuada pela rede para 2025, mantendo o resultado em 2026",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.9,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Aprendizagem Equitativa",
+        "#":4.4,
+        "INDICADORES":"Número de premiações da rede em Olimpíadas escolares",
+        "FÓRMULA":"Nº de Premiações recebidas pela rede",
+        "FONTE DOS DADOS":"Olimpiando",
+        "RESPONSÁVEL":"SUPAAD",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Aumentar em 5% o número de premiações por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Repensar periodicidade",
+        "valor":1989.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.1,
+        "INDICADORES":"Profissionais formados na EE",
+        "FÓRMULA":"Σ Docentes e Profissionais com Formação na Educação Especial (120h)",
+        "FONTE DOS DADOS":"LabEaD",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Mensal",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Prevê 90% de conclusão da carga horária nos inscritos em 2 cursos para 2025, além de um incremento de 20% em 2026.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Coletar dados atualizados!",
+        "valor":177.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.2,
+        "INDICADORES":"Escolas com salas de AEE",
+        "FÓRMULA":"(Nº de Escolas com salas AEE \/ Nº total de Escolas ) * 100",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPEE",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Dentro do esperado",
+        "REFERENCIAL DA META":"Considera a implementação e entrega de 50 salas AEE por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos um dado prévio com o time do Daniel Bove?",
+        "valor":0.3411669368,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Educação Inclusiva e Acessível",
+        "#":5.3,
+        "INDICADORES":"Taxa de estudantes autodeclarados",
+        "FÓRMULA":"Σ Alunos autodeclarados negros \/ Total de alunos",
+        "FONTE DOS DADOS":"Censo Escolar",
+        "RESPONSÁVEL":"SUPED",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Manter a média de variação histórica (5,07%) por ano ",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.68,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.1,
+        "INDICADORES":"Profissionais da educação com formação continuada",
+        "FÓRMULA":"Profissionais da educação com fomarção continuada \/ Total de Profissionais da Educação",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Prevê para 2025, aumentar 10% referente a 2024. Para 2026, aumentar 15% em relação a 2024",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":30300.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.2,
+        "INDICADORES":"Esforço docente",
+        "FÓRMULA":"% de docentes do Ensino Médio  da rede Estadual classificados nos Níveis 1 e 2 (até 150 alunos)",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬇️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera a manutenção da média de variação histórica (+2,95%) por ano",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":0.1304,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Saúde e bem-estar",
+        "#":6.3,
+        "INDICADORES":"Número de professores migrados de 18h para 30h",
+        "FÓRMULA":"Σ professores migrados para 30h",
+        "FONTE DOS DADOS":"RH SEEDUC",
+        "RESPONSÁVEL":"SUPGP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Meta 2025 alcançada",
+        "REFERENCIAL DA META":"Meta definida e divulgada pela Secretaria",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":5000.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.2,
+        "INDICADORES":"Formações Municipais",
+        "FÓRMULA":"Número de formações oferecidas para os municípios",
+        "FONTE DOS DADOS":"Conexão",
+        "RESPONSÁVEL":"SUPDP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"Nº",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Meta definida pela SUPDP, de acordo com planejamento de formações.",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":34.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Regime de Colaboração",
+        "#":7.3,
+        "INDICADORES":"Alfabetização na idade certa",
+        "FÓRMULA":"Σ de estudantes alfabetizados na idade certa \/ Σ de estudantes da rede estadual",
+        "FONTE DOS DADOS":"Inep",
+        "RESPONSÁVEL":"SUPIR",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Abaixo do esperado",
+        "REFERENCIAL DA META":"Considera meta prevista pelo CNCA",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Conseguimos uma prévia?",
+        "valor":0.66,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Gestão Estratégica",
+        "#":8.1,
+        "INDICADORES":"Percentual de Diretorias Regionais alcançando suas metas de aprendizagem",
+        "FÓRMULA":"Número de Diretorias Regionais com metas alcançadas",
+        "FONTE DOS DADOS":"SGA",
+        "RESPONSÁVEL":"UAP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Indicador sem dados",
+        "REFERENCIAL DA META":"Considera a curva de maturação da gestão por resultados através do EGPP",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":null,
+        "valor":1.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Gestão Estratégica",
+        "#":8.2,
+        "INDICADORES":"Percentual de escolas alcançando suas metas de aprendizagem",
+        "FÓRMULA":"Percentual de escolas alcançando as metas pedagógicas do plano de intervenção no período de referência.",
+        "FONTE DOS DADOS":"SGA",
+        "RESPONSÁVEL":"UAP",
+        "PERIODICIDADE DE MEDIÇÃO":"Semestral",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Indicador sem dados",
+        "REFERENCIAL DA META":"Considera a curva de maturação da gestão por resultados através do EGPP",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Teremos dados periódicos a partir da próxima semana, via Thais Delpupo",
+        "valor":1.0,
+        "tipo_dado":"META",
+        "ano":2026
+    },
+    {
+        "OBJETIVO ESTRATÉGICO":"Gestão Estratégica",
+        "#":8.3,
+        "INDICADORES":"Taxa de alcance da meta dos projetos estratégicos (referente ao Escritório de Projetos)",
+        "FÓRMULA":"Número de projetos estratégicos alcançando a meta projetada \/ Total de projetos * 100",
+        "FONTE DOS DADOS":"Interno",
+        "RESPONSÁVEL":"UAP",
+        "PERIODICIDADE DE MEDIÇÃO":"Anual",
+        "GRANDEZA":"%",
+        "POLARIDADE":"⬆️",
+        "Resultado Atual":null,
+        "Status":"Indicador sem dados",
+        "REFERENCIAL DA META":"Considera a curva de maturação da gestão por resultados através do EGPP",
+        "DOUBLE CHECK":"ok",
+        "OBSERVAÇÕES":"Teremos dados periódicos a partir da próxima semana, via Thais Delpupo",
+        "valor":1.0,
+        "tipo_dado":"META",
+        "ano":2026
+    }
+].flatMap(d => {
+            if (d.INDICADORES === "IDEB" && (d.ano === 2020 || d.ano === 2022 || d.ano === 2023)) {
+                return []; // IDEB é Bianual (2019, 2021)
+            }
+            if (d.INDICADORES === "Taxa líquida de matrícula do ensino médio regular no ERJ" && (d.ano === 2020 || d.ano === 2021)) {
+                 return []; // Apenas simulação 2019, 2022, 2023 para simplicidade
+            }
+            if (d.INDICADORES === "Percentual de Escolas com Acessibilidade Física" && (d.ano === 2020)) {
+                 return []; // Apenas simulação 2019, 2021, 2022, 2023 para simplicidade
+            }
+            return d;
+        });
+
+        // Agrupa os dados por indicador para a caixa de seleção e séries históricas
+        const indicatorsData = rawData.reduce((acc, curr) => {
+            const key = curr.INDICADORES;
+            if (!acc[key]) {
+                acc[key] = {
+                    details: curr,
+                    history: []
+                };
+            }
+            acc[key].history.push({ year: curr.ano, value: curr.valor });
+            return acc;
+        }, {});
+
+        // Popula o <select>
+        const indicatorSelect = document.getElementById('indicator-select');
+        indicatorSelect.innerHTML = '<option value="">-- Selecione um Indicador --</option>';
+        Object.keys(indicatorsData).forEach(indicatorName => {
+            const option = document.createElement('option');
+            option.value = indicatorName;
+            option.textContent = indicatorName;
+            indicatorSelect.appendChild(option);
+        });
+
+        let currentIndicatorName = null;
+
+        // Função para carregar os dados do indicador selecionado e atualizar o painel
+        function loadIndicatorData(indicatorName) {
+            currentIndicatorName = indicatorName;
+            if (!indicatorName) {
+                // Limpa o painel se nada for selecionado
+                document.getElementById('indicator-name').textContent = 'Selecione um Indicador Acima 👆';
+                document.getElementById('indicator-description').textContent = 'Visão detalhada da série histórica e metas.';
+                document.getElementById('chart-data-line').style.clipPath = 'polygon(0% 100%, 100% 100%, 100% 100%)';
+                document.getElementById('y-axis-container').innerHTML = '<div class="y-axis-label y-axis-title">Valores</div>';
+                document.getElementById('grid-lines-container').innerHTML = '';
+                document.getElementById('x-axis-labels-container').innerHTML = '<div>2019</div><div>2020</div><div>2021</div><div>2022</div><div>2023</div>';
+                
+                // Limpa detalhes
+                document.getElementById('detail-polaridade').textContent = '--';
+                document.getElementById('detail-grandeza').textContent = '--';
+                document.getElementById('detail-periodicidade').textContent = '--';
+                document.getElementById('meta-2025-value-box').textContent = 'N/A';
+                document.getElementById('meta-2026-value-box').textContent = 'N/A';
+                document.getElementById('objetivo-estrategico').textContent = 'Selecione um indicador para ver os detalhes completos, como Objetivo, Referencial, Fórmula e Fonte dos Dados.';
+                document.getElementById('referencial-meta').textContent = '--';
+                document.getElementById('formula-content').textContent = '--';
+                document.getElementById('fonte-dados').textContent = '--';
+                document.getElementById('responsavel').textContent = '--';
+                document.getElementById('status-value').textContent = '--';
+                document.getElementById('status-card').style.borderTopColor = 'var(--color-text-light)';
+                
+                // Limpa Gráfico de Barras
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('meta-2025-marker').style.left = '0%';
+                document.getElementById('meta-2026-marker').style.left = '0%';
+                document.getElementById('current-result-bar-label').textContent = '--';
+                document.getElementById('max-bar-label').textContent = 'Max: --';
+                document.getElementById('progress-bar').style.backgroundColor = 'var(--color-primary)';
+
+                return;
+            }
+
+            const data = indicatorsData[indicatorName];
+            const latestData = rawData.filter(d => d.INDICADORES === indicatorName)
+                                       .sort((a, b) => b.ano - a.ano)[0];
+            const history = data.history.sort((a, b) => a.year - b.year);
+            const polaridade = data.details.POLARIDADE === '⬆️' ? 'Positiva (Melhor se Aumentar)' : 'Negativa (Melhor se Diminuir)';
+
+            // Atualiza o Cabeçalho e Detalhes
+            document.getElementById('indicator-name').textContent = data.details.INDICADORES;
+            document.getElementById('indicator-description').textContent = data.details['OBJETIVO ESTRATÉGICO'];
+            document.getElementById('detail-polaridade').textContent = polaridade;
+            document.getElementById('detail-grandeza').textContent = data.details.GRANDEZA;
+            document.getElementById('detail-periodicidade').textContent = data.details['PERIODICIDADE DE MEDIÇÃO'];
+            document.getElementById('meta-2025-value-box').textContent = formatValue(data.details.meta_2025, data.details.GRANDEZA);
+            document.getElementById('meta-2026-value-box').textContent = formatValue(data.details.meta_2026, data.details.GRANDEZA);
+            document.getElementById('objetivo-estrategico').textContent = data.details['OBJETIVO ESTRATÉGICO'];
+            document.getElementById('referencial-meta').textContent = data.details['REFERENCIAL DA META'];
+            document.getElementById('formula-content').textContent = data.details.FÓRMULA;
+            document.getElementById('fonte-dados').textContent = data.details['FONTE DOS DADOS'];
+            document.getElementById('responsavel').textContent = data.details['RESPONSÁVEL'];
+
+            // Atualiza Status
+            const statusColor = data.details.Status === 'Dentro do esperado' ? 'var(--color-positive)' : 'var(--color-negative)';
+            document.getElementById('status-value').textContent = data.details.Status;
+            document.getElementById('status-card').style.borderTopColor = statusColor;
+            
+            // --- Atualiza Série Histórica (Gráfico de Área) ---
+            updateAreaChart(history, data.details.GRANDEZA);
+
+            // --- Atualiza Gráfico de Barras de Progresso ---
+            updateProgressBarChart(latestData);
+        }
+
+        // Função para formatar valores
+        function formatValue(value, unit) {
+            if (unit === '%') {
+                return (value * 100).toFixed(1) + '%';
+            } else if (unit === 'Nº') {
+                return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            return value;
+        }
+
+        // Função para atualizar o Gráfico de Área (Série Histórica)
+        function updateAreaChart(history, grandeza) {
+            const chartArea = document.querySelector('.chart-area');
+            const dataLine = document.getElementById('chart-data-line');
+            const yAxisContainer = document.getElementById('y-axis-container');
+            const gridLinesContainer = document.getElementById('grid-lines-container');
+            const xAxisLabelsContainer = document.getElementById('x-axis-labels-container');
+
+            // 1. Encontra min/max do histórico
+            const values = history.map(d => d.value);
+            const minVal = Math.min(...values);
+            const maxVal = Math.max(...values);
+            
+            // Adiciona margem de 10% para melhor visualização
+            const padding = (maxVal - minVal) * 0.1;
+            const chartMin = minVal - padding > 0 ? minVal - padding : 0; // Não deixa o mínimo ser negativo
+            const chartMax = maxVal + padding;
+            const range = chartMax - chartMin;
+            
+            const totalYears = 5; // Anos 2019 a 2023 (5 pontos)
+            
+            // 2. Atualiza os rótulos do eixo X (Anos)
+            xAxisLabelsContainer.innerHTML = history.map(d => `<div>${d.year}</div>`).join('');
+
+            // 3. Calcula o polígono
+            const points = history.map((d, i) => {
+                const xPercent = (i / (totalYears - 1)) * 100;
+                let yPercent = 100;
+                
+                if (range > 0) {
+                    yPercent = 100 - ((d.value - chartMin) / range) * 100;
+                }
+                
+                // Formato do ponto: X% Y%
+                return `${xPercent.toFixed(2)}% ${yPercent.toFixed(2)}%`;
+            });
+
+            // Adiciona pontos de fechamento (canto inferior direito e esquerdo)
+            const clipPath = `polygon(
+                0% 100%, 
+                ${points.join(', ')}, 
+                100% 100%
+            )`;
+
+            dataLine.style.clipPath = clipPath;
+
+            // 4. Cria Eixos Y e Linhas de Grade
+            yAxisContainer.innerHTML = '<div class="y-axis-label y-axis-title">Valores</div>';
+            gridLinesContainer.innerHTML = '';
+            
+            const numLabels = 5;
+            for (let i = 0; i < numLabels; i++) {
+                const yPos = (i / (numLabels - 1)) * 100; // 0%, 25%, 50%, 75%, 100%
+                const value = chartMin + (range * (1 - (i / (numLabels - 1)))); // Invertido para o topo do gráfico
+                
+                // Rótulo Y
+                const yLabel = document.createElement('div');
+                yLabel.className = 'y-axis-label';
+                yLabel.style.top = `${yPos}%`;
+                yLabel.textContent = formatValue(value, grandeza);
+                yAxisContainer.appendChild(yLabel);
+
+                // Linha de Grade (exceto na base)
+                if (i < numLabels - 1) {
+                    const gridLine = document.createElement('div');
+                    gridLine.className = 'grid-line';
+                    gridLine.style.top = `${yPos}%`;
+                    gridLinesContainer.appendChild(gridLine);
+                }
+            }
+
+            // Garante que o título do eixo Y esteja no container
+            const yTitle = document.createElement('div');
+            yTitle.className = 'y-axis-label y-axis-title';
+            yTitle.textContent = grandeza;
+            yAxisContainer.appendChild(yTitle);
+        }
+
+        // Função para atualizar o NOVO Gráfico de Barras de Progresso
+        function updateProgressBarChart(latestData) {
+            const result = latestData['Resultado Atual'];
+            const meta2025 = latestData.meta_2025;
+            const meta2026 = latestData.meta_2026;
+            const polaridade = latestData.POLARIDADE;
+            const grandeza = latestData.GRANDEZA;
+
+            const progressBar = document.getElementById('progress-bar');
+            const meta2025Marker = document.getElementById('meta-2025-marker');
+            const meta2026Marker = document.getElementById('meta-2026-marker');
+            const currentResultLabel = document.getElementById('current-result-bar-label');
+            const maxBarLabel = document.getElementById('max-bar-label');
+
+            // Encontrar o valor de referência máximo para 100% do gráfico
+            // Se polaridade ⬆️, o máximo é a maior meta (meta2026).
+            // Se polaridade ⬇️, o máximo é o valor mais alto entre o resultado e as metas (se não for muito alto).
+            
+            let maxRef = Math.max(result, meta2025, meta2026);
+            
+            if (polaridade === '⬇️') {
+                // Para polaridade negativa, o "progresso" é a redução em relação a um ponto de partida ideal ou o valor máximo.
+                // Usamos a maior meta ou resultado como 100% do *eixo* para garantir que as barras caibam.
+                // Se a meta é 0.04 (melhor) e o resultado é 0.023, o 0.04 é o "pior" valor relevante.
+                maxRef = Math.max(result, meta2025, meta2026, 0.0001); // Garante que não é zero
+            } else {
+                 // Para polaridade positiva, usamos a maior meta como 100%
+                 maxRef = Math.max(meta2026, result, 0.0001); // Garante que não é zero
+            }
+
+            // Para ⬆️, o progresso é (Resultado / Meta mais alta)
+            // Para ⬇️, o progresso é (1 - Resultado / MaxRef) -> Inverte a barra para mostrar progresso em direção a 0 (ou meta)
+            
+            let resultPercent;
+            let meta2025Percent;
+            let meta2026Percent;
+            let barColor;
+
+            if (polaridade === '⬆️') {
+                resultPercent = (result / maxRef) * 100;
+                meta2025Percent = (meta2025 / maxRef) * 100;
+                meta2026Percent = (meta2026 / maxRef) * 100;
+                
+                // Cor: se o resultado atual for MAIOR ou IGUAL à meta mais próxima (2025)
+                barColor = result >= meta2025 ? 'var(--color-positive)' : 'var(--color-primary)';
+
+            } else { // Polaridade '⬇️'
+                // Aqui o menor valor é o melhor. Invertemos o eixo: o MaxRef será a extremidade '0%' da barra visual.
+                // Mas para manter a simplicidade visual de uma barra de progresso (a barra cresce até a meta),
+                // vamos definir o progresso como a distância percorrida da *pior* situação relevante (o máximo) até o *melhor* (o resultado ou a meta 2026, o que for o pior valor que ainda queremos monitorar)
+                
+                // MaxRef para polaridade ⬇️ deve ser um valor alto o suficiente para conter o pior resultado. 
+                // Ex: Se o resultado mais alto (pior) foi 0.4 e a meta é 0.25 (melhor), usamos o maior.
+                const visualMax = Math.max(result, meta2025, meta2026); // O valor que representa 100% do EIXO
+                
+                // Progresso é (VisualMax - Resultado) / (VisualMax - Meta Mais Otimista/Referência Baixa)
+                // Isto é complexo para uma barra de progresso simples.
+                
+                // Vamos simplificar: O "100%" da barra é o valor alvo (Meta 2026). 
+                // O 0% é o valor máximo visto.
+                
+                // Se o valor de interesse for maior que o visualMax (pior que o esperado), ajustamos a escala.
+                let scaleMax = Math.max(visualMax, latestData.valor); // Pega o pior valor do histórico/atual/metas
+                
+                // Mapeia os valores para percentual. 0% é o valor mais alto (pior), 100% é a meta 2026.
+                // Isso inverte a barra. Se quiser uma barra que cresce, remapeie:
+                
+                // Opção Simples: Mostrar o progresso em relação à Meta 2026 (a mais ambiciosa)
+                // O progresso é 100% quando o resultado for igual ou menor que Meta 2026.
+                // O valor Máximo (scaleMax) é o ponto de partida (pior cenário).
+                
+                scaleMax = Math.max(result, meta2025, meta2026, 0.5); // Garante escala decente, 0.5 é um chute seguro
+                
+                // 1. Calcule a distância do "pior" valor (scaleMax) para o "melhor" valor (Meta 2026)
+                const targetRange = scaleMax - meta2026;
+                // 2. Calcule a distância percorrida do "pior" valor até o resultado atual
+                const achievedDistance = scaleMax - result;
+
+                // Se o resultado for melhor que a meta, a distância é maior.
+                // A barra deve mostrar o progresso em relação à distância total necessária (do pior valor relevante até a meta).
+                
+                // Vamos usar a abordagem simples de 0 a 100% baseado no progresso de "pior cenário" para "meta 2026".
+                
+                // O maxRef será o ponto de partida (pior resultado relevante).
+                const worstValue = Math.max(latestData.valor, result, meta2025, meta2026);
+                const bestValue = meta2026;
+                
+                const progressRange = worstValue - bestValue;
+                
+                // Garante que o progresso é sempre positivo (se for negativo, o progresso é 0)
+                if (progressRange <= 0) { 
+                    resultPercent = 100;
+                    meta2025Percent = 100;
+                    meta2026Percent = 100;
+                } else {
+                    // O percentual de progresso é (Distância do Pior para o Resultado) / (Distância do Pior para o Melhor) * 100
+                    resultPercent = ((worstValue - result) / progressRange) * 100;
+                    meta2025Percent = ((worstValue - meta2025) / progressRange) * 100;
+                    meta2026Percent = ((worstValue - meta2026) / progressRange) * 100;
+                    
+                    // Adiciona um limite para não ir além de 100%
+                    resultPercent = Math.min(100, Math.max(0, resultPercent));
+                    meta2025Percent = Math.min(100, Math.max(0, meta2025Percent));
+                    meta2026Percent = Math.min(100, Math.max(0, meta2026Percent));
+                }
+
+                // Cor: se o resultado atual for MENOR ou IGUAL à meta mais próxima (2025)
+                barColor = result <= meta2025 ? 'var(--color-positive)' : 'var(--color-negative)';
+                
+                // Para polaridade ⬇️, o maxLabel deve ser o pior valor, e o min Label (não desenhado) o melhor
+                maxBarLabel.textContent = `Pior Caso: ${formatValue(worstValue, grandeza)}`;
+            }
+
+            // Atualiza a barra de progresso
+            progressBar.style.width = `${resultPercent.toFixed(1)}%`;
+            progressBar.style.backgroundColor = barColor;
+
+            // Atualiza os marcadores de meta
+            meta2025Marker.style.left = `${meta2025Percent.toFixed(1)}%`;
+            meta2026Marker.style.left = `${meta2026Percent.toFixed(1)}%`;
+            
+            // Atualiza os rótulos
+            currentResultLabel.textContent = formatValue(result, grandeza);
+            if (polaridade === '⬆️') {
+                 maxBarLabel.textContent = `Meta 2026: ${formatValue(maxRef, grandeza)}`;
+            }
+        }
+        
+        // Inicializa o primeiro indicador ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstIndicator = indicatorSelect.options[1] ? indicatorSelect.options[1].value : null;
+            if (firstIndicator) {
+                indicatorSelect.value = firstIndicator;
+                loadIndicatorData(firstIndicator);
+            }
+        });
+    </script>
+</body>
+</html>
