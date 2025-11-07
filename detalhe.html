@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Indicador - Painel de Monitoramento</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=material+symbols+outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-primary: #003d7a;
+            --color-secondary: #0074d9;
+            --color-background-light: #f7f9fb;
+            --color-text-dark: #2f3e4e;
+            --color-text-light: #7a8a9c;
+            --color-positive: #2e7d32;
+            --color-negative: #c62828;
+            --color-neutral: #ffb300;
+            --color-gray: #9e9e9e;
+            --color-tactical: #005e63;
+            --color-responsible: #6a1b9a;
+            --color-source: #2e7d32;
+            --color-hiperpositive: #00f729;
+            --color-meta-2025: #9370db;
+            --color-meta-2026: #87cefa;
+            --color-gauge-track: #dcdcdc;
+            --color-chart-line: #2196F3;
+            --color-chart-area: #B3E5FC;
+            /* NOVA COR CINZA CLARO PARA CARDS DE DETALHE */
+            --color-detail-card: #eef1f4; 
+            --color-detail-text: #4a4a4a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", "Segoe UI", sans-serif;
+            background-color: var(--color-background-light);
+            color: var(--color-text-dark);
+            margin: 0;
+            padding: 15px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            background-color: var(--color-secondary);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .back-button:hover {
+            background-color: #005ea8;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: calc(100vh - 30px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            border-left: 4px solid var(--color-primary);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header h1 {
+            color: var(--color-primary);
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .header p {
+            color: var(--color-text-light);
+            font-size: 13px;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* DROPDOWN STYLES */
+        .indicators-dropdown {
+            position: relative;
+            margin-left: 20px;
+            flex-shrink: 0;
+        }
+
+        .dropdown-button {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            /* REMOVIDO ICONES E SETAS */
+            display: flex; 
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-button:hover {
+            background-color: #002d5b;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-list.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .indicator-name {
+            font-weight: 500;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .indicator-value {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-left: 10px;
+        }
+
+        .indicator-status {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+            color: white;
+        }
+
+        .status-positive { background-color: var(--color-positive); }
+        .status-negative { background-color: var(--color-negative); }
+        .status-neutral { background-color: var(--color-neutral); }
+        .status-gray { background-color: var(--color-gray); }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 0;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            flex-shrink: 0;
+        }
+
+        /* GRÁFICO OCUPANDO ALTURA TOTAL */
+        .chart-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .chart-card {
+            position: relative;
+            padding: 12px;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-area {
+            position: relative;
+            flex: 1;
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            min-height: 0;
+            margin-left: 50px;
+            margin-right: 10px;
+            margin-bottom: 25px;
+        }
+        
+        #grid-lines-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none; 
+        }
+
+        .chart-plot-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: visible; 
+        }
+
+        .y-axis-labels {
+            position: absolute;
+            left: -50px;
+            top: 0;
+            bottom: 0;
+            width: 45px;
+        }
+
+        .y-axis-label {
+            position: absolute;
+            font-size: 10px;
+            color: var(--color-text-light);
+            text-align: right;
+            padding-right: 8px;
+            transform: translateY(-50%);
+        }
+
+        .x-axis-labels {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            display: block; 
+            font-size: 10px;
+            color: var(--color-text-light);
+        }
+
+        .x-axis-labels div {
+             text-align: center;
+             display: inline-block; 
+             position: absolute; 
+        }
+
+        .grid-line {
+            position: absolute;
+            border-top: 1px dashed #eee;
+            width: 100%;
+            left: 0;
+        }
+
+        .data-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border: 2px solid var(--color-chart-line);
+            border-radius: 50%;
+            transform: translate(-50%, -50%); 
+            z-index: 20;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.2s ease; 
+        }
+
+        .data-point:hover {
+            background-color: var(--color-chart-line);
+            transform: translate(-50%, -50%) scale(1.2); 
+        }
+
+        .data-point:hover::after {
+            content: attr(data-value);
+            position: absolute;
+            bottom: 15px; 
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 100;
+            font-weight: 600;
+        }
+
+        .line-path {
+            fill: none;
+            stroke: var(--color-chart-line);
+            stroke-width: 3px;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+
+        .details-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .indicator-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .meta-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        /* ESTILOS DE COR DE DETALHES ALTERADOS PARA CINZA CLARO */
+        .indicator-detail, .meta-card {
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background-color: var(--color-detail-card); /* Cor Cinza Claro */
+            color: var(--color-detail-text); /* Cor de texto mais escura */
+            min-height: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .indicator-detail .label, .meta-card .meta-label {
+            font-size: 8px;
+            color: var(--color-text-light); /* Texto do label em cinza claro */
+            text-transform: uppercase;
+            margin-top: 1px;
+        }
+
+        .indicator-detail .value, .meta-card .meta-value {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--color-detail-text); /* Cor de texto do valor em cinza escuro */
+            margin-bottom: 1px;
+        }
+        
+        /* Remoção das classes box-polaridade, box-grandeza e box-periodicidade no CSS */
+        /* Remoção das classes meta-2025 e meta-2026 no CSS */
+
+        .info-card {
+            background-color: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .info-card .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+            margin-top: 6px;
+            display: block;
+            border-top: 1px solid #eee;
+            padding-top: 6px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .info-card .status-title {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+            padding-top: 3px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .formula-card .content {
+            font-size: 12px;
+            line-height: 1.3;
+            text-align: center;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .info-card p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.3;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .footer-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 0;
+        }
+        .footer-detail {
+            text-align: center;
+        }
+
+        .footer-detail .label {
+            font-size: 8px;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+            margin-top: 2px;
+            padding-top: 0;
+            border-top: none;
+        }
+        .footer-detail .value {
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-dark);
+            margin: 0 0 8px 0;
+        }
+
+        .chart-title {
+            font-size: 11px;
+            margin: 0 0 5px 0;
+            color: var(--color-text-light);
+            flex-shrink: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-text-light);
+        }
+        
+        /* Estilo específico para os ícones de polaridade para ficarem centralizados */
+        .polarity-icon {
+            font-size: 16px; 
+            font-weight: 700;
+            display: block; 
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" id="dashboard-container">
+        <a href="#" onclick="navigate('?page=dashboard'); return false;" class="back-button">← Voltar ao Dashboard</a>
+
+        <div class="header">
+            <div class="header-content">
+                <h1 id="indicator-name">Carregando detalhes do indicador...</h1>
+                <p id="indicator-description">Aguarde enquanto carregamos as informações</p>
+            </div>
+
+            <div class="indicators-dropdown">
+                <button class="dropdown-button" onclick="toggleDropdown()">
+                    Outros Indicadores
+                </button>
+                <div class="dropdown-list" id="indicators-dropdown-list">
+                    <div class="dropdown-item">
+                        <div class="indicator-name">Carregando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="chart-section">
+                    <div class="card chart-card">
+                        <p class="chart-title">Série Histórica do Indicador</p>
+                        <div class="chart-area">
+                            <div id="grid-lines-container"></div>
+                            <svg id="chart-svg" class="chart-plot-area"></svg>
+                            <div id="data-points-container"></div>
+                            <div id="y-axis-container" class="y-axis-labels"></div>
+                        </div>
+                        <div class="x-axis-labels" id="x-axis-labels-container"></div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <div class="card">
+                        <p class="section-title">Detalhes do Indicador</p>
+                        <div class="indicator-details">
+                            <div class="indicator-detail">
+                                <div class="value" id="detail-polaridade">--</div>
+                                <div class="label">Polaridade</div>
+                            </div>
+                            <div class="indicator-detail">
+                                <div class="value" id="detail-grandeza">--</div>
+                                <div class="label">Grandeza</div>
+                            </div>
+                            <div class="indicator-detail">
+                                <div class="value" id="detail-periodicidade">--</div>
+                                <div class="label">Periodicidade</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <p class="section-title">Metas</p>
+                        <div class="meta-cards">
+                             <div class="meta-card">
+                                <div class="meta-value" id="meta-2025-value-box">N/A</div>
+                                <div class="meta-label">Meta 2025</div>
+                            </div>
+                            <div class="meta-card">
+                                <div class="meta-value" id="meta-2026-value-box">N/A</div>
+                                <div class="meta-label">Meta 2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="info-card" id="status-card" style="border-top: 4px solid var(--color-text-light);">
+                    <p class="status-title" id="status-value" style="color: var(--color-text-light);">--</p>
+                    <span class="label">Status</span>
+                </div>
+
+                <div class="info-card">
+                    <p id="objetivo-estrategico">Selecione um indicador para ver os detalhes completos</p>
+                    <span class="label">Objetivo Estratégico</span>
+                </div>
+
+                <div class="info-card">
+                    <p id="referencial-meta">--</p>
+                    <span class="label">Referencial da Meta</span>
+                </div>
+
+                <div class="info-card formula-card">
+                    <p class="content" id="formula-content">--</p>
+                    <span class="label">Fórmula</span>
+                </div>
+
+                <div class="info-card" style="padding: 12px;">
+                    <div class="footer-details">
+                        <div class="footer-detail">
+                            <div class="value" id="fonte-dados">--</div>
+                            <span class="label">Fonte dos Dados</span>
+                        </div>
+                        <div class="footer-detail">
+                            <div class="value" id="responsavel">--</div>
+                            <span class="label">Responsável</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DADOS DE FALLBACK AJUSTADOS para o teste de espaçamento uniforme
+        const fallbackData = [
+            // Indicador 1: Escolas com salas de AEE 
+            {
+                "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
+                "#": 5.2,
+                "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
+                "FÓRMULA": "(Nº de Escolas com salas AEE / Nº total de Escolas ) * 100",
+                "FONTE DOS DADOS": "Censo Escolar / Conexão",
+                "SUPINTENDÊNCIA": "SUPEE",
+                "PERIODICIDADE DE MEDIÇÃO": "Anual",
+                "GRANDEZA": "%",
+                "RESULTADO ATUAL": 0.21996879875195008,
+                "POLARIDADE": "⬆️",
+                "STATUS": "Dentro do esperado",
+                "valor": 0.21996879875195008,
+                "tipo_dado": "VALOR",
+                "ano": 2023 // 4º Ponto (Índice 3, se classificado)
+            },
+            {
+                "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
+                "valor": 0.095,
+                "tipo_dado": "VALOR",
+                "ano": 2019 // 1º Ponto (Índice 0)
+            },
+            {
+                "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
+                "valor": 0.152,
+                "tipo_dado": "VALOR",
+                "ano": 2021 // 2º Ponto (Índice 1)
+            },
+            {
+                "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
+                "valor": 0.158,
+                "tipo_dado": "VALOR",
+                "ano": 2022 // 3º Ponto (Índice 2)
+            },
+             {
+                "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
+                "valor": 0.165,
+                "tipo_dado": "VALOR",
+                "ano": 2024 // 5º Ponto (Índice 4)
+            },
+            
+            // Indicador 2: Taxa de Evasão (Teste com poucos pontos)
+            {
+                "OBJETIVO ESTRATÉGICO": "Combate ao Abandono",
+                "#": 1.1,
+                "INDICADORES": "Taxa de Evasão",
+                "FÓRMULA": "...",
+                "FONTE DOS DADOS": "SED",
+                "SUPINTENDÊNCIA": "SUGEE",
+                "PERIODICIDADE DE MEDIÇÃO": "Anual",
+                "GRANDEZA": "%",
+                "RESULTADO ATUAL": 0.05,
+                "POLARIDADE": "⬇️", 
+                "STATUS": "Abaixo do esperado",
+                "valor": 0.08,
+                "tipo_dado": "VALOR",
+                "ano": 2020 
+            },
+            {
+                "INDICADORES": "Taxa de Evasão",
+                "valor": 0.05,
+                "tipo_dado": "VALOR",
+                "ano": 2023 
+            },
+            {
+                "INDICADORES": "Taxa de Evasão",
+                "valor": 0.02,
+                "tipo_dado": "VALOR",
+                "ano": 2025 
+            }
+        ];
+
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                indicador: params.get('indicador')
+            };
+        }
+
+        function navigate(path) {
+            if (path.startsWith('?')) {
+                const targetPage = path.includes('dashboard') ? 'index.html' : 'detalhe.html';
+                window.location.href = `${targetPage}${path}`;
+                return;
+            }
+            window.location.href = path;
+        }
+
+        function formatValue(value, grandeza) {
+            if (value === null || value === undefined) return 'N/A';
+            const isPercentage = grandeza === '%';
+            
+            if (isPercentage) {
+                return (value * 100).toFixed(1) + '%';
+            }
+            return value.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'Dentro do esperado': return 'var(--color-positive)'; 
+                case 'Meta 2025 alcançada': return 'var(--color-positive)';
+                case 'Abaixo do esperado': return 'var(--color-negative)';
+                case 'Indicador sem dados': return 'var(--color-gray)';
+                default: return 'var(--color-text-light)';
+            }
+        }
+
+        function loadData() {
+            try {
+                const storedData = localStorage.getItem('dashboardData');
+                if (storedData) {
+                    return JSON.parse(storedData);
+                }
+            } catch (e) {
+                console.log('Erro ao carregar do localStorage, usando fallback');
+            }
+            return fallbackData;
+        }
+
+        function groupDataByIndicator(data) {
+            const grouped = {};
+
+            data.forEach(item => {
+                const indicatorName = item.INDICADORES;
+                if (!indicatorName) return;
+
+                if (!grouped[indicatorName]) {
+                    grouped[indicatorName] = {
+                        details: item,
+                        history: []
+                    };
+                }
+
+                if (item.tipo_dado === 'VALOR' && item.valor !== null && item.valor !== undefined) {
+                    if (item.ano && item.valor) { 
+                         grouped[indicatorName].history.push({
+                            year: item.ano,
+                            value: item.valor
+                        });
+                    }
+                }
+                
+                 if (item.SUPINTENDÊNCIA) {
+                    grouped[indicatorName].details = item;
+                }
+            });
+            
+            Object.keys(grouped).forEach(key => {
+                const historyMap = new Map();
+                grouped[key].history.forEach(item => historyMap.set(item.year, item));
+                grouped[key].history = Array.from(historyMap.values()).sort((a, b) => a.year - b.year);
+            });
+
+            return grouped;
+        }
+
+        function generateHypotheticalGoals(indicatorData) {
+            const history = indicatorData.history;
+            if (history.length === 0) return { meta2025: null, meta2026: null, max_ref: null };
+
+            const latestValue = history[history.length - 1].value;
+            const polaridade = indicatorData.details.POLARIDADE;
+
+            let meta2025, meta2026;
+
+            if (polaridade === '⬆️') {
+                meta2025 = latestValue * 1.1;
+                meta2026 = latestValue * 1.2;
+            } else {
+                meta2025 = latestValue * 0.9;
+                meta2026 = latestValue * 0.8;
+            }
+
+            return {
+                meta2025: parseFloat(meta2025.toFixed(3)),
+                meta2026: parseFloat(meta2026.toFixed(3)),
+                max_ref: Math.max(...history.map(h => h.value))
+            };
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('indicators-dropdown-list');
+            dropdown.classList.toggle('show');
+        }
+
+        function closeDropdown() {
+            const dropdown = document.getElementById('indicators-dropdown-list');
+            dropdown.classList.remove('show');
+        }
+
+        function loadIndicatorsDropdown(groupedData, currentIndicator) {
+            const dropdownList = document.getElementById('indicators-dropdown-list');
+
+            if (!groupedData || Object.keys(groupedData).length === 0) {
+                dropdownList.innerHTML = '<div class="dropdown-item"><div class="indicator-name">Nenhum indicador encontrado</div></div>';
+                return;
+            }
+
+            dropdownList.innerHTML = '';
+
+            Object.entries(groupedData).forEach(([name, data]) => {
+                const isCurrent = name === currentIndicator;
+                const latestValue = data.history.length > 0 ? data.history[data.history.length - 1].value : null;
+
+                const item = document.createElement('div');
+                item.className = `dropdown-item ${isCurrent ? 'current' : ''}`;
+                item.onclick = () => {
+                    if (!isCurrent) {
+                        navigate(`?indicador=${encodeURIComponent(name)}`);
+                    }
+                    closeDropdown();
+                };
+
+                const statusClass = getStatusClass(data.details.STATUS);
+
+                item.innerHTML = `
+                    <div class="indicator-name">${data.details['#'] || '-'} - ${name}</div>
+                    <div style="display: flex; align-items: center;">
+                        ${latestValue !== null ? `<div class="indicator-value">${formatValue(latestValue, data.details.GRANDEZA)}</div>` : ''}
+                        <div class="indicator-status ${statusClass}">${data.details.STATUS}</div>
+                    </div>
+                `;
+
+                if (isCurrent) {
+                    item.style.backgroundColor = '#e3f2fd';
+                    item.style.fontWeight = '600';
+                }
+
+                dropdownList.appendChild(item);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Dentro do esperado': return 'status-positive';
+                case 'Meta 2025 alcançada': return 'status-positive';
+                case 'Abaixo do esperado': return 'status-negative';
+                case 'Indicador sem dados': return 'status-gray';
+                default: return 'status-neutral';
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('indicators-dropdown-list');
+            const button = document.querySelector('.dropdown-button');
+            if (button && dropdown && !button.contains(event.target) && !dropdown.contains(event.target)) {
+                closeDropdown();
+            }
+        });
+
+        function loadIndicatorDetails() {
+            const data = loadData();
+            const groupedData = groupDataByIndicator(data);
+            
+            const defaultIndicatorName = Object.keys(groupedData)[0]; 
+
+            const params = getUrlParams();
+            let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
+            
+             if (!params.indicador && Object.keys(groupedData).length > 0) {
+                 indicatorName = defaultIndicatorName;
+                 const newUrl = `?indicador=${encodeURIComponent(defaultIndicatorName)}`;
+                 window.history.replaceState(null, null, newUrl);
+             }
+
+            if (!indicatorName || !groupedData[indicatorName]) {
+                document.getElementById('indicator-name').textContent = 'Nenhum indicador para exibir';
+                loadIndicatorsDropdown(groupedData, indicatorName);
+                return;
+            }
+
+            const indicatorData = groupedData[indicatorName];
+            loadIndicatorsDropdown(groupedData, indicatorName);
+
+            const details = indicatorData.details;
+            const history = indicatorData.history.sort((a, b) => a.year - b.year);
+            const goals = generateHypotheticalGoals(indicatorData);
+
+            // ATUALIZAÇÃO DA POLARIDADE COM ICONES
+            let polarityIcon;
+            if (details.POLARIDADE === '⬆️') {
+                polarityIcon = '<span class="material-symbols-outlined polarity-icon" style="color: var(--color-positive);">arrow_upward</span>';
+            } else if (details.POLARIDADE === '⬇️') {
+                 polarityIcon = '<span class="material-symbols-outlined polarity-icon" style="color: var(--color-negative);">arrow_downward</span>';
+            } else {
+                polarityIcon = '--';
+            }
+            
+            document.getElementById('indicator-name').textContent = details.INDICADORES;
+            document.getElementById('indicator-description').textContent =
+                `${details['OBJETIVO ESTRATÉGICO'] || 'Indicador'} (#${details['#'] || '-'})`;
+
+            document.getElementById('detail-polaridade').innerHTML = polarityIcon;
+            document.getElementById('detail-grandeza').textContent = details.GRANDEZA || '--';
+            document.getElementById('detail-periodicidade').textContent = details['PERIODICIDADE DE MEDIÇÃO'] || '--';
+
+            document.getElementById('meta-2025-value-box').textContent = goals.meta2025 !== null ? formatValue(goals.meta2025, details.GRANDEZA) : 'N/A';
+            document.getElementById('meta-2026-value-box').textContent = goals.meta2026 !== null ? formatValue(goals.meta2026, details.GRANDEZA) : 'N/A';
+
+            const statusCard = document.getElementById('status-card');
+            document.getElementById('status-value').textContent = details.STATUS || '--';
+
+            const statusColor = getStatusColor(details.STATUS);
+            statusCard.style.borderTop = `4px solid ${statusColor}`;
+            document.getElementById('status-value').style.color = statusColor;
+
+            document.getElementById('objetivo-estrategico').textContent = details['OBJETIVO ESTRATÉGICO'] || '--';
+            document.getElementById('referencial-meta').textContent =
+                details['REFERENCIAL DA META'] || 'Baseado em crescimento histórico';
+            document.getElementById('formula-content').textContent = details.FÓRMULA || 'Fórmula não especificada';
+            document.getElementById('fonte-dados').textContent = details['FONTE DOS DADOS'] || '--';
+            document.getElementById('responsavel').textContent = details.SUPINTENDÊNCIA || '--';
+
+            // RENDERIZAR GRÁFICO (mantendo a escala categórica revisada)
+            renderChart(history, details.GRANDEZA);
+        }
+
+        // RENDERIZAR GRÁFICO (Escala Categórica/Índice) - Lógica do eixo X mantida para não reintroduzir erro anterior
+        function renderChart(history, grandeza) {
+            const chartSvg = document.getElementById('chart-svg');
+            const dataPointsContainer = document.getElementById('data-points-container');
+            const yAxisContainer = document.getElementById('y-axis-container');
+            const xAxisLabelsContainer = document.getElementById('x-axis-labels-container');
+            const gridLinesContainer = document.getElementById('grid-lines-container');
+
+            // Limpar
+            chartSvg.innerHTML = '';
+            dataPointsContainer.innerHTML = '';
+            yAxisContainer.innerHTML = '';
+            xAxisLabelsContainer.innerHTML = '';
+            gridLinesContainer.innerHTML = '';
+
+            if (history.length === 0) {
+                chartSvg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="12px">Sem dados históricos</text>';
+                return;
+            }
+
+            const sortedHistory = history.sort((a, b) => a.year - b.year);
+            const dataCount = sortedHistory.length;
+            const values = sortedHistory.map(h => h.value);
+
+            // Escala Y
+            const minVal = Math.min(...values);
+            const maxVal = Math.max(...values);
+            const range = maxVal - minVal;
+            const padding = range * 0.1 || (minVal === 0 ? 0.05 : minVal * 0.1); 
+            const yMin = Math.max(0, minVal - padding); 
+            const yMax = maxVal + padding;
+            const yRange = yMax - yMin;
+            const effectiveYRange = (yRange === 0) ? (yMax * 0.2 || 0.1) : yRange;
+            const effectiveYMin = (yRange === 0) ? (yMin - effectiveYRange / 2) : yMin;
+
+            function scaleY(value) {
+                if (effectiveYRange === 0) return 50;
+                return 100 - ((value - effectiveYMin) / effectiveYRange) * 100;
+            }
+            
+            // Escala X (Categórica/Índice)
+            function scaleX(index) {
+                if (dataCount <= 1) return 50; 
+                return (index / (dataCount - 1)) * 100;
+            }
+
+            // Desenho do Path (Linha e Área)
+            let pathData = '';
+            sortedHistory.forEach((item, index) => {
+                const x = scaleX(index); 
+                const y = scaleY(item.value);
+                pathData += (index === 0 ? `M ${x},${y}` : ` L ${x},${y}`);
+            });
+
+            // Renderizar SVG e Paths (Linha, Área)
+            chartSvg.setAttribute('width', '100%');
+            chartSvg.setAttribute('height', '100%');
+            chartSvg.setAttribute('viewBox', '0 0 100 100'); 
+
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const linearGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+            linearGradient.setAttribute('id', 'areaGradient');
+            linearGradient.setAttribute('x1', '0%');
+            linearGradient.setAttribute('y1', '0%');
+            linearGradient.setAttribute('x2', '0%');
+            linearGradient.setAttribute('y2', '100%');
+            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+            stop1.setAttribute('offset', '0%');
+            stop1.setAttribute('style', 'stop-color:var(--color-chart-line);stop-opacity:0.6');
+            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+            stop2.setAttribute('offset', '100%');
+            stop2.setAttribute('style', 'stop-color:var(--color-chart-area);stop-opacity:0.1');
+            linearGradient.appendChild(stop1);
+            linearGradient.appendChild(stop2);
+            defs.appendChild(linearGradient);
+            chartSvg.prepend(defs);
+
+            const linePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            linePath.setAttribute('d', pathData);
+            linePath.setAttribute('class', 'line-path');
+            chartSvg.appendChild(linePath);
+
+            if (dataCount > 0) {
+                const xStart = scaleX(0); 
+                const xEnd = scaleX(dataCount - 1); 
+                const yBase = 100; 
+
+                const areaPathData = pathData + ` L ${xEnd},${yBase} L ${xStart},${yBase} Z`;
+
+                const areaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                areaPath.setAttribute('d', areaPathData);
+                areaPath.setAttribute('fill', 'url(#areaGradient)'); 
+                areaPath.setAttribute('stroke', 'none');
+                chartSvg.prepend(areaPath); 
+            }
+
+            // Renderizar Pontos de Dados e Rótulos X (usando o ÍNDICE)
+            sortedHistory.forEach((item, index) => {
+                const xCoord = scaleX(index);
+                const yCoord = scaleY(item.value);
+
+                const point = document.createElement('div');
+                point.className = 'data-point';
+                point.style.left = `${xCoord}%`;
+                point.style.top = `${yCoord}%`;
+                point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza)}`);
+                dataPointsContainer.appendChild(point);
+
+                const label = document.createElement('div');
+                label.style.position = 'absolute';
+                label.style.left = `${xCoord}%`;
+                label.style.transform = 'translateX(-50%)';
+
+                label.textContent = item.year;
+                xAxisLabelsContainer.appendChild(label);
+            });
+
+            // Renderizar Eixos Y (rótulos e linhas de grade)
+            const numLabels = 5;
+            for (let i = 0; i < numLabels; i++) {
+                const percentage = i / (numLabels - 1);
+                const value = effectiveYMin + (1 - percentage) * effectiveYRange; 
+                const yPos = percentage * 100;
+
+                const label = document.createElement('div');
+                label.className = 'y-axis-label';
+                label.style.top = `${yPos}%`;
+                label.textContent = formatValue(value, grandeza);
+                yAxisContainer.appendChild(label);
+
+                if (i < numLabels - 1) {
+                    const gridLine = document.createElement('div');
+                    gridLine.className = 'grid-line';
+                    gridLine.style.top = `${yPos}%`;
+                    gridLinesContainer.appendChild(gridLine);
+                }
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+             const data = loadData();
+             const groupedData = groupDataByIndicator(data);
+             const defaultIndicatorName = Object.keys(groupedData)[0];
+             
+             const params = getUrlParams();
+             let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
+            
+             if (!params.indicador && Object.keys(groupedData).length > 0) {
+                 indicatorName = defaultIndicatorName;
+                 const newUrl = `?indicador=${encodeURIComponent(defaultIndicatorName)}`;
+                 window.history.replaceState(null, null, newUrl);
+             }
+
+             loadIndicatorDetails();
+        });
+    </script>
+</body>
+</html>
