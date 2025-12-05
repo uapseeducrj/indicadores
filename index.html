@@ -3950,19 +3950,19 @@
                 }
             });
             
-            // Calcular porcentagens
-            stats.percentages = {};
-            Object.keys(stats).forEach(key => {
-                if (key !== 'Total' && key !== 'percentages') {
-                    stats.percentages[key] = stats.Total > 0 ? ((stats[key] / stats.Total) * 100).toFixed(1) : 0;
-                }
-            });
+            // REMOVIDO: Cálculo de porcentagens
+            // stats.percentages = {};
+            // Object.keys(stats).forEach(key => {
+            //     if (key !== 'Total' && key !== 'percentages') {
+            //         stats.percentages[key] = stats.Total > 0 ? ((stats[key] / stats.Total) * 100).toFixed(1) : 0;
+            //     }
+            // });
             
             return stats;
         }
 
         // ------------------------------------------------------------------
-        // NOVA FUNÇÃO: Renderizar resumo por objetivo
+        // NOVA FUNÇÃO: Renderizar resumo por objetivo (SEM PORCENTAGENS)
         // ------------------------------------------------------------------
         function renderObjectiveStatusSummary(stats, isTactical = false) {
             const statusMap = [
@@ -3977,7 +3977,7 @@
                     ${statusMap.map(item => `
                         <div class="objective-status-item">
                             <div class="objective-status-count" style="color: ${item.color}">
-                                ${stats[item.key]} (${stats.percentages[item.key]}%)
+                                ${stats[item.key]} <!-- APENAS O NÚMERO, SEM PORCENTAGEM -->
                             </div>
                             <div class="objective-status-label" style="color: ${item.color}">
                                 ${item.label}
