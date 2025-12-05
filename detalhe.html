@@ -261,7 +261,8 @@
             display: flex;
             position: relative;
             min-height: 0;
-            padding-bottom: 25px; /* Espaço para rótulos X */
+            padding-bottom: 30px; /* Mais espaço para rótulos X */
+            width: 100%;
         }
         
         /* Contêiner da área de plotagem (sem Eixo Y) */
@@ -271,6 +272,7 @@
             border-bottom: 1px solid #ddd;
             border-left: 1px solid #ddd;
             margin-left: 40px; /* Alinhamento do eixo Y */
+            overflow: visible; /* Mudar para visible */
         }
 
         /* SVG e contêineres de dados cobrindo 100% da área de plotagem */
@@ -309,30 +311,35 @@
             pointer-events: none;
         }
 
-        /* Contêiner dos Rótulos X (Anos) - Fica no mesmo nível do Y, fora da plotagem */
+        /* Contêiner dos Rótulos X (Anos) */
         #x-axis-labels-container {
             position: absolute;
-            bottom: 0; /* Alinhado ao fundo do .chart-wrapper */
-            left: 40px; /* Alinhado após o Eixo Y */
-            width: calc(100% - 40px);
-            height: 20px;
+            bottom: 0;
+            left: 40px; /* Mesmo que margin-left do .chart-container */
+            width: calc(100% - 40px); /* Mesma largura do .chart-container */
+            height: 30px;
+            pointer-events: none;
+            overflow: visible;
         }
         
-        /* Estilo do Rótulo individual do ano (CENTRALIZADO EM CIMA DA BARRA) */
+        /* Rótulo do ano - POSIÇÃO CORRIGIDA */
         .x-axis-bar-label {
             font-size: 10px;
             color: var(--color-text-light);
             text-align: center;
             white-space: nowrap;
             position: absolute;
-            bottom: 20px; /* Posiciona EM CIMA da área das barras */
-            transform: translateX(-50%); /* Centraliza o rótulo */
-            pointer-events: none; /* Evita interferir com interações */
-            background-color: rgba(255, 255, 255, 0.8); /* Fundo branco semi-transparente */
-            padding: 2px 4px;
-            border-radius: 2px;
+            bottom: 5px;
+            transform: translateX(-50%); /* Centraliza exatamente no ponto */
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 2px 6px;
+            border-radius: 3px;
             border: 1px solid #eee;
             font-weight: bold;
+            z-index: 5;
+            min-width: 40px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         /* Estilo das barras no SVG */
@@ -343,7 +350,7 @@
         /* Placeholder para tooltip */
         .data-point-placeholder {
             position: absolute;
-            width: 10px;
+            width: 12px;
             height: 100%; /* Aumenta a área de hover para a barra */
             transform: translateX(-50%); 
             cursor: pointer;
@@ -958,7 +965,7 @@
         renderChart(history, details.GRANDEZA);
     }
 
-    // RENDERIZAR GRÁFICO (Gráfico de Colunas - SIMPLIFICADO E CORRETO)
+    // RENDERIZAR GRÁFICO (Gráfico de Colunas - CORREÇÃO COMPLETA)
     function renderChart(history, grandeza) {
         const chartSvg = document.getElementById('chart-svg');
         const dataPointsContainer = document.getElementById('data-points-container');
@@ -998,28 +1005,54 @@
             return 100 - ((value - effectiveYMin) / effectiveYRange) * 100;
         }
         
-        // --- SIMPLIFICADO: Distribuição uniforme das barras ---
-        const totalWidth = 100; // 100% do container
-        const barWidth = Math.min(15, totalWidth / dataCount * 0.8); // Largura da barra em %
-        const availableSpace = totalWidth - (barWidth * dataCount);
-        const spacing = availableSpace / (dataCount + 1); // Espaço entre barras
+        // --- CÁLCULO SIMPLIFICADO E CORRETO ---
+        const totalWidth = 100; // 100% do container SVG
+        const leftMargin = 2; // Pequena margem esquerda
+        const rightMargin = 2; // Pequena margem direita
+        const usableWidth = totalWidth - (leftMargin + rightMargin); // Largura utilizável
+        
+        // Calcular largura da barra baseada no número de dados
+        let barWidth;
+        if (dataCount <= 3) {
+            barWidth = 20;
+        } else if (dataCount <= 5) {
+            barWidth = 15;
+        } else if (dataCount <= 8) {
+            barWidth = 10;
+        } else {
+            barWidth = 8;
+        }
+        
+        // Garantir que a barra não seja muito larga
+        barWidth = Math.min(barWidth, usableWidth / dataCount * 0.9);
+        
+        // Calcular espaçamento
+        const totalBarWidth = barWidth * dataCount;
+        const availableSpace = usableWidth - totalBarWidth;
+        const spacing = availableSpace / (dataCount + 1);
         
         // Renderiza o SVG principal
         chartSvg.setAttribute('width', '100%');
         chartSvg.setAttribute('height', '100%');
-        chartSvg.setAttribute('viewBox', '0 0 100 100'); 
+        chartSvg.setAttribute('viewBox', '0 0 100 100');
+        chartSvg.setAttribute('preserveAspectRatio', 'none');
 
+        // Obter dimensões do container para cálculo preciso
+        const chartContainer = document.querySelector('.chart-container');
+        const containerWidth = chartContainer ? chartContainer.clientWidth : 500;
+        
         sortedHistory.forEach((item, index) => {
-            // Calcular posição X baseada no índice (distribuição uniforme)
-            const xPosition = spacing + index * (barWidth + spacing);
+            // Calcular posição X da barra (no sistema SVG 0-100%)
+            const xPositionPercent = leftMargin + spacing + (index * (barWidth + spacing));
             
+            // Calcular posições Y
             const yTop = scaleY(item.value);
             const yBase = scaleY(effectiveYMin); 
-            const height = yBase - yTop;
+            const height = Math.max(0.5, yBase - yTop);
 
-            // Criar barra - POSIÇÃO CORRETA
+            // Criar barra
             const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            rect.setAttribute('x', `${xPosition}`);
+            rect.setAttribute('x', `${xPositionPercent}`);
             rect.setAttribute('y', `${yTop}`);
             rect.setAttribute('width', `${barWidth}`);
             rect.setAttribute('height', `${height}`);
@@ -1027,32 +1060,43 @@
             rect.setAttribute('rx', '1'); 
             rect.setAttribute('class', 'chart-bar');
             
-            // Adiciona classe de destaque para a barra mais recente
+            // Adiciona destaque para a barra mais recente
             if (index === dataCount - 1) {
                 rect.setAttribute('fill', 'var(--color-primary)');
             }
             
             chartSvg.appendChild(rect);
 
-            // Renderiza Rótulos X EM CIMA DA BARRA
+            // CALCULAR POSIÇÃO DO RÓTULO - CORREÇÃO FINAL
+            // O centro da barra no sistema SVG
+            const barCenterPercent = xPositionPercent + (barWidth / 2);
+            
+            // Renderiza Rótulos X
             const label = document.createElement('div');
             label.className = 'x-axis-bar-label';
-            // Centraliza o rótulo em cima da barra
-            label.style.left = `${xPosition + barWidth / 2}%`;
+            
+            // Converter a posição percentual do SVG para posição no contêiner de rótulos
+            // O contêiner #x-axis-labels-container tem left: 40px (largura do eixo Y)
+            // e ocupa 100% - 40px da largura total do .chart-wrapper
+            
+            // A posição percentual no SVG (0-100) corresponde à mesma porcentagem no contêiner de rótulos
+            label.style.left = `${barCenterPercent}%`;
+            
             label.textContent = item.year;
             
             if (index === dataCount - 1) {
                 label.style.fontWeight = 'bold';
                 label.style.color = 'var(--color-primary)';
-                label.style.backgroundColor = 'rgba(0, 61, 122, 0.1)';
+                label.style.backgroundColor = 'rgba(0, 61, 122, 0.15)';
+                label.style.border = '1px solid var(--color-primary)';
             }
 
             xAxisLabelsContainer.appendChild(label);
 
-            // Adiciona um ponto invisível para Tooltip
+            // Adicionar tooltip
             const point = document.createElement('div');
             point.className = 'data-point-placeholder'; 
-            point.style.left = `${xPosition + barWidth / 2}%`;
+            point.style.left = `${barCenterPercent}%`;
             point.style.top = `${yTop}%`; 
             point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza)}`);
             dataPointsContainer.appendChild(point);
@@ -1080,6 +1124,23 @@
         }
     }
 
+    // Função para redesenhar o gráfico com alinhamento correto
+    function redrawChartWithAlignment() {
+        const data = loadData();
+        const groupedData = groupDataByIndicator(data);
+        const params = getUrlParams();
+        const indicatorName = decodeURIComponent(params.indicador || Object.keys(groupedData)[0]);
+        
+        if (groupedData[indicatorName]) {
+            const indicatorData = groupedData[indicatorName];
+            
+            // Pequeno delay para garantir que o DOM esteja pronto
+            setTimeout(() => {
+                renderChart(indicatorData.history, indicatorData.details.GRANDEZA);
+            }, 50);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const data = loadData();
         const groupedData = groupDataByIndicator(data);
@@ -1095,6 +1156,14 @@
         }
 
         loadIndicatorDetails();
+        
+        // Redesenhar após um pequeno delay para garantir layout
+        setTimeout(redrawChartWithAlignment, 100);
+        
+        // Redesenhar quando a janela for redimensionada
+        window.addEventListener('resize', () => {
+            setTimeout(redrawChartWithAlignment, 150);
+        });
     });
 </script>
     
