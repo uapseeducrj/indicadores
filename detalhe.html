@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Indicador - Painel de Monitoramento</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=material+symbols+outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
     <style>
@@ -372,6 +372,23 @@
             z-index: 100;
             font-weight: 600;
         }
+
+        /* Estilo para os valores sobre as barras */
+        .bar-value-label {
+            position: absolute;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--color-text-dark);
+            text-align: center;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 20;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1px 3px;
+            border-radius: 2px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+        }
         /* --- FIM DAS MUDANÇAS NO GRÁFICO --- */
 
 
@@ -514,11 +531,10 @@
         }
         
         .polarity-icon {
-            font-size: 16px; 
-            font-weight: 700;
-            display: block; 
-            text-align: center;
-            margin-right: 0 !important; /* Sobrescreve o margin do .material-symbols-outlined */
+            font-size: 24px; 
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
         }
     </style>
 </head>
@@ -557,6 +573,7 @@
                                 <div id="grid-lines-container"></div>
                                 <svg id="chart-svg" class="chart-svg"></svg>
                                 <div id="data-points-container"></div>
+                                <div id="bar-values-container"></div>
                             </div>
                             
                             <div id="x-axis-labels-container"></div>
@@ -650,7 +667,7 @@
             "PERIODICIDADE DE MEDIÇÃO": "Anual",
             "GRANDEZA": "%",
             "RESULTADO ATUAL": 0.21996879875195008,
-            "POLARIDADE": "⬆️",
+            "POLARIDADE": "Positiva",
             "STATUS": "Dentro do esperado",
             "valor": 0.21996879875195008,
             "tipo_dado": "VALOR",
@@ -692,7 +709,7 @@
             "PERIODICIDADE DE MEDIÇÃO": "Anual",
             "GRANDEZA": "%",
             "RESULTADO ATUAL": 0.05,
-            "POLARIDADE": "⬇️", 
+            "POLARIDADE": "Negativa", 
             "STATUS": "Abaixo do esperado",
             "valor": 0.08,
             "tipo_dado": "VALOR",
@@ -728,21 +745,24 @@
         window.location.href = path;
     }
 
-    function formatValue(value, grandeza) {
+    function formatValue(value, grandeza, decimals = 1) {
         if (value === null || value === undefined) return 'N/A';
         const isPercentage = grandeza === '%';
         
         if (isPercentage) {
-            return (value * 100).toFixed(1) + '%';
+            return (value * 100).toFixed(decimals) + '%';
         }
         // Formatar números com separadores de milhar
         if (typeof value === 'number' && value >= 1000) {
             return value.toLocaleString('pt-BR', { 
-                maximumFractionDigits: 1,
+                maximumFractionDigits: decimals,
                 minimumFractionDigits: 0
             });
         }
-        return value.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+        return value.toLocaleString('pt-BR', { 
+            maximumFractionDigits: decimals,
+            minimumFractionDigits: 0 
+        });
     }
 
     function getStatusColor(status) {
@@ -813,7 +833,7 @@
 
         let meta2025, meta2026;
 
-        if (polaridade === '⬆️') {
+        if (polaridade.includes('Positiva') || polaridade.includes('⬆️') || polaridade.includes('arrow_upward')) {
             meta2025 = latestValue * 1.1;
             meta2026 = latestValue * 1.2;
         } else {
@@ -821,9 +841,10 @@
             meta2026 = latestValue * 0.8;
         }
 
+        // ARREDONDA PARA INTEIRO
         return {
-            meta2025: parseFloat(meta2025.toFixed(3)),
-            meta2026: parseFloat(meta2026.toFixed(3)),
+            meta2025: Math.round(meta2025), // Arredonda para inteiro
+            meta2026: Math.round(meta2026), // Arredonda para inteiro
             max_ref: Math.max(...history.map(h => h.value))
         };
     }
@@ -926,26 +947,49 @@
         const history = indicatorData.history.sort((a, b) => a.year - b.year);
         const goals = generateHypotheticalGoals(indicatorData);
 
-        // ATUALIZAÇÃO DA POLARIDADE COM ICONES
-        let polarityIcon;
-        if (details.POLARIDADE === '⬆️') {
-            polarityIcon = '<span class="material-symbols-outlined polarity-icon" style="color: var(--color-positive);">arrow_upward</span>';
-        } else if (details.POLARIDADE === '⬇️') {
-             polarityIcon = '<span class="material-symbols-outlined polarity-icon" style="color: var(--color-negative);">arrow_downward</span>';
+        // ATUALIZAÇÃO DA POLARIDADE - VERSÃO CORRIGIDA
+        const polarityElement = document.getElementById('detail-polaridade');
+        polarityElement.innerHTML = '';
+
+        // Normaliza o valor da polaridade
+        const polaridade = (details.POLARIDADE || '').toString().trim();
+
+        if (polaridade.includes('⬆️') || polaridade.includes('Positiva') || 
+            polaridade.includes('arrow_upward') || polaridade.includes('+') ||
+            polaridade.toLowerCase().includes('positiva')) {
+            
+            // Ícone para cima (positivo)
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined';
+            icon.style.cssText = 'color: var(--color-positive); font-size: 24px; vertical-align: middle;';
+            icon.textContent = 'arrow_upward';
+            polarityElement.appendChild(icon);
+            
+        } else if (polaridade.includes('⬇️') || polaridade.includes('Negativa') || 
+                   polaridade.includes('arrow_downward') || polaridade.includes('-') ||
+                   polaridade.toLowerCase().includes('negativa')) {
+            
+            // Ícone para baixo (negativo)
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined';
+            icon.style.cssText = 'color: var(--color-negative); font-size: 24px; vertical-align: middle;';
+            icon.textContent = 'arrow_downward';
+            polarityElement.appendChild(icon);
+            
         } else {
-            polarityIcon = '--';
+            polarityElement.textContent = '--';
         }
         
         document.getElementById('indicator-name').textContent = details.INDICADORES;
         document.getElementById('indicator-description').textContent =
             `${details['OBJETIVO ESTRATÉGICO'] || 'Indicador'} (#${details['#'] || '-'})`;
 
-        document.getElementById('detail-polaridade').innerHTML = polarityIcon;
         document.getElementById('detail-grandeza').textContent = details.GRANDEZA || '--';
         document.getElementById('detail-periodicidade').textContent = details['PERIODICIDADE DE MEDIÇÃO'] || '--';
 
-        document.getElementById('meta-2025-value-box').textContent = goals.meta2025 !== null ? formatValue(goals.meta2025, details.GRANDEZA) : 'N/A';
-        document.getElementById('meta-2026-value-box').textContent = goals.meta2026 !== null ? formatValue(goals.meta2026, details.GRANDEZA) : 'N/A';
+        // METAS COM 0 DECIMAIS
+        document.getElementById('meta-2025-value-box').textContent = goals.meta2025 !== null ? formatValue(goals.meta2025, details.GRANDEZA, 0) : 'N/A';
+        document.getElementById('meta-2026-value-box').textContent = goals.meta2026 !== null ? formatValue(goals.meta2026, details.GRANDEZA, 0) : 'N/A';
 
         const statusCard = document.getElementById('status-card');
         document.getElementById('status-value').textContent = details.STATUS || '--';
@@ -972,6 +1016,7 @@
         const yAxisContainer = document.getElementById('y-axis-container');
         const xAxisLabelsContainer = document.getElementById('x-axis-labels-container');
         const gridLinesContainer = document.getElementById('grid-lines-container');
+        const barValuesContainer = document.getElementById('bar-values-container');
 
         // Limpar
         chartSvg.innerHTML = '';
@@ -979,6 +1024,7 @@
         yAxisContainer.innerHTML = '';
         xAxisLabelsContainer.innerHTML = '';
         gridLinesContainer.innerHTML = '';
+        if (barValuesContainer) barValuesContainer.innerHTML = '';
 
         if (history.length === 0) {
             chartSvg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="12px">Sem dados históricos</text>';
@@ -1037,10 +1083,6 @@
         chartSvg.setAttribute('viewBox', '0 0 100 100');
         chartSvg.setAttribute('preserveAspectRatio', 'none');
 
-        // Obter dimensões do container para cálculo preciso
-        const chartContainer = document.querySelector('.chart-container');
-        const containerWidth = chartContainer ? chartContainer.clientWidth : 500;
-        
         sortedHistory.forEach((item, index) => {
             // Calcular posição X da barra (no sistema SVG 0-100%)
             const xPositionPercent = leftMargin + spacing + (index * (barWidth + spacing));
@@ -1050,14 +1092,14 @@
             const yBase = scaleY(effectiveYMin); 
             const height = Math.max(0.5, yBase - yTop);
 
-            // Criar barra
+            // Criar barra - BORDAS RETAS (rx: 0)
             const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             rect.setAttribute('x', `${xPositionPercent}`);
             rect.setAttribute('y', `${yTop}`);
             rect.setAttribute('width', `${barWidth}`);
             rect.setAttribute('height', `${height}`);
             rect.setAttribute('fill', 'var(--color-chart-line)');
-            rect.setAttribute('rx', '1'); 
+            rect.setAttribute('rx', '0'); // BORDAS RETAS
             rect.setAttribute('class', 'chart-bar');
             
             // Adiciona destaque para a barra mais recente
@@ -1067,21 +1109,37 @@
             
             chartSvg.appendChild(rect);
 
-            // CALCULAR POSIÇÃO DO RÓTULO - CORREÇÃO FINAL
-            // O centro da barra no sistema SVG
+            // CALCULAR POSIÇÃO DO RÓTULO
             const barCenterPercent = xPositionPercent + (barWidth / 2);
             
+            // ADICIONAR VALOR SOBRE A BARRA
+            if (barValuesContainer) {
+                const valueLabel = document.createElement('div');
+                valueLabel.className = 'bar-value-label';
+                
+                // Posicionar acima da barra
+                valueLabel.style.left = `${barCenterPercent}%`;
+                valueLabel.style.bottom = `${100 - yTop + 2}%`; // 2% acima do topo da barra
+                
+                // Formatar o valor com 1 decimal para exibição
+                valueLabel.textContent = formatValue(item.value, grandeza, 1);
+                
+                // Estilo especial para o valor mais recente
+                if (index === dataCount - 1) {
+                    valueLabel.style.fontWeight = 'bold';
+                    valueLabel.style.color = 'var(--color-primary)';
+                    valueLabel.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                    valueLabel.style.border = '1px solid var(--color-primary)';
+                }
+                
+                barValuesContainer.appendChild(valueLabel);
+            }
+
             // Renderiza Rótulos X
             const label = document.createElement('div');
             label.className = 'x-axis-bar-label';
             
-            // Converter a posição percentual do SVG para posição no contêiner de rótulos
-            // O contêiner #x-axis-labels-container tem left: 40px (largura do eixo Y)
-            // e ocupa 100% - 40px da largura total do .chart-wrapper
-            
-            // A posição percentual no SVG (0-100) corresponde à mesma porcentagem no contêiner de rótulos
             label.style.left = `${barCenterPercent}%`;
-            
             label.textContent = item.year;
             
             if (index === dataCount - 1) {
@@ -1098,7 +1156,7 @@
             point.className = 'data-point-placeholder'; 
             point.style.left = `${barCenterPercent}%`;
             point.style.top = `${yTop}%`; 
-            point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza)}`);
+            point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza, 1)}`);
             dataPointsContainer.appendChild(point);
         });
 
@@ -1112,7 +1170,7 @@
             const label = document.createElement('div');
             label.className = 'y-axis-label';
             label.style.top = `${yPos}%`;
-            label.textContent = formatValue(value, grandeza);
+            label.textContent = formatValue(value, grandeza, 1);
             yAxisContainer.appendChild(label);
 
             if (i < numLabels - 1) {
