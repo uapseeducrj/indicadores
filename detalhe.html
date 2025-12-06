@@ -396,18 +396,35 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+            height: 100px; /* ALTURA FIXA PARA IGUALAR AMBAS */
+        }
+
+        .indicator-details-card, .meta-card-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* OCUPA 100% DA ALTURA DO CONTAINER PAI */
+        }
+
+        .indicator-details-card .card, .meta-card-container .card {
+            flex: 1; /* FAZ A CARD OCUPAR TODO O ESPAÇO DISPONÍVEL */
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .indicator-details {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 6px;
+            flex: 1; /* OCUPA O ESPAÇO RESTANTE */
         }
 
         .meta-cards {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px;
+            flex: 1; /* OCUPA O ESPAÇO RESTANTE */
+            height: 100%;
         }
 
         .indicator-detail, .meta-card {
@@ -417,10 +434,11 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             background-color: var(--color-detail-card);
             color: var(--color-detail-text);
-            min-height: 25px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            height: 100%; /* OCUPA TODA A ALTURA DISPONÍVEL */
+            min-height: 50px; /* ALTURA MÍNIMA GARANTIDA */
         }
 
         .indicator-detail .label, .meta-card .meta-label {
@@ -498,23 +516,38 @@
             grid-template-columns: 1fr 1fr;
             gap: 8px;
             padding: 0;
+            height: 100%; /* ALTURA TOTAL DO CONTÊINER */
         }
+        
         .footer-detail {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* DISTRIBUI ESPAÇO ENTRE VALOR E LABEL */
+            height: 100%; /* OCUPA ALTURA TOTAL */
         }
 
         .footer-detail .label {
             font-size: 8px;
             text-transform: uppercase;
             color: var(--color-text-light);
-            margin-top: 2px;
-            padding-top: 0;
-            border-top: none;
+            margin-top: auto; /* EMPURRA PARA BAIXO */
+            padding-top: 6px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            flex-shrink: 0;
         }
+        
         .footer-detail .value {
             font-size: 11px;
             font-weight: bold;
             line-height: 1.2;
+            display: flex;
+            align-items: center; /* CENTRALIZA VERTICALMENTE */
+            justify-content: center; /* CENTRALIZA HORIZONTALMENTE */
+            text-align: center;
+            flex-grow: 1; /* OCUPA ESPAÇO DISPONÍVEL */
+            margin-bottom: 4px; /* PEQUENO ESPAÇO ACIMA DO LABEL */
         }
 
         .section-title {
@@ -522,6 +555,7 @@
             font-weight: 600;
             color: var(--color-text-dark);
             margin: 0 0 8px 0;
+            flex-shrink: 0;
         }
 
         .loading {
@@ -582,34 +616,38 @@
                 </div>
 
                 <div class="details-section">
-                    <div class="card">
-                        <p class="section-title">Detalhes do Indicador</p>
-                        <div class="indicator-details">
-                            <div class="indicator-detail">
-                                <div class="value" id="detail-polaridade">--</div>
-                                <div class="label">Polaridade</div>
-                            </div>
-                            <div class="indicator-detail">
-                                <div class="value" id="detail-grandeza">--</div>
-                                <div class="label">Grandeza</div>
-                            </div>
-                            <div class="indicator-detail">
-                                <div class="value" id="detail-periodicidade">--</div>
-                                <div class="label">Periodicidade</div>
+                    <div class="indicator-details-card">
+                        <div class="card">
+                            <p class="section-title">Detalhes do Indicador</p>
+                            <div class="indicator-details">
+                                <div class="indicator-detail">
+                                    <div class="value" id="detail-polaridade">--</div>
+                                    <div class="label">Polaridade</div>
+                                </div>
+                                <div class="indicator-detail">
+                                    <div class="value" id="detail-grandeza">--</div>
+                                    <div class="label">Grandeza</div>
+                                </div>
+                                <div class="indicator-detail">
+                                    <div class="value" id="detail-periodicidade">--</div>
+                                    <div class="label">Periodicidade</div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card">
-                        <p class="section-title">Metas</p>
-                        <div class="meta-cards">
-                            <div class="meta-card">
-                                <div class="meta-value" id="meta-2025-value-box">N/A</div>
-                                <div class="meta-label">Meta 2025</div>
-                            </div>
-                            <div class="meta-card">
-                                <div class="meta-value" id="meta-2026-value-box">N/A</div>
-                                <div class="meta-label">Meta 2026</div>
+                    <div class="meta-card-container">
+                        <div class="card">
+                            <p class="section-title">Metas</p>
+                            <div class="meta-cards">
+                                <div class="meta-card">
+                                    <div class="meta-value" id="meta-2025-value-box">N/A</div>
+                                    <div class="meta-label">Meta 2025</div>
+                                </div>
+                                <div class="meta-card">
+                                    <div class="meta-value" id="meta-2026-value-box">N/A</div>
+                                    <div class="meta-label">Meta 2026</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -749,18 +787,26 @@
         if (value === null || value === undefined) return 'N/A';
         const isPercentage = grandeza === '%';
         
+        // Para percentuais, usar mais casas decimais
+        let decimalPlaces = decimals;
+        if (isPercentage && Math.abs(value) < 0.01) {
+            decimalPlaces = 4; // Para percentuais muito pequenos
+        } else if (isPercentage) {
+            decimalPlaces = 2; // Para percentuais normais
+        }
+        
         if (isPercentage) {
-            return (value * 100).toFixed(decimals) + '%';
+            return (value * 100).toFixed(decimalPlaces) + '%';
         }
         // Formatar números com separadores de milhar
         if (typeof value === 'number' && value >= 1000) {
             return value.toLocaleString('pt-BR', { 
-                maximumFractionDigits: decimals,
+                maximumFractionDigits: decimalPlaces,
                 minimumFractionDigits: 0
             });
         }
         return value.toLocaleString('pt-BR', { 
-            maximumFractionDigits: decimals,
+            maximumFractionDigits: decimalPlaces,
             minimumFractionDigits: 0 
         });
     }
@@ -830,6 +876,7 @@
 
         const latestValue = history[history.length - 1].value;
         const polaridade = indicatorData.details.POLARIDADE;
+        const grandeza = indicatorData.details.GRANDEZA || '';
 
         let meta2025, meta2026;
 
@@ -841,10 +888,10 @@
             meta2026 = latestValue * 0.8;
         }
 
-        // ARREDONDA PARA INTEIRO
+        // REMOVER O ARREDONDAMENTO PARA INTEIRO
         return {
-            meta2025: Math.round(meta2025), // Arredonda para inteiro
-            meta2026: Math.round(meta2026), // Arredonda para inteiro
+            meta2025: meta2025, // Removido Math.round()
+            meta2026: meta2026, // Removido Math.round()
             max_ref: Math.max(...history.map(h => h.value))
         };
     }
@@ -987,9 +1034,14 @@
         document.getElementById('detail-grandeza').textContent = details.GRANDEZA || '--';
         document.getElementById('detail-periodicidade').textContent = details['PERIODICIDADE DE MEDIÇÃO'] || '--';
 
-        // METAS COM 0 DECIMAIS
-        document.getElementById('meta-2025-value-box').textContent = goals.meta2025 !== null ? formatValue(goals.meta2025, details.GRANDEZA, 0) : 'N/A';
-        document.getElementById('meta-2026-value-box').textContent = goals.meta2026 !== null ? formatValue(goals.meta2026, details.GRANDEZA, 0) : 'N/A';
+        // METAS COM DECIMAIS APROPRIADOS
+        const meta2025Value = goals.meta2025 !== null ? 
+            formatValue(goals.meta2025, details.GRANDEZA, 2) : 'N/A';
+        const meta2026Value = goals.meta2026 !== null ? 
+            formatValue(goals.meta2026, details.GRANDEZA, 2) : 'N/A';
+
+        document.getElementById('meta-2025-value-box').textContent = meta2025Value;
+        document.getElementById('meta-2026-value-box').textContent = meta2026Value;
 
         const statusCard = document.getElementById('status-card');
         document.getElementById('status-value').textContent = details.STATUS || '--';
