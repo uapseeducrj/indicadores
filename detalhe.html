@@ -764,6 +764,30 @@
             "valor": 0.02,
             "tipo_dado": "VALOR",
             "ano": 2025 
+        },
+        
+        // Indicador 3: Teste com VALOR ATUAL zerado (não deve aparecer no dropdown)
+        {
+            "OBJETIVO ESTRATÉGICO": "Teste de Indicador Zerado",
+            "#": 9.9,
+            "INDICADORES": "Indicador com Valor Zero",
+            "FÓRMULA": "Teste",
+            "FONTE DOS DADOS": "Teste",
+            "SUPINTENDÊNCIA": "Teste",
+            "PERIODICIDADE DE MEDIÇÃO": "Anual",
+            "GRANDEZA": "%",
+            "RESULTADO ATUAL": 0, // VALOR ATUAL ZERADO
+            "POLARIDADE": "Positiva",
+            "STATUS": "Indicador sem dados",
+            "valor": 0.15,
+            "tipo_dado": "VALOR",
+            "ano": 2022 
+        },
+        {
+            "INDICADORES": "Indicador com Valor Zero",
+            "valor": 0,
+            "tipo_dado": "VALOR",
+            "ano": 2024 
         }
     ];
 
@@ -833,6 +857,35 @@
         return fallbackData;
     }
 
+    // MODIFICADO: Função para determinar o VALOR ATUAL mais recente
+    function getCurrentValue(indicatorData) {
+        // Prioridade 1: RESULTADO ATUAL do registro principal
+        if (indicatorData.details && indicatorData.details.RESULTADO_ATUAL !== undefined && 
+            indicatorData.details.RESULTADO_ATUAL !== null) {
+            return {
+                value: indicatorData.details.RESULTADO_ATUAL,
+                year: new Date().getFullYear()
+            };
+        }
+        
+        // Prioridade 2: Último valor da série histórica
+        if (indicatorData.history && indicatorData.history.length > 0) {
+            const sortedHistory = [...indicatorData.history].sort((a, b) => b.year - a.year);
+            const latest = sortedHistory[0];
+            
+            // Verificar se o último valor não é zero
+            if (latest.value !== 0) {
+                return {
+                    value: latest.value,
+                    year: latest.year
+                };
+            }
+        }
+        
+        return null; // Sem valor atual válido
+    }
+
+    // MODIFICADO: Agrupa dados e determina VALOR ATUAL
     function groupDataByIndicator(data) {
         const grouped = {};
 
@@ -847,52 +900,71 @@
                 };
             }
 
+            // Adicionar valor histórico se existir
             if (item.tipo_dado === 'VALOR' && item.valor !== null && item.valor !== undefined) {
-                if (item.ano && item.valor) { 
-                     grouped[indicatorName].history.push({
-                         year: item.ano,
-                         value: item.valor
-                     });
+                if (item.ano && item.valor !== undefined) {
+                    grouped[indicatorName].history.push({
+                        year: item.ano,
+                        value: item.valor
+                    });
                 }
             }
             
-             if (item.SUPINTENDÊNCIA) {
-                 grouped[indicatorName].details = item;
-             }
+            // Atualizar detalhes se tiver informações mais completas
+            if (item.SUPINTENDÊNCIA || item.OBJETIVO_ESTRATÉGICO) {
+                grouped[indicatorName].details = { ...grouped[indicatorName].details, ...item };
+            }
         });
         
+        // Ordenar histórico e determinar VALOR ATUAL
         Object.keys(grouped).forEach(key => {
+            // Remover duplicatas no histórico
             const historyMap = new Map();
             grouped[key].history.forEach(item => historyMap.set(item.year, item));
             grouped[key].history = Array.from(historyMap.values()).sort((a, b) => a.year - b.year);
+            
+            // Determinar VALOR ATUAL
+            const currentValueInfo = getCurrentValue(grouped[key]);
+            if (currentValueInfo) {
+                grouped[key].currentValue = currentValueInfo.value;
+                grouped[key].currentYear = currentValueInfo.year;
+            } else {
+                grouped[key].currentValue = null;
+                grouped[key].currentYear = null;
+            }
         });
 
         return grouped;
     }
 
     function generateHypotheticalGoals(indicatorData) {
-        const history = indicatorData.history;
-        if (history.length === 0) return { meta2025: null, meta2026: null, max_ref: null };
+        // Usar o VALOR ATUAL para calcular metas
+        const currentValue = indicatorData.currentValue;
+        if (currentValue === null || currentValue === undefined) {
+            return { meta2025: null, meta2026: null, max_ref: null };
+        }
 
-        const latestValue = history[history.length - 1].value;
         const polaridade = indicatorData.details.POLARIDADE;
         const grandeza = indicatorData.details.GRANDEZA || '';
 
         let meta2025, meta2026;
 
         if (polaridade.includes('Positiva') || polaridade.includes('⬆️') || polaridade.includes('arrow_upward')) {
-            meta2025 = latestValue * 1.1;
-            meta2026 = latestValue * 1.2;
+            meta2025 = currentValue * 1.1;
+            meta2026 = currentValue * 1.2;
         } else {
-            meta2025 = latestValue * 0.9;
-            meta2026 = latestValue * 0.8;
+            meta2025 = currentValue * 0.9;
+            meta2026 = currentValue * 0.8;
         }
 
-        // REMOVER O ARREDONDAMENTO PARA INTEIRO
+        // Calcular referência máxima (maior valor da série histórica)
+        const historyValues = indicatorData.history.map(h => h.value);
+        const max_ref = historyValues.length > 0 ? Math.max(...historyValues) : currentValue;
+
         return {
-            meta2025: meta2025, // Removido Math.round()
-            meta2026: meta2026, // Removido Math.round()
-            max_ref: Math.max(...history.map(h => h.value))
+            meta2025: meta2025,
+            meta2026: meta2026,
+            max_ref: max_ref
         };
     }
 
@@ -906,6 +978,7 @@
         dropdown.classList.remove('show');
     }
 
+    // MODIFICADO: Filtrar indicadores com VALOR ATUAL zerado
     function loadIndicatorsDropdown(groupedData, currentIndicator) {
         const dropdownList = document.getElementById('indicators-dropdown-list');
 
@@ -916,9 +989,19 @@
 
         dropdownList.innerHTML = '';
 
-        Object.entries(groupedData).forEach(([name, data]) => {
+        // Filtrar indicadores que possuem VALOR ATUAL e não são zero
+        const validIndicators = Object.entries(groupedData).filter(([name, data]) => {
+            // Verificar se tem VALOR ATUAL definido e não é zero
+            return data.currentValue !== null && data.currentValue !== undefined && data.currentValue !== 0;
+        });
+
+        if (validIndicators.length === 0) {
+            dropdownList.innerHTML = '<div class="dropdown-item"><div class="indicator-name">Nenhum indicador com dados atuais</div></div>';
+            return;
+        }
+
+        validIndicators.forEach(([name, data]) => {
             const isCurrent = name === currentIndicator;
-            const latestValue = data.history.length > 0 ? data.history[data.history.length - 1].value : null;
 
             const item = document.createElement('div');
             item.className = `dropdown-item ${isCurrent ? 'current' : ''}`;
@@ -931,11 +1014,15 @@
 
             const statusClass = getStatusClass(data.details.STATUS);
 
+            // Usar VALOR ATUAL no dropdown
+            const displayValue = data.currentValue !== null ? 
+                formatValue(data.currentValue, data.details.GRANDEZA) : 'N/A';
+
             item.innerHTML = `
                 <div class="indicator-name">${data.details['#'] || '-'} - ${name}</div>
                 <div style="display: flex; align-items: center;">
-                    ${latestValue !== null ? `<div class="indicator-value">${formatValue(latestValue, data.details.GRANDEZA)}</div>` : ''}
-                    <div class="indicator-status ${statusClass}">${data.details.STATUS}</div>
+                    ${data.currentValue !== null ? `<div class="indicator-value">${displayValue}</div>` : ''}
+                    <div class="indicator-status ${statusClass}">${data.details.STATUS || '--'}</div>
                 </div>
             `;
 
@@ -949,6 +1036,8 @@
     }
 
     function getStatusClass(status) {
+        if (!status) return 'status-gray';
+        
         switch (status) {
             case 'Dentro do esperado': return 'status-positive';
             case 'Meta 2025 alcançada': return 'status-positive';
@@ -975,11 +1064,11 @@
         const params = getUrlParams();
         let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
         
-         if (!params.indicador && Object.keys(groupedData).length > 0) {
-             indicatorName = defaultIndicatorName;
-             const newUrl = `?indicador=${encodeURIComponent(defaultIndicatorName)}`;
-             window.history.replaceState(null, null, newUrl);
-         }
+        if (!params.indicador && Object.keys(groupedData).length > 0) {
+            indicatorName = defaultIndicatorName;
+            const newUrl = `?indicador=${encodeURIComponent(defaultIndicatorName)}`;
+            window.history.replaceState(null, null, newUrl);
+        }
 
         if (!indicatorName || !groupedData[indicatorName]) {
             document.getElementById('indicator-name').textContent = 'Nenhum indicador para exibir';
@@ -990,22 +1079,27 @@
         const indicatorData = groupedData[indicatorName];
         loadIndicatorsDropdown(groupedData, indicatorName);
 
+        // Verificar se o indicador tem VALOR ATUAL
+        if (indicatorData.currentValue === null || indicatorData.currentValue === 0) {
+            document.getElementById('indicator-name').textContent = 'Indicador sem dados atuais';
+            document.getElementById('indicator-description').textContent = 'Este indicador não possui valores atuais disponíveis';
+            return;
+        }
+
         const details = indicatorData.details;
         const history = indicatorData.history.sort((a, b) => a.year - b.year);
         const goals = generateHypotheticalGoals(indicatorData);
 
-        // ATUALIZAÇÃO DA POLARIDADE - VERSÃO CORRIGIDA
+        // ATUALIZAÇÃO DA POLARIDADE
         const polarityElement = document.getElementById('detail-polaridade');
         polarityElement.innerHTML = '';
 
-        // Normaliza o valor da polaridade
         const polaridade = (details.POLARIDADE || '').toString().trim();
 
         if (polaridade.includes('⬆️') || polaridade.includes('Positiva') || 
             polaridade.includes('arrow_upward') || polaridade.includes('+') ||
             polaridade.toLowerCase().includes('positiva')) {
             
-            // Ícone para cima (positivo)
             const icon = document.createElement('span');
             icon.className = 'material-symbols-outlined';
             icon.style.cssText = 'color: var(--color-positive); font-size: 24px; vertical-align: middle;';
@@ -1016,7 +1110,6 @@
                    polaridade.includes('arrow_downward') || polaridade.includes('-') ||
                    polaridade.toLowerCase().includes('negativa')) {
             
-            // Ícone para baixo (negativo)
             const icon = document.createElement('span');
             icon.className = 'material-symbols-outlined';
             icon.style.cssText = 'color: var(--color-negative); font-size: 24px; vertical-align: middle;';
@@ -1057,12 +1150,12 @@
         document.getElementById('fonte-dados').textContent = details['FONTE DOS DADOS'] || '--';
         document.getElementById('responsavel').textContent = details.SUPINTENDÊNCIA || '--';
 
-        // RENDERIZAR GRÁFICO (Gráfico de Colunas)
-        renderChart(history, details.GRANDEZA);
+        // RENDERIZAR GRÁFICO com VALOR ATUAL incluído
+        renderChart(history, details.GRANDEZA, indicatorData.currentValue);
     }
 
-    // RENDERIZAR GRÁFICO (Gráfico de Colunas - CORREÇÃO COMPLETA)
-    function renderChart(history, grandeza) {
+    // MODIFICADO: Função renderChart para incluir VALOR ATUAL
+    function renderChart(history, grandeza, currentValue = null) {
         const chartSvg = document.getElementById('chart-svg');
         const dataPointsContainer = document.getElementById('data-points-container');
         const yAxisContainer = document.getElementById('y-axis-container');
@@ -1078,14 +1171,40 @@
         gridLinesContainer.innerHTML = '';
         if (barValuesContainer) barValuesContainer.innerHTML = '';
 
-        if (history.length === 0) {
+        // Se não houver dados históricos e nem valor atual
+        if (history.length === 0 && currentValue === null) {
             chartSvg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="12px">Sem dados históricos</text>';
             return;
         }
 
-        const sortedHistory = history.sort((a, b) => a.year - b.year);
-        const dataCount = sortedHistory.length;
-        const values = sortedHistory.map(h => h.value);
+        // Preparar dados para o gráfico
+        let chartData = [...history];
+        
+        // Adicionar valor atual se existir e não estiver já no histórico do ano atual
+        if (currentValue !== null) {
+            const currentYear = new Date().getFullYear();
+            const hasCurrentYear = chartData.some(item => item.year === currentYear);
+            
+            if (!hasCurrentYear) {
+                chartData.push({
+                    year: currentYear,
+                    value: currentValue,
+                    isCurrent: true
+                });
+            } else {
+                // Marcar o último valor do ano atual como "current"
+                chartData = chartData.map(item => {
+                    if (item.year === currentYear) {
+                        return { ...item, isCurrent: true };
+                    }
+                    return item;
+                });
+            }
+        }
+
+        const sortedData = chartData.sort((a, b) => a.year - b.year);
+        const dataCount = sortedData.length;
+        const values = sortedData.map(h => h.value);
 
         // --- Escala Y ---
         const minVal = Math.min(...values);
@@ -1135,7 +1254,7 @@
         chartSvg.setAttribute('viewBox', '0 0 100 100');
         chartSvg.setAttribute('preserveAspectRatio', 'none');
 
-        sortedHistory.forEach((item, index) => {
+        sortedData.forEach((item, index) => {
             // Calcular posição X da barra (no sistema SVG 0-100%)
             const xPositionPercent = leftMargin + spacing + (index * (barWidth + spacing));
             
@@ -1144,19 +1263,21 @@
             const yBase = scaleY(effectiveYMin); 
             const height = Math.max(0.5, yBase - yTop);
 
-            // Criar barra - BORDAS RETAS (rx: 0)
+            // Criar barra
             const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             rect.setAttribute('x', `${xPositionPercent}`);
             rect.setAttribute('y', `${yTop}`);
             rect.setAttribute('width', `${barWidth}`);
             rect.setAttribute('height', `${height}`);
-            rect.setAttribute('fill', 'var(--color-chart-line)');
             rect.setAttribute('rx', '0'); // BORDAS RETAS
-            rect.setAttribute('class', 'chart-bar');
             
-            // Adiciona destaque para a barra mais recente
-            if (index === dataCount - 1) {
+            // Adiciona destaque para a barra do VALOR ATUAL
+            if (item.isCurrent || index === dataCount - 1) {
                 rect.setAttribute('fill', 'var(--color-primary)');
+                rect.setAttribute('class', 'chart-bar current');
+            } else {
+                rect.setAttribute('fill', 'var(--color-chart-line)');
+                rect.setAttribute('class', 'chart-bar');
             }
             
             chartSvg.appendChild(rect);
@@ -1171,13 +1292,13 @@
                 
                 // Posicionar acima da barra
                 valueLabel.style.left = `${barCenterPercent}%`;
-                valueLabel.style.bottom = `${100 - yTop + 2}%`; // 2% acima do topo da barra
+                valueLabel.style.bottom = `${100 - yTop + 2}%`;
                 
                 // Formatar o valor com 1 decimal para exibição
                 valueLabel.textContent = formatValue(item.value, grandeza, 1);
                 
-                // Estilo especial para o valor mais recente
-                if (index === dataCount - 1) {
+                // Estilo especial para o VALOR ATUAL
+                if (item.isCurrent || index === dataCount - 1) {
                     valueLabel.style.fontWeight = 'bold';
                     valueLabel.style.color = 'var(--color-primary)';
                     valueLabel.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
@@ -1194,7 +1315,7 @@
             label.style.left = `${barCenterPercent}%`;
             label.textContent = item.year;
             
-            if (index === dataCount - 1) {
+            if (item.isCurrent || index === dataCount - 1) {
                 label.style.fontWeight = 'bold';
                 label.style.color = 'var(--color-primary)';
                 label.style.backgroundColor = 'rgba(0, 61, 122, 0.15)';
@@ -1246,7 +1367,7 @@
             
             // Pequeno delay para garantir que o DOM esteja pronto
             setTimeout(() => {
-                renderChart(indicatorData.history, indicatorData.details.GRANDEZA);
+                renderChart(indicatorData.history, indicatorData.details.GRANDEZA, indicatorData.currentValue);
             }, 50);
         }
     }
@@ -1254,14 +1375,26 @@
     document.addEventListener('DOMContentLoaded', () => {
         const data = loadData();
         const groupedData = groupDataByIndicator(data);
-        const defaultIndicatorName = Object.keys(groupedData)[0];
+        
+        // Filtrar indicadores que têm VALOR ATUAL para definir o padrão
+        const validIndicators = Object.keys(groupedData).filter(name => 
+            groupedData[name].currentValue !== null && groupedData[name].currentValue !== 0
+        );
+        
+        const defaultIndicatorName = validIndicators.length > 0 ? validIndicators[0] : Object.keys(groupedData)[0];
         
         const params = getUrlParams();
         let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
         
-        if (!params.indicador && Object.keys(groupedData).length > 0) {
+        // Verificar se o indicador selecionado tem VALOR ATUAL
+        if (groupedData[indicatorName] && 
+            (groupedData[indicatorName].currentValue === null || groupedData[indicatorName].currentValue === 0)) {
+            // Se não tiver, redirecionar para o primeiro com valor atual
             indicatorName = defaultIndicatorName;
-            const newUrl = `?indicador=${encodeURIComponent(defaultIndicatorName)}`;
+        }
+        
+        if (!params.indicador && Object.keys(groupedData).length > 0) {
+            const newUrl = `?indicador=${encodeURIComponent(indicatorName)}`;
             window.history.replaceState(null, null, newUrl);
         }
 
