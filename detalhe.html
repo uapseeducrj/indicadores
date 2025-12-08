@@ -570,6 +570,15 @@
             vertical-align: middle;
             line-height: 1;
         }
+        
+        /* Estilo especial para as metas com cores diferentes */
+        .meta-2025 {
+            border-left: 3px solid var(--color-meta-2025);
+        }
+        
+        .meta-2026 {
+            border-left: 3px solid var(--color-meta-2026);
+        }
     </style>
 </head>
 <body>
@@ -640,11 +649,11 @@
                         <div class="card">
                             <p class="section-title">Metas</p>
                             <div class="meta-cards">
-                                <div class="meta-card">
+                                <div class="meta-card meta-2025">
                                     <div class="meta-value" id="meta-2025-value-box">N/A</div>
                                     <div class="meta-label">Meta 2025</div>
                                 </div>
-                                <div class="meta-card">
+                                <div class="meta-card meta-2026">
                                     <div class="meta-value" id="meta-2026-value-box">N/A</div>
                                     <div class="meta-label">Meta 2026</div>
                                 </div>
@@ -694,100 +703,93 @@
     <script>
     // DADOS DE FALLBACK AJUSTADOS
     const fallbackData = [
-        // Indicador 1: Escolas com salas de AEE (dados esparsos: 2019, 2021, 2022, 2023, 2024)
         {
-            "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
-            "#": 5.2,
-            "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
-            "FÓRMULA": "(Nº de Escolas com salas AEE / Nº total de Escolas ) * 100",
-            "FONTE DOS DADOS": "Censo Escolar / Conexão",
-            "SUPINTENDÊNCIA": "SUPEE",
-            "PERIODICIDADE DE MEDIÇÃO": "Anual",
-            "GRANDEZA": "%",
-            "RESULTADO ATUAL": 0.21996879875195008,
-            "POLARIDADE": "Positiva",
-            "STATUS": "Dentro do esperado",
-            "valor": 0.21996879875195008,
-            "tipo_dado": "VALOR",
-            "ano": 2023 
-        },
-        {
-            "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
-            "valor": 0.095,
-            "tipo_dado": "VALOR",
-            "ano": 2019 
-        },
-        {
-            "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
-            "valor": 0.152,
-            "tipo_dado": "VALOR",
-            "ano": 2021 
-        },
-        {
-            "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
-            "valor": 0.158,
-            "tipo_dado": "VALOR",
-            "ano": 2022 
-        },
-        {
-            "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
-            "valor": 0.165,
-            "tipo_dado": "VALOR",
-            "ano": 2024 
-        },
-        
-        // Indicador 2: Taxa de Evasão (Teste com lacuna de anos: 2020, 2023, 2025)
-        {
-            "OBJETIVO ESTRATÉGICO": "Combate ao Abandono",
+            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
             "#": 1.1,
-            "INDICADORES": "Taxa de Evasão",
-            "FÓRMULA": "...",
-            "FONTE DOS DADOS": "SED",
-            "SUPINTENDÊNCIA": "SUGEE",
-            "PERIODICIDADE DE MEDIÇÃO": "Anual",
+            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
+            "FÓRMULA": "% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
+            "FONTE DOS DADOS": "PNADC",
+            "EMAIL PESSOA RESPONSÁVEL": 0.0,
+            "SUPINTENDÊNCIA": "SUPLAN ",
+            "SUBSECRETARIA": "SUBPAE",
+            "PERIODICIDADE DE MEDIÇÃO": "Trimestral",
             "GRANDEZA": "%",
-            "RESULTADO ATUAL": 0.05,
-            "POLARIDADE": "Negativa", 
-            "STATUS": "Abaixo do esperado",
-            "valor": 0.08,
+            "POLARIDADE": "⬆️",
+            "VALOR ATUAL": 0.0,
+            "Status": "Abaixo do esperado",
+            "REFERENCIAL DA META": "Considera meta prevista e pactuada pelo PNE 2014-2024",
+            "DOUBLE CHECK": "ok",
+            "OBSERVAÇÕES": "Se o indicador é trimestral, conseguimos um número atualizado?",
+            "BASE DE DADOS": 0.0,
+            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
+            "INDICADOR": "Nível Desconhecido",
+            "valor": 0.739,
             "tipo_dado": "VALOR",
-            "ano": 2020 
+            "ano": 2019
         },
         {
-            "INDICADORES": "Taxa de Evasão",
-            "valor": 0.05,
+            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
+            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
+            "valor": 0.82,
             "tipo_dado": "VALOR",
-            "ano": 2023 
+            "ano": 2021
         },
         {
-            "INDICADORES": "Taxa de Evasão",
-            "valor": 0.02,
+            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
+            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
+            "valor": 0.85,
             "tipo_dado": "VALOR",
-            "ano": 2025 
+            "ano": 2022
         },
-        
-        // Indicador 3: Teste com VALOR ATUAL zerado (não deve aparecer no dropdown)
         {
-            "OBJETIVO ESTRATÉGICO": "Teste de Indicador Zerado",
-            "#": 9.9,
-            "INDICADORES": "Indicador com Valor Zero",
-            "FÓRMULA": "Teste",
-            "FONTE DOS DADOS": "Teste",
-            "SUPINTENDÊNCIA": "Teste",
-            "PERIODICIDADE DE MEDIÇÃO": "Anual",
+            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
+            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
+            "valor": 0.87,
+            "tipo_dado": "VALOR",
+            "ano": 2023
+        },
+        {
+            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
+            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
+            "valor": 0.89,
+            "tipo_dado": "VALOR",
+            "ano": 2024
+        },
+        {
+            "OBJETIVO ESTRATÉGICO": "Infraestrutura",
+            "#": 2.1,
+            "INDICADORES": "Salas de aula climatizadas",
+            "FÓRMULA": "Percentual de salas de aula utilizadas climatizadas na rede",
+            "FONTE DOS DADOS": "Censo escolar / Dados internos SUPIE",
+            "EMAIL PESSOA RESPONSÁVEL": 0.0,
+            "SUPINTENDÊNCIA": "SUPIE",
+            "SUBSECRETARIA": "SUBAD",
+            "PERIODICIDADE DE MEDIÇÃO": "Mensal",
             "GRANDEZA": "%",
-            "RESULTADO ATUAL": 0, // VALOR ATUAL ZERADO
-            "POLARIDADE": "Positiva",
-            "STATUS": "Indicador sem dados",
-            "valor": 0.15,
+            "POLARIDADE": "⬆️",
+            "VALOR ATUAL": 0.91,
+            "Status": "Meta 2025 alcançada",
+            "REFERENCIAL DA META": "Meta do plano de climatização",
+            "DOUBLE CHECK": "ok",
+            "OBSERVAÇÕES": "",
+            "BASE DE DADOS": 0.0,
+            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
+            "INDICADOR": "Estratégico",
+            "valor": 0.75,
             "tipo_dado": "VALOR",
-            "ano": 2022 
+            "ano": 2019
         },
         {
-            "INDICADORES": "Indicador com Valor Zero",
-            "valor": 0,
+            "INDICADORES": "Salas de aula climatizadas",
+            "valor": 0.82,
             "tipo_dado": "VALOR",
-            "ano": 2024 
+            "ano": 2021
+        },
+        {
+            "INDICADORES": "Salas de aula climatizadas",
+            "valor": 0.88,
+            "tipo_dado": "VALOR",
+            "ano": 2023
         }
     ];
 
@@ -807,32 +809,19 @@
         window.location.href = path;
     }
 
-    function formatValue(value, grandeza, decimals = 1) {
+    // FUNÇÃO FORMATVALUE CORRIGIDA - sem decimais
+    function formatValue(value, grandeza, decimals = 0) { // MUDADO: decimals = 0 por padrão
         if (value === null || value === undefined) return 'N/A';
         const isPercentage = grandeza === '%';
         
-        // Para percentuais, usar mais casas decimais
-        let decimalPlaces = decimals;
-        if (isPercentage && Math.abs(value) < 0.01) {
-            decimalPlaces = 4; // Para percentuais muito pequenos
-        } else if (isPercentage) {
-            decimalPlaces = 2; // Para percentuais normais
-        }
-        
         if (isPercentage) {
-            return (value * 100).toFixed(decimalPlaces) + '%';
+            return Math.round(value * 100) + '%'; // MUDADO: Math.round() sem decimais
         }
         // Formatar números com separadores de milhar
         if (typeof value === 'number' && value >= 1000) {
-            return value.toLocaleString('pt-BR', { 
-                maximumFractionDigits: decimalPlaces,
-                minimumFractionDigits: 0
-            });
+            return Math.round(value).toLocaleString('pt-BR'); // MUDADO: Math.round()
         }
-        return value.toLocaleString('pt-BR', { 
-            maximumFractionDigits: decimalPlaces,
-            minimumFractionDigits: 0 
-        });
+        return Math.round(value).toLocaleString('pt-BR'); // MUDADO: Math.round()
     }
 
     function getStatusColor(status) {
@@ -857,35 +846,34 @@
         return fallbackData;
     }
 
-    // MODIFICADO: Função para determinar o VALOR ATUAL mais recente
+    // FUNÇÃO CORRIGIDA: Agora aceita VALOR ATUAL zero
     function getCurrentValue(indicatorData) {
-        // Prioridade 1: RESULTADO ATUAL do registro principal
-        if (indicatorData.details && indicatorData.details.RESULTADO_ATUAL !== undefined && 
-            indicatorData.details.RESULTADO_ATUAL !== null) {
+        // SEMPRE retornar o VALOR ATUAL, mesmo se for zero
+        if (indicatorData.details && indicatorData.details["VALOR ATUAL"] !== undefined) {
             return {
-                value: indicatorData.details.RESULTADO_ATUAL,
-                year: new Date().getFullYear()
+                value: indicatorData.details["VALOR ATUAL"],
+                year: new Date().getFullYear() // Usar ano atual
             };
         }
         
-        // Prioridade 2: Último valor da série histórica
+        // Se não tiver VALOR ATUAL, usar o último valor histórico
         if (indicatorData.history && indicatorData.history.length > 0) {
             const sortedHistory = [...indicatorData.history].sort((a, b) => b.year - a.year);
             const latest = sortedHistory[0];
             
-            // Verificar se o último valor não é zero
-            if (latest.value !== 0) {
-                return {
-                    value: latest.value,
-                    year: latest.year
-                };
-            }
+            return {
+                value: latest.value,
+                year: latest.year
+            };
         }
         
-        return null; // Sem valor atual válido
+        // Se não tiver nada, retornar zero
+        return {
+            value: 0,
+            year: new Date().getFullYear()
+        };
     }
 
-    // MODIFICADO: Agrupa dados e determina VALOR ATUAL
     function groupDataByIndicator(data) {
         const grouped = {};
 
@@ -923,22 +911,20 @@
             grouped[key].history.forEach(item => historyMap.set(item.year, item));
             grouped[key].history = Array.from(historyMap.values()).sort((a, b) => a.year - b.year);
             
-            // Determinar VALOR ATUAL
+            // Determinar VALOR ATUAL (agora aceita zero)
             const currentValueInfo = getCurrentValue(grouped[key]);
             if (currentValueInfo) {
                 grouped[key].currentValue = currentValueInfo.value;
                 grouped[key].currentYear = currentValueInfo.year;
-            } else {
-                grouped[key].currentValue = null;
-                grouped[key].currentYear = null;
             }
         });
 
         return grouped;
     }
 
+    // FUNÇÃO GERATEHYPOTHETICALGOALS CORRIGIDA - arredondar números inteiros
     function generateHypotheticalGoals(indicatorData) {
-        // Usar o VALOR ATUAL para calcular metas
+        // Usar o VALOR ATUAL para calcular metas (mesmo se for zero)
         const currentValue = indicatorData.currentValue;
         if (currentValue === null || currentValue === undefined) {
             return { meta2025: null, meta2026: null, max_ref: null };
@@ -955,6 +941,17 @@
         } else {
             meta2025 = currentValue * 0.9;
             meta2026 = currentValue * 0.8;
+        }
+
+        // ARREDONDAR para números inteiros
+        if (grandeza === '%') {
+            // Para percentuais, manter como está mas arredondar
+            meta2025 = Math.round(meta2025 * 100) / 100;
+            meta2026 = Math.round(meta2026 * 100) / 100;
+        } else {
+            // Para outros valores, arredondar para inteiro
+            meta2025 = Math.round(meta2025);
+            meta2026 = Math.round(meta2026);
         }
 
         // Calcular referência máxima (maior valor da série histórica)
@@ -978,7 +975,7 @@
         dropdown.classList.remove('show');
     }
 
-    // MODIFICADO: Filtrar indicadores com VALOR ATUAL zerado
+    // FUNÇÃO CORRIGIDA: Mostrar TODOS os indicadores, mesmo com VALOR ATUAL zero
     function loadIndicatorsDropdown(groupedData, currentIndicator) {
         const dropdownList = document.getElementById('indicators-dropdown-list');
 
@@ -989,18 +986,8 @@
 
         dropdownList.innerHTML = '';
 
-        // Filtrar indicadores que possuem VALOR ATUAL e não são zero
-        const validIndicators = Object.entries(groupedData).filter(([name, data]) => {
-            // Verificar se tem VALOR ATUAL definido e não é zero
-            return data.currentValue !== null && data.currentValue !== undefined && data.currentValue !== 0;
-        });
-
-        if (validIndicators.length === 0) {
-            dropdownList.innerHTML = '<div class="dropdown-item"><div class="indicator-name">Nenhum indicador com dados atuais</div></div>';
-            return;
-        }
-
-        validIndicators.forEach(([name, data]) => {
+        // MOSTRAR TODOS os indicadores
+        Object.entries(groupedData).forEach(([name, data]) => {
             const isCurrent = name === currentIndicator;
 
             const item = document.createElement('div');
@@ -1012,17 +999,17 @@
                 closeDropdown();
             };
 
-            const statusClass = getStatusClass(data.details.STATUS);
+            const statusClass = getStatusClass(data.details.Status);
 
-            // Usar VALOR ATUAL no dropdown
-            const displayValue = data.currentValue !== null ? 
+            // Usar VALOR ATUAL no dropdown (mesmo se for zero)
+            const displayValue = data.currentValue !== null && data.currentValue !== undefined ? 
                 formatValue(data.currentValue, data.details.GRANDEZA) : 'N/A';
 
             item.innerHTML = `
                 <div class="indicator-name">${data.details['#'] || '-'} - ${name}</div>
                 <div style="display: flex; align-items: center;">
-                    ${data.currentValue !== null ? `<div class="indicator-value">${displayValue}</div>` : ''}
-                    <div class="indicator-status ${statusClass}">${data.details.STATUS || '--'}</div>
+                    <div class="indicator-value">${displayValue}</div>
+                    <div class="indicator-status ${statusClass}">${data.details.Status || '--'}</div>
                 </div>
             `;
 
@@ -1042,7 +1029,9 @@
             case 'Dentro do esperado': return 'status-positive';
             case 'Meta 2025 alcançada': return 'status-positive';
             case 'Abaixo do esperado': return 'status-negative';
-            case 'Indicador sem dados': return 'status-gray';
+            case 'Dados em Coleta': 
+            case 'Indicador sem dados': 
+                return 'status-gray';
             default: return 'status-neutral';
         }
     }
@@ -1071,7 +1060,8 @@
         }
 
         if (!indicatorName || !groupedData[indicatorName]) {
-            document.getElementById('indicator-name').textContent = 'Nenhum indicador para exibir';
+            document.getElementById('indicator-name').textContent = 'Indicador não encontrado';
+            document.getElementById('indicator-description').textContent = 'O indicador selecionado não foi encontrado na base de dados';
             loadIndicatorsDropdown(groupedData, indicatorName);
             return;
         }
@@ -1079,12 +1069,12 @@
         const indicatorData = groupedData[indicatorName];
         loadIndicatorsDropdown(groupedData, indicatorName);
 
-        // Verificar se o indicador tem VALOR ATUAL
-        if (indicatorData.currentValue === null || indicatorData.currentValue === 0) {
-            document.getElementById('indicator-name').textContent = 'Indicador sem dados atuais';
-            document.getElementById('indicator-description').textContent = 'Este indicador não possui valores atuais disponíveis';
-            return;
-        }
+        // REMOVIDO: Verificação se tem VALOR ATUAL - agora mostra sempre
+        // if (indicatorData.currentValue === null || indicatorData.currentValue === undefined) {
+        //     document.getElementById('indicator-name').textContent = 'Indicador sem dados atuais';
+        //     document.getElementById('indicator-description').textContent = 'Este indicador não possui valores atuais disponíveis';
+        //     return;
+        // }
 
         const details = indicatorData.details;
         const history = indicatorData.history.sort((a, b) => a.year - b.year);
@@ -1127,19 +1117,19 @@
         document.getElementById('detail-grandeza').textContent = details.GRANDEZA || '--';
         document.getElementById('detail-periodicidade').textContent = details['PERIODICIDADE DE MEDIÇÃO'] || '--';
 
-        // METAS COM DECIMAIS APROPRIADOS
+        // METAS ARREDONDADAS - SEM DECIMAIS
         const meta2025Value = goals.meta2025 !== null ? 
-            formatValue(goals.meta2025, details.GRANDEZA, 2) : 'N/A';
+            formatValue(goals.meta2025, details.GRANDEZA, 0) : 'N/A'; // MUDADO: decimals = 0
         const meta2026Value = goals.meta2026 !== null ? 
-            formatValue(goals.meta2026, details.GRANDEZA, 2) : 'N/A';
+            formatValue(goals.meta2026, details.GRANDEZA, 0) : 'N/A'; // MUDADO: decimals = 0
 
         document.getElementById('meta-2025-value-box').textContent = meta2025Value;
         document.getElementById('meta-2026-value-box').textContent = meta2026Value;
 
         const statusCard = document.getElementById('status-card');
-        document.getElementById('status-value').textContent = details.STATUS || '--';
+        document.getElementById('status-value').textContent = details.Status || '--';
 
-        const statusColor = getStatusColor(details.STATUS);
+        const statusColor = getStatusColor(details.Status);
         statusCard.style.borderTop = `4px solid ${statusColor}`;
         document.getElementById('status-value').style.color = statusColor;
 
@@ -1150,12 +1140,12 @@
         document.getElementById('fonte-dados').textContent = details['FONTE DOS DADOS'] || '--';
         document.getElementById('responsavel').textContent = details.SUPINTENDÊNCIA || '--';
 
-        // RENDERIZAR GRÁFICO com VALOR ATUAL incluído
-        renderChart(history, details.GRANDEZA, indicatorData.currentValue);
+        // RENDERIZAR GRÁFICO CORRIGIDO - sem duplicar valores
+        renderChart(history, details.GRANDEZA, indicatorData);
     }
 
-    // MODIFICADO: Função renderChart para incluir VALOR ATUAL
-    function renderChart(history, grandeza, currentValue = null) {
+    // FUNÇÃO RENDERCHART CORRIGIDA - não duplica valores
+    function renderChart(history, grandeza, indicatorData) {
         const chartSvg = document.getElementById('chart-svg');
         const dataPointsContainer = document.getElementById('data-points-container');
         const yAxisContainer = document.getElementById('y-axis-container');
@@ -1171,39 +1161,40 @@
         gridLinesContainer.innerHTML = '';
         if (barValuesContainer) barValuesContainer.innerHTML = '';
 
-        // Se não houver dados históricos e nem valor atual
-        if (history.length === 0 && currentValue === null) {
+        // Preparar dados para o gráfico - usar apenas dados históricos
+        let chartData = [...history];
+        
+        // Verificar se já temos dados para o ano atual no histórico
+        const currentYear = new Date().getFullYear();
+        const hasCurrentYearInHistory = chartData.some(item => item.year === currentYear);
+        
+        // Se temos VALOR ATUAL e não temos dados para o ano atual no histórico, adicionar
+        if (indicatorData.currentValue !== null && indicatorData.currentValue !== undefined && 
+            !hasCurrentYearInHistory && indicatorData.currentYear === currentYear) {
+            chartData.push({
+                year: currentYear,
+                value: indicatorData.currentValue,
+                isCurrent: true
+            });
+        } else if (hasCurrentYearInHistory) {
+            // Se já tem dados para o ano atual, marcar o último como "current"
+            chartData = chartData.map(item => {
+                if (item.year === currentYear) {
+                    return { ...item, isCurrent: true };
+                }
+                return item;
+            });
+        }
+
+        // Ordenar os dados
+        const sortedData = chartData.sort((a, b) => a.year - b.year);
+        const dataCount = sortedData.length;
+        
+        if (dataCount === 0) {
             chartSvg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="12px">Sem dados históricos</text>';
             return;
         }
 
-        // Preparar dados para o gráfico
-        let chartData = [...history];
-        
-        // Adicionar valor atual se existir e não estiver já no histórico do ano atual
-        if (currentValue !== null) {
-            const currentYear = new Date().getFullYear();
-            const hasCurrentYear = chartData.some(item => item.year === currentYear);
-            
-            if (!hasCurrentYear) {
-                chartData.push({
-                    year: currentYear,
-                    value: currentValue,
-                    isCurrent: true
-                });
-            } else {
-                // Marcar o último valor do ano atual como "current"
-                chartData = chartData.map(item => {
-                    if (item.year === currentYear) {
-                        return { ...item, isCurrent: true };
-                    }
-                    return item;
-                });
-            }
-        }
-
-        const sortedData = chartData.sort((a, b) => a.year - b.year);
-        const dataCount = sortedData.length;
         const values = sortedData.map(h => h.value);
 
         // --- Escala Y ---
@@ -1271,8 +1262,8 @@
             rect.setAttribute('height', `${height}`);
             rect.setAttribute('rx', '0'); // BORDAS RETAS
             
-            // Adiciona destaque para a barra do VALOR ATUAL
-            if (item.isCurrent || index === dataCount - 1) {
+            // Adiciona destaque para a barra do VALOR ATUAL ou mais recente
+            if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
                 rect.setAttribute('fill', 'var(--color-primary)');
                 rect.setAttribute('class', 'chart-bar current');
             } else {
@@ -1294,11 +1285,11 @@
                 valueLabel.style.left = `${barCenterPercent}%`;
                 valueLabel.style.bottom = `${100 - yTop + 2}%`;
                 
-                // Formatar o valor com 1 decimal para exibição
-                valueLabel.textContent = formatValue(item.value, grandeza, 1);
+                // Formatar o valor SEM decimais
+                valueLabel.textContent = formatValue(item.value, grandeza, 0);
                 
                 // Estilo especial para o VALOR ATUAL
-                if (item.isCurrent || index === dataCount - 1) {
+                if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
                     valueLabel.style.fontWeight = 'bold';
                     valueLabel.style.color = 'var(--color-primary)';
                     valueLabel.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
@@ -1315,7 +1306,7 @@
             label.style.left = `${barCenterPercent}%`;
             label.textContent = item.year;
             
-            if (item.isCurrent || index === dataCount - 1) {
+            if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
                 label.style.fontWeight = 'bold';
                 label.style.color = 'var(--color-primary)';
                 label.style.backgroundColor = 'rgba(0, 61, 122, 0.15)';
@@ -1329,7 +1320,7 @@
             point.className = 'data-point-placeholder'; 
             point.style.left = `${barCenterPercent}%`;
             point.style.top = `${yTop}%`; 
-            point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza, 1)}`);
+            point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza, 0)}`);
             dataPointsContainer.appendChild(point);
         });
 
@@ -1343,7 +1334,7 @@
             const label = document.createElement('div');
             label.className = 'y-axis-label';
             label.style.top = `${yPos}%`;
-            label.textContent = formatValue(value, grandeza, 1);
+            label.textContent = formatValue(value, grandeza, 0); // SEM decimais
             yAxisContainer.appendChild(label);
 
             if (i < numLabels - 1) {
@@ -1367,7 +1358,7 @@
             
             // Pequeno delay para garantir que o DOM esteja pronto
             setTimeout(() => {
-                renderChart(indicatorData.history, indicatorData.details.GRANDEZA, indicatorData.currentValue);
+                renderChart(indicatorData.history, indicatorData.details.GRANDEZA, indicatorData);
             }, 50);
         }
     }
@@ -1376,22 +1367,10 @@
         const data = loadData();
         const groupedData = groupDataByIndicator(data);
         
-        // Filtrar indicadores que têm VALOR ATUAL para definir o padrão
-        const validIndicators = Object.keys(groupedData).filter(name => 
-            groupedData[name].currentValue !== null && groupedData[name].currentValue !== 0
-        );
-        
-        const defaultIndicatorName = validIndicators.length > 0 ? validIndicators[0] : Object.keys(groupedData)[0];
+        const defaultIndicatorName = Object.keys(groupedData)[0];
         
         const params = getUrlParams();
         let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
-        
-        // Verificar se o indicador selecionado tem VALOR ATUAL
-        if (groupedData[indicatorName] && 
-            (groupedData[indicatorName].currentValue === null || groupedData[indicatorName].currentValue === 0)) {
-            // Se não tiver, redirecionar para o primeiro com valor atual
-            indicatorName = defaultIndicatorName;
-        }
         
         if (!params.indicador && Object.keys(groupedData).length > 0) {
             const newUrl = `?indicador=${encodeURIComponent(indicatorName)}`;
