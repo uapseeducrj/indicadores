@@ -882,13 +882,13 @@
         },
         {
             "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
-            "valor": 1894.0,
+            "valor": 1894.2,
             "tipo_dado": "META",
             "ano": 2025
         },
         {
             "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
-            "valor": 1989.0,
+            "valor": 1988.9,
             "tipo_dado": "META",
             "ano": 2026
         },
@@ -918,13 +918,13 @@
         },
         {
             "INDICADORES": "Profissionais formados na EE",
-            "valor": 746.0,
+            "valor": 746.4,
             "tipo_dado": "META",
             "ano": 2025
         },
         {
             "INDICADORES": "Profissionais formados na EE",
-            "valor": 895.0,
+            "valor": 895.7,
             "tipo_dado": "META",
             "ano": 2026
         }
@@ -946,18 +946,27 @@
         window.location.href = path;
     }
 
-    // FUNÇÃO FORMATVALUE CORRIGIDA - sem decimais
-    function formatValue(value, grandeza, decimals = 0) {
+    // FUNÇÃO FORMATVALUE CORRIGIDA - COM 1 CASA DECIMAL
+    function formatValue(value, grandeza, decimals = 1) {
         if (value === null || value === undefined) return 'N/A';
         const isPercentage = grandeza === '%';
 
         if (isPercentage) {
-            return Math.round(value * 100) + '%';
+            // Para percentuais: multiplicar por 100 e formatar com 1 casa decimal
+            return (value * 100).toFixed(1).replace('.', ',') + '%';
         }
-        if (typeof value === 'number' && value >= 1000) {
-            return Math.round(value).toLocaleString('pt-BR');
+        
+        // Para números: formatar com 1 casa decimal
+        if (typeof value === 'number') {
+            // Se for número inteiro grande, formatar com separador de milhar e 1 casa decimal
+            if (value >= 1000) {
+                return value.toFixed(1).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+            // Para números menores, apenas 1 casa decimal
+            return value.toFixed(1).replace('.', ',');
         }
-        return Math.round(value).toLocaleString('pt-BR');
+        
+        return value.toString();
     }
 
     function getStatusColor(status) {
@@ -1203,12 +1212,14 @@
             meta2026 = currentValue * 1.2;
         }
 
+        // FORMATAR COM 1 CASA DECIMAL
         if (grandeza === '%') {
-            meta2025 = Math.round(meta2025 * 100) / 100;
-            meta2026 = Math.round(meta2026 * 100) / 100;
+            meta2025 = Math.round(meta2025 * 1000) / 1000; // 3 casas para arredondamento
+            meta2026 = Math.round(meta2026 * 1000) / 1000;
         } else {
-            meta2025 = Math.round(meta2025);
-            meta2026 = Math.round(meta2026);
+            // Para números, arredondar para 1 casa decimal
+            meta2025 = Math.round(meta2025 * 10) / 10;
+            meta2026 = Math.round(meta2026 * 10) / 10;
         }
 
         // Calcular referência máxima (maior valor da série histórica - apenas VALORES)
@@ -1261,7 +1272,7 @@
             const displayStatus = normalizeStatus(data.details.Status);
 
             const displayValue = data.currentValue !== null && data.currentValue !== undefined ?
-                formatValue(data.currentValue, data.details.GRANDEZA) : 'N/A';
+                formatValue(data.currentValue, data.details.GRANDEZA, 1) : 'N/A'; // 1 casa decimal
 
             item.innerHTML = `
                 <div class="indicator-name">${data.details['#'] || '-'} - ${name}</div>
@@ -1356,9 +1367,9 @@
 
         // METAS - usar valores do JSON se disponíveis, senão usar os calculados
         const meta2025Value = goals.meta2025 !== null && goals.meta2025 !== undefined ?
-            formatValue(goals.meta2025, details.GRANDEZA, 0) : 'N/A';
+            formatValue(goals.meta2025, details.GRANDEZA, 1) : 'N/A'; // 1 casa decimal
         const meta2026Value = goals.meta2026 !== null && goals.meta2026 !== undefined ?
-            formatValue(goals.meta2026, details.GRANDEZA, 0) : 'N/A';
+            formatValue(goals.meta2026, details.GRANDEZA, 1) : 'N/A'; // 1 casa decimal
 
         document.getElementById('meta-2025-value-box').textContent = meta2025Value;
         document.getElementById('meta-2026-value-box').textContent = meta2026Value;
@@ -1523,7 +1534,7 @@
                 valueLabel.style.left = `${barCenterPercent}%`;
                 valueLabel.style.bottom = `${100 - yTop + 2}%`;
 
-                valueLabel.textContent = formatValue(item.value, grandeza, 0);
+                valueLabel.textContent = formatValue(item.value, grandeza, 1); // 1 casa decimal
 
                 if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
                     valueLabel.style.fontWeight = 'bold';
@@ -1554,7 +1565,7 @@
             point.className = 'data-point-placeholder';
             point.style.left = `${barCenterPercent}%`;
             point.style.top = `${yTop}%`;
-            point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza, 0)}`);
+            point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza, 1)}`); // 1 casa decimal
             dataPointsContainer.appendChild(point);
         });
 
@@ -1567,7 +1578,7 @@
             const label = document.createElement('div');
             label.className = 'y-axis-label';
             label.style.top = `${yPos}%`;
-            label.textContent = formatValue(value, grandeza, 0);
+            label.textContent = formatValue(value, grandeza, 1); // 1 casa decimal
             yAxisContainer.appendChild(label);
 
             if (i < numLabels - 1) {
