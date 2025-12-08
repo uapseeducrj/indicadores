@@ -4916,28 +4916,52 @@
             
             const isPercentage = grandeza === '%';
             if (isPercentage) {
-                return (value * 100).toFixed(1) + '%';
+                return Math.round(value * 100) + '%'; // Arredondado sem decimais
             }
             if (grandeza === 'Nº' && value >= 1000) {
                  return Math.round(value).toLocaleString('pt-BR');
             }
             
-            return value.toLocaleString('pt-BR', { maximumFractionDigits: value > 100 ? 0 : 2 }) + (grandeza === 'Nº' ? '' : (grandeza && grandeza !== 0 ? ' ' + grandeza : ''));
+            return Math.round(value).toLocaleString('pt-BR'); // Arredondado sem decimais
         }
 
+        // FUNÇÃO CORRIGIDA: Padronizar "Dados em Coleta" e cores corretas
         function getStatusClass(status, isButton = false) {
-            switch (status) {
+            if (!status) return isButton ? 'status-gray-btn' : 'status-gray';
+            
+            // Normalizar o status para "Dados em Coleta"
+            const normalizedStatus = status.toString().trim();
+            
+            if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
+                normalizedStatus === 'Dados em Coleta') {
+                return isButton ? 'status-gray-btn' : 'status-gray';
+            }
+            
+            switch (normalizedStatus) {
                 case 'Dentro do esperado':
                     return isButton ? 'status-hiperpositive-btn' : 'status-hiperpositive';
                 case 'Meta 2025 alcançada':
                     return isButton ? 'status-positive-btn' : 'status-positive';
                 case 'Abaixo do esperado': 
                     return isButton ? 'status-negative-btn' : 'status-negative';
-                case 'Dados em Coleta': 
-                case 'Dados em coleta': 
-                    return isButton ? 'status-neutral-btn' : 'status-gray';
-                default: return '';
+                default: 
+                    return isButton ? 'status-gray-btn' : 'status-gray';
             }
+        }
+
+        // FUNÇÃO CORRIGIDA: Normalizar o status para exibição
+        function normalizeStatus(status) {
+            if (!status) return 'Dados em Coleta';
+            
+            const normalizedStatus = status.toString().trim();
+            
+            // Padronizar todos para "Dados em Coleta"
+            if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
+                normalizedStatus === 'Dados em Coleta') {
+                return 'Dados em Coleta';
+            }
+            
+            return normalizedStatus;
         }
 
         // FUNÇÃO SIMPLIFICADA: Usar apenas VALOR ATUAL como valor mais recente
@@ -4959,7 +4983,9 @@
                     
                     indicatorsMap.set(indicatorKey, {
                         ...item,
-                        displayValue: displayValue
+                        displayValue: displayValue,
+                        // Normalizar o status
+                        normalizedStatus: normalizeStatus(item.Status)
                     });
                 }
             });
@@ -5418,7 +5444,7 @@
             let indicatorsToShow = objective.indicators;
             if (activeStatusFilter) {
                 indicatorsToShow = objective.indicators.filter(indicator => 
-                    indicator.Status === activeStatusFilter
+                    normalizeStatus(indicator.Status) === activeStatusFilter
                 );
             }
             
@@ -5455,6 +5481,7 @@
                 
                 const formattedValue = formatValue(displayValue, indicator.GRANDEZA);
                 const statusClass = getStatusClass(indicator.Status);
+                const displayStatus = normalizeStatus(indicator.Status); // Status normalizado para exibição
                 
                 const indicatorCard = document.createElement('div');
                 indicatorCard.className = 'indicator-card';
@@ -5465,7 +5492,7 @@
                     indicatorCard.innerHTML = `
                         <div style="display: flex; flex-direction: column; height: 100%;">
                             <div style="margin-bottom: 8px;">
-                                <span class="status-badge ${statusClass}">${indicator.Status}</span>
+                                <span class="status-badge ${statusClass}">${displayStatus}</span>
                                 <div style="font-size: 11px; color: var(--color-text-light); margin-top: 2px;">${indicator["#"]}</div>
                             </div>
                             
@@ -5492,7 +5519,7 @@
                     indicatorCard.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>
-                                <span class="status-badge ${statusClass}">${indicator.Status}</span>
+                                <span class="status-badge ${statusClass}">${displayStatus}</span>
                                 <h3 style="font-size: 14px; font-weight: 600; margin: 5px 0; line-height: 1.3;">${indicator.INDICADORES}</h3>
                             </div>
                             <div style="text-align: right;">
@@ -5523,7 +5550,7 @@
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO DE CONTAGEM AJUSTADA
+        // FUNÇÃO DE CONTAGEM CORRIGIDA - Incluindo "Dados em Coleta"
         // ------------------------------------------------------------------
         function countIndicatorsByStatus(indicators) {
             const counts = { 
@@ -5534,10 +5561,14 @@
             };
             
             indicators.forEach(indicator => {
-                const status = indicator.Status;
+                const status = normalizeStatus(indicator.Status); // Usar status normalizado
+                
                 if (status === 'Dentro do esperado' || status === 'Meta 2025 alcançada' || status === 'Abaixo do esperado') {
                     counts[status]++; 
-                } else if (status === 'Dados em Coleta' || status === 'Dados em coleta') {
+                } else if (status === 'Dados em Coleta') {
+                    counts['Dados em Coleta']++;
+                } else {
+                    // Qualquer outro status vai para "Dados em Coleta"
                     counts['Dados em Coleta']++;
                 }
             });
@@ -5547,7 +5578,7 @@
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO DE RESUMO DE STATUS - AGORA ATUALIZA CORRETAMENTE
+        // FUNÇÃO DE RESUMO DE STATUS - CORRIGIDA
         // ------------------------------------------------------------------
         function renderStatusSummary(indicators) {
             const statusCounts = countIndicatorsByStatus(indicators);

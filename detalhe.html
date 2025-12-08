@@ -790,6 +790,36 @@
             "valor": 0.88,
             "tipo_dado": "VALOR",
             "ano": 2023
+        },
+        {
+            "OBJETIVO ESTRATÉGICO": "Infraestrutura",
+            "#": 2.2,
+            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
+            "FÓRMULA": "[∑{se [(Velocidade da Internet contratada / Máx(número de matrículas por turno))​≥1 Mbps] então 1 senão 0}]/1198*100",
+            "FONTE DOS DADOS": "SUPTI",
+            "EMAIL PESSOA RESPONSÁVEL": 0.0,
+            "SUPINTENDÊNCIA": "SUPTI",
+            "SUBSECRETARIA": "SUBPAE",
+            "PERIODICIDADE DE MEDIÇÃO": "Semestral",
+            "GRANDEZA": "%",
+            "POLARIDADE": "⬆️",
+            "VALOR ATUAL": 0.0,
+            "Status": "Dados em coleta",
+            "REFERENCIAL DA META": "Meta do plano de conectividade",
+            "DOUBLE CHECK": "pendente",
+            "OBSERVAÇÕES": "Aguardando dados atualizados",
+            "BASE DE DADOS": 0.0,
+            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
+            "INDICADOR": "Estratégico",
+            "valor": 0.45,
+            "tipo_dado": "VALOR",
+            "ano": 2019
+        },
+        {
+            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
+            "valor": 0.55,
+            "tipo_dado": "VALOR",
+            "ano": 2022
         }
     ];
 
@@ -810,7 +840,7 @@
     }
 
     // FUNÇÃO FORMATVALUE CORRIGIDA - sem decimais
-    function formatValue(value, grandeza, decimals = 0) { // MUDADO: decimals = 0 por padrão
+    function formatValue(value, grandeza, decimals = 0) {
         if (value === null || value === undefined) return 'N/A';
         const isPercentage = grandeza === '%';
         
@@ -825,12 +855,51 @@
     }
 
     function getStatusColor(status) {
-        switch (status) {
-            case 'Dentro do esperado': return 'var(--color-positive)'; 
-            case 'Meta 2025 alcançada': return 'var(--color-positive)';
-            case 'Abaixo do esperado': return 'var(--color-negative)';
-            case 'Indicador sem dados': return 'var(--color-gray)';
-            default: return 'var(--color-text-light)';
+        const normalizedStatus = normalizeStatus(status);
+        
+        switch (normalizedStatus) {
+            case 'Dentro do esperado': 
+            case 'Meta 2025 alcançada': 
+                return 'var(--color-positive)';
+            case 'Abaixo do esperado': 
+                return 'var(--color-negative)';
+            case 'Dados em Coleta': 
+                return 'var(--color-gray)';
+            default: 
+                return 'var(--color-text-light)';
+        }
+    }
+
+    // FUNÇÃO CORRIGIDA: Normalizar status para "Dados em Coleta"
+    function normalizeStatus(status) {
+        if (!status) return 'Dados em Coleta';
+        
+        const normalizedStatus = status.toString().trim();
+        
+        // Padronizar todos para "Dados em Coleta"
+        if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
+            normalizedStatus === 'Dados em Coleta') {
+            return 'Dados em Coleta';
+        }
+        
+        return normalizedStatus;
+    }
+
+    // FUNÇÃO CORRIGIDA: Classes de status com normalização
+    function getStatusClass(status) {
+        const normalizedStatus = normalizeStatus(status);
+        
+        switch (normalizedStatus) {
+            case 'Dentro do esperado':
+                return 'status-positive';
+            case 'Meta 2025 alcançada':
+                return 'status-positive';
+            case 'Abaixo do esperado': 
+                return 'status-negative';
+            case 'Dados em Coleta': 
+                return 'status-gray';
+            default: 
+                return 'status-gray';
         }
     }
 
@@ -975,7 +1044,7 @@
         dropdown.classList.remove('show');
     }
 
-    // FUNÇÃO CORRIGIDA: Mostrar TODOS os indicadores, mesmo com VALOR ATUAL zero
+    // FUNÇÃO CORRIGIDA: Mostrar TODOS os indicadores com status normalizados
     function loadIndicatorsDropdown(groupedData, currentIndicator) {
         const dropdownList = document.getElementById('indicators-dropdown-list');
 
@@ -1000,6 +1069,7 @@
             };
 
             const statusClass = getStatusClass(data.details.Status);
+            const displayStatus = normalizeStatus(data.details.Status); // Status normalizado
 
             // Usar VALOR ATUAL no dropdown (mesmo se for zero)
             const displayValue = data.currentValue !== null && data.currentValue !== undefined ? 
@@ -1009,7 +1079,7 @@
                 <div class="indicator-name">${data.details['#'] || '-'} - ${name}</div>
                 <div style="display: flex; align-items: center;">
                     <div class="indicator-value">${displayValue}</div>
-                    <div class="indicator-status ${statusClass}">${data.details.Status || '--'}</div>
+                    <div class="indicator-status ${statusClass}">${displayStatus}</div>
                 </div>
             `;
 
@@ -1020,20 +1090,6 @@
 
             dropdownList.appendChild(item);
         });
-    }
-
-    function getStatusClass(status) {
-        if (!status) return 'status-gray';
-        
-        switch (status) {
-            case 'Dentro do esperado': return 'status-positive';
-            case 'Meta 2025 alcançada': return 'status-positive';
-            case 'Abaixo do esperado': return 'status-negative';
-            case 'Dados em Coleta': 
-            case 'Indicador sem dados': 
-                return 'status-gray';
-            default: return 'status-neutral';
-        }
     }
 
     document.addEventListener('click', function(event) {
@@ -1068,13 +1124,6 @@
 
         const indicatorData = groupedData[indicatorName];
         loadIndicatorsDropdown(groupedData, indicatorName);
-
-        // REMOVIDO: Verificação se tem VALOR ATUAL - agora mostra sempre
-        // if (indicatorData.currentValue === null || indicatorData.currentValue === undefined) {
-        //     document.getElementById('indicator-name').textContent = 'Indicador sem dados atuais';
-        //     document.getElementById('indicator-description').textContent = 'Este indicador não possui valores atuais disponíveis';
-        //     return;
-        // }
 
         const details = indicatorData.details;
         const history = indicatorData.history.sort((a, b) => a.year - b.year);
@@ -1119,15 +1168,16 @@
 
         // METAS ARREDONDADAS - SEM DECIMAIS
         const meta2025Value = goals.meta2025 !== null ? 
-            formatValue(goals.meta2025, details.GRANDEZA, 0) : 'N/A'; // MUDADO: decimals = 0
+            formatValue(goals.meta2025, details.GRANDEZA, 0) : 'N/A';
         const meta2026Value = goals.meta2026 !== null ? 
-            formatValue(goals.meta2026, details.GRANDEZA, 0) : 'N/A'; // MUDADO: decimals = 0
+            formatValue(goals.meta2026, details.GRANDEZA, 0) : 'N/A';
 
         document.getElementById('meta-2025-value-box').textContent = meta2025Value;
         document.getElementById('meta-2026-value-box').textContent = meta2026Value;
 
         const statusCard = document.getElementById('status-card');
-        document.getElementById('status-value').textContent = details.Status || '--';
+        const displayStatus = normalizeStatus(details.Status);
+        document.getElementById('status-value').textContent = displayStatus || '--';
 
         const statusColor = getStatusColor(details.Status);
         statusCard.style.borderTop = `4px solid ${statusColor}`;
