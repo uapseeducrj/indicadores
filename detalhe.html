@@ -26,9 +26,9 @@
             --color-meta-2025: #9370db;
             --color-meta-2026: #87cefa;
             --color-gauge-track: #dcdcdc;
-            --color-chart-line: #2196F3; /* Cor da linha/barra padrão */
+            --color-chart-line: #2196F3;
             --color-chart-area: #B3E5FC;
-            --color-detail-card: #eef1f4; 
+            --color-detail-card: #eef1f4;
             --color-detail-text: #4a4a4a;
         }
 
@@ -127,7 +127,7 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 13px;
-            display: flex; 
+            display: flex;
             align-items: center;
             gap: 8px;
             transition: background-color 0.2s;
@@ -254,25 +254,25 @@
             color: var(--color-text-light);
             flex-shrink: 0;
         }
-        
+
         /* NOVO CONTÊINER FLEXÍVEL PARA PLOTAGEM */
         .chart-wrapper {
             flex: 1;
             display: flex;
             position: relative;
             min-height: 0;
-            padding-bottom: 30px; /* Mais espaço para rótulos X */
+            padding-bottom: 30px;
             width: 100%;
         }
-        
+
         /* Contêiner da área de plotagem (sem Eixo Y) */
         .chart-container {
             flex-grow: 1;
             position: relative;
             border-bottom: 1px solid #ddd;
             border-left: 1px solid #ddd;
-            margin-left: 40px; /* Alinhamento do eixo Y */
-            overflow: visible; /* Mudar para visible */
+            margin-left: 40px;
+            overflow: visible;
         }
 
         /* SVG e contêineres de dados cobrindo 100% da área de plotagem */
@@ -283,13 +283,13 @@
             width: 100%;
             height: 100%;
         }
-        
+
         /* Eixo Y (Rótulos) */
         #y-axis-container {
             position: absolute;
             left: 0;
             top: 0;
-            width: 40px; 
+            width: 40px;
             height: 100%;
         }
         .y-axis-label {
@@ -301,7 +301,7 @@
             text-align: right;
             padding-right: 2px;
         }
-        
+
         /* Linhas de Grade */
         .grid-line {
             position: absolute;
@@ -315,13 +315,13 @@
         #x-axis-labels-container {
             position: absolute;
             bottom: 0;
-            left: 40px; /* Mesmo que margin-left do .chart-container */
-            width: calc(100% - 40px); /* Mesma largura do .chart-container */
+            left: 40px;
+            width: calc(100% - 40px);
             height: 30px;
             pointer-events: none;
             overflow: visible;
         }
-        
+
         /* Rótulo do ano - POSIÇÃO CORRIGIDA */
         .x-axis-bar-label {
             font-size: 10px;
@@ -330,7 +330,7 @@
             white-space: nowrap;
             position: absolute;
             bottom: 5px;
-            transform: translateX(-50%); /* Centraliza exatamente no ponto */
+            transform: translateX(-50%);
             pointer-events: none;
             background-color: rgba(255, 255, 255, 0.95);
             padding: 2px 6px;
@@ -341,26 +341,26 @@
             min-width: 40px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        
+
         /* Estilo das barras no SVG */
         .chart-bar {
             transition: fill 0.2s;
         }
-        
+
         /* Placeholder para tooltip */
         .data-point-placeholder {
             position: absolute;
             width: 12px;
-            height: 100%; /* Aumenta a área de hover para a barra */
-            transform: translateX(-50%); 
+            height: 100%;
+            transform: translateX(-50%);
             cursor: pointer;
             z-index: 10;
         }
-        
+
         .data-point-placeholder:hover::after {
             content: attr(data-value);
             position: absolute;
-            bottom: 100%; /* Acima do ponto/barra */
+            bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.9);
@@ -391,22 +391,21 @@
         }
         /* --- FIM DAS MUDANÇAS NO GRÁFICO --- */
 
-
         .details-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            height: 100px; /* ALTURA FIXA PARA IGUALAR AMBAS */
+            height: 100px;
         }
 
         .indicator-details-card, .meta-card-container {
             display: flex;
             flex-direction: column;
-            height: 100%; /* OCUPA 100% DA ALTURA DO CONTAINER PAI */
+            height: 100%;
         }
 
         .indicator-details-card .card, .meta-card-container .card {
-            flex: 1; /* FAZ A CARD OCUPAR TODO O ESPAÇO DISPONÍVEL */
+            flex: 1;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -416,14 +415,14 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 6px;
-            flex: 1; /* OCUPA O ESPAÇO RESTANTE */
+            flex: 1;
         }
 
         .meta-cards {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px;
-            flex: 1; /* OCUPA O ESPAÇO RESTANTE */
+            flex: 1;
             height: 100%;
         }
 
@@ -437,8 +436,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            height: 100%; /* OCUPA TODA A ALTURA DISPONÍVEL */
-            min-height: 50px; /* ALTURA MÍNIMA GARANTIDA */
+            height: 100%;
+            min-height: 50px;
         }
 
         .indicator-detail .label, .meta-card .meta-label {
@@ -454,7 +453,7 @@
             color: var(--color-detail-text);
             margin-bottom: 1px;
         }
-        
+
         .info-card {
             background-color: #fff;
             padding: 12px;
@@ -516,38 +515,38 @@
             grid-template-columns: 1fr 1fr;
             gap: 8px;
             padding: 0;
-            height: 100%; /* ALTURA TOTAL DO CONTÊINER */
+            height: 100%;
         }
-        
+
         .footer-detail {
             text-align: center;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* DISTRIBUI ESPAÇO ENTRE VALOR E LABEL */
-            height: 100%; /* OCUPA ALTURA TOTAL */
+            justify-content: space-between;
+            height: 100%;
         }
 
         .footer-detail .label {
             font-size: 8px;
             text-transform: uppercase;
             color: var(--color-text-light);
-            margin-top: auto; /* EMPURRA PARA BAIXO */
+            margin-top: auto;
             padding-top: 6px;
             border-top: 1px solid #eee;
             text-align: center;
             flex-shrink: 0;
         }
-        
+
         .footer-detail .value {
             font-size: 11px;
             font-weight: bold;
             line-height: 1.2;
             display: flex;
-            align-items: center; /* CENTRALIZA VERTICALMENTE */
-            justify-content: center; /* CENTRALIZA HORIZONTALMENTE */
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            flex-grow: 1; /* OCUPA ESPAÇO DISPONÍVEL */
-            margin-bottom: 4px; /* PEQUENO ESPAÇO ACIMA DO LABEL */
+            flex-grow: 1;
+            margin-bottom: 4px;
         }
 
         .section-title {
@@ -563,19 +562,19 @@
             padding: 40px;
             color: var(--color-text-light);
         }
-        
+
         .polarity-icon {
-            font-size: 24px; 
+            font-size: 24px;
             display: inline-block;
             vertical-align: middle;
             line-height: 1;
         }
-        
+
         /* Estilo especial para as metas com cores diferentes */
         .meta-2025 {
             border-left: 3px solid var(--color-meta-2025);
         }
-        
+
         .meta-2026 {
             border-left: 3px solid var(--color-meta-2026);
         }
@@ -608,20 +607,20 @@
                 <div class="chart-section">
                     <div class="card chart-card">
                         <p class="chart-title">Série Histórica do Indicador</p>
-                        
-                        <div class="chart-wrapper"> 
+
+                        <div class="chart-wrapper">
                             <div id="y-axis-container"></div>
-                            
+
                             <div class="chart-container">
                                 <div id="grid-lines-container"></div>
                                 <svg id="chart-svg" class="chart-svg"></svg>
                                 <div id="data-points-container"></div>
                                 <div id="bar-values-container"></div>
                             </div>
-                            
+
                             <div id="x-axis-labels-container"></div>
                         </div>
-                        </div>
+                    </div>
                 </div>
 
                 <div class="details-section">
@@ -699,9 +698,9 @@
             </div>
         </div>
     </div>
-    
+
     <script>
-    // DADOS DE FALLBACK AJUSTADOS
+    // DADOS DE FALLBACK AJUSTADOS - incluindo dados com tipo_dado: META
     const fallbackData = [
         {
             "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
@@ -715,8 +714,8 @@
             "PERIODICIDADE DE MEDIÇÃO": "Trimestral",
             "GRANDEZA": "%",
             "POLARIDADE": "⬆️",
-            "VALOR ATUAL": 0.0,
-            "Status": "Abaixo do esperado",
+            "VALOR ATUAL": 0.85,
+            "Status": "Dentro do esperado",
             "REFERENCIAL DA META": "Considera meta prevista e pactuada pelo PNE 2014-2024",
             "DOUBLE CHECK": "ok",
             "OBSERVAÇÕES": "Se o indicador é trimestral, conseguimos um número atualizado?",
@@ -756,6 +755,18 @@
             "ano": 2024
         },
         {
+            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
+            "valor": 0.95,
+            "tipo_dado": "META",
+            "ano": 2025
+        },
+        {
+            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
+            "valor": 0.98,
+            "tipo_dado": "META",
+            "ano": 2026
+        },
+        {
             "OBJETIVO ESTRATÉGICO": "Infraestrutura",
             "#": 2.1,
             "INDICADORES": "Salas de aula climatizadas",
@@ -792,6 +803,18 @@
             "ano": 2023
         },
         {
+            "INDICADORES": "Salas de aula climatizadas",
+            "valor": 0.95,
+            "tipo_dado": "META",
+            "ano": 2025
+        },
+        {
+            "INDICADORES": "Salas de aula climatizadas",
+            "valor": 1.0,
+            "tipo_dado": "META",
+            "ano": 2026
+        },
+        {
             "OBJETIVO ESTRATÉGICO": "Infraestrutura",
             "#": 2.2,
             "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
@@ -820,6 +843,90 @@
             "valor": 0.55,
             "tipo_dado": "VALOR",
             "ano": 2022
+        },
+        {
+            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
+            "valor": 0.70,
+            "tipo_dado": "META",
+            "ano": 2025
+        },
+        {
+            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
+            "valor": 0.85,
+            "tipo_dado": "META",
+            "ano": 2026
+        },
+        {
+            "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
+            "#": 4.4,
+            "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
+            "FÓRMULA": "Nº de Premiações recebidas pela rede",
+            "FONTE DOS DADOS": "Olimpiando",
+            "EMAIL PESSOA RESPONSÁVEL": 0.0,
+            "SUPINTENDÊNCIA": "SUPAA",
+            "SUBSECRETARIA": "SUBGEN",
+            "PERIODICIDADE DE MEDIÇÃO": "Anual",
+            "GRANDEZA": "Nº",
+            "POLARIDADE": "⬆️",
+            "VALOR ATUAL": 0.0,
+            "Status": "Indicador em coleta",
+            "REFERENCIAL DA META": "Aumentar em 5% o número de premiações por ano ",
+            "DOUBLE CHECK": "ok",
+            "OBSERVAÇÕES": "Repensar periodicidade",
+            "BASE DE DADOS": 0.0,
+            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
+            "INDICADOR": "Nível Desconhecido",
+            "valor": 1804.0,
+            "tipo_dado": "VALOR",
+            "ano": 2024
+        },
+        {
+            "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
+            "valor": 1894.0,
+            "tipo_dado": "META",
+            "ano": 2025
+        },
+        {
+            "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
+            "valor": 1989.0,
+            "tipo_dado": "META",
+            "ano": 2026
+        },
+        {
+            "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
+            "#": 5.1,
+            "INDICADORES": "Profissionais formados na EE",
+            "FÓRMULA": "Σ Docentes e Profissionais com Formação na Educação Especial (120h)",
+            "FONTE DOS DADOS": "LabEaD / Moodle",
+            "EMAIL PESSOA RESPONSÁVEL": 0.0,
+            "SUPINTENDÊNCIA": "SUPPEE",
+            "SUBSECRETARIA": "SUBPAE",
+            "PERIODICIDADE DE MEDIÇÃO": "Mensal",
+            "GRANDEZA": "Nº",
+            "POLARIDADE": "⬆️",
+            "VALOR ATUAL": 0.0,
+            "Status": "Indicador em coleta",
+            "REFERENCIAL DA META": "Prevê 90% de conclusão da carga horária nos inscritos em 2 cursos para 2025, além de um incremento de 20% em 2026.",
+            "DOUBLE CHECK": "ok",
+            "OBSERVAÇÕES": "Coletar dados atualizados!",
+            "BASE DE DADOS": 0.0,
+            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
+            "INDICADOR": "Nível Desconhecido",
+            "valor": 622.0,
+            "tipo_dado": "VALOR",
+            "ano": 2024
+        },
+        {
+            "INDICADORES": "Profissionais formados na EE",
+            "valor": 746.0,
+            "tipo_dado": "META",
+            "ano": 2025
+        },
+        {
+            "INDICADORES": "Profissionais formados na EE",
+            "valor": 895.0,
+            "tipo_dado": "META",
+            "ano": 2026
         }
     ];
 
@@ -843,62 +950,59 @@
     function formatValue(value, grandeza, decimals = 0) {
         if (value === null || value === undefined) return 'N/A';
         const isPercentage = grandeza === '%';
-        
+
         if (isPercentage) {
-            return Math.round(value * 100) + '%'; // MUDADO: Math.round() sem decimais
+            return Math.round(value * 100) + '%';
         }
-        // Formatar números com separadores de milhar
         if (typeof value === 'number' && value >= 1000) {
-            return Math.round(value).toLocaleString('pt-BR'); // MUDADO: Math.round()
+            return Math.round(value).toLocaleString('pt-BR');
         }
-        return Math.round(value).toLocaleString('pt-BR'); // MUDADO: Math.round()
+        return Math.round(value).toLocaleString('pt-BR');
     }
 
     function getStatusColor(status) {
         const normalizedStatus = normalizeStatus(status);
-        
+
         switch (normalizedStatus) {
-            case 'Dentro do esperado': 
-            case 'Meta 2025 alcançada': 
+            case 'Dentro do esperado':
+            case 'Meta 2025 alcançada':
                 return 'var(--color-positive)';
-            case 'Abaixo do esperado': 
+            case 'Abaixo do esperado':
                 return 'var(--color-negative)';
-            case 'Dados em Coleta': 
+            case 'Dados em Coleta':
+            case 'Indicador em coleta':
                 return 'var(--color-gray)';
-            default: 
+            default:
                 return 'var(--color-text-light)';
         }
     }
 
-    // FUNÇÃO CORRIGIDA: Normalizar status para "Dados em Coleta"
     function normalizeStatus(status) {
         if (!status) return 'Dados em Coleta';
-        
+
         const normalizedStatus = status.toString().trim();
-        
-        // Padronizar todos para "Dados em Coleta"
-        if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
-            normalizedStatus === 'Dados em Coleta') {
+
+        if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' ||
+            normalizedStatus === 'Dados em Coleta' || normalizedStatus === 'Indicador em coleta') {
             return 'Dados em Coleta';
         }
-        
+
         return normalizedStatus;
     }
 
-    // FUNÇÃO CORRIGIDA: Classes de status com normalização
     function getStatusClass(status) {
         const normalizedStatus = normalizeStatus(status);
-        
+
         switch (normalizedStatus) {
             case 'Dentro do esperado':
                 return 'status-positive';
             case 'Meta 2025 alcançada':
                 return 'status-positive';
-            case 'Abaixo do esperado': 
+            case 'Abaixo do esperado':
                 return 'status-negative';
-            case 'Dados em Coleta': 
+            case 'Dados em Coleta':
                 return 'status-gray';
-            default: 
+            default:
                 return 'status-gray';
         }
     }
@@ -915,28 +1019,53 @@
         return fallbackData;
     }
 
-    // FUNÇÃO CORRIGIDA: Agora aceita VALOR ATUAL zero
+    // FUNÇÃO CORRIGIDA: getCurrentValue com fallbacks múltiplos
     function getCurrentValue(indicatorData) {
-        // SEMPRE retornar o VALOR ATUAL, mesmo se for zero
+        // Prioridade 1: VALOR ATUAL dos detalhes
         if (indicatorData.details && indicatorData.details["VALOR ATUAL"] !== undefined) {
-            return {
-                value: indicatorData.details["VALOR ATUAL"],
-                year: new Date().getFullYear() // Usar ano atual
-            };
+            const valorAtual = indicatorData.details["VALOR ATUAL"];
+            if (valorAtual !== null && valorAtual !== undefined) {
+                return {
+                    value: valorAtual,
+                    year: new Date().getFullYear()
+                };
+            }
         }
-        
-        // Se não tiver VALOR ATUAL, usar o último valor histórico
+
+        // Prioridade 2: Último valor histórico (tipo_dado: VALOR)
         if (indicatorData.history && indicatorData.history.length > 0) {
-            const sortedHistory = [...indicatorData.history].sort((a, b) => b.year - a.year);
-            const latest = sortedHistory[0];
+            // Filtrar apenas valores, não metas
+            const valoresHistoricos = indicatorData.history.filter(item => 
+                item.tipo_dado === 'VALOR' || item.tipo_dado === undefined
+            );
             
-            return {
-                value: latest.value,
-                year: latest.year
-            };
+            if (valoresHistoricos.length > 0) {
+                const sortedHistory = [...valoresHistoricos].sort((a, b) => b.year - a.year);
+                const latest = sortedHistory[0];
+
+                if (latest.value !== null && latest.value !== undefined) {
+                    return {
+                        value: latest.value,
+                        year: latest.year
+                    };
+                }
+            }
         }
-        
-        // Se não tiver nada, retornar zero
+
+        // Prioridade 3: Tentar extrair de outros campos
+        if (indicatorData.details) {
+            for (let key in indicatorData.details) {
+                const val = indicatorData.details[key];
+                if (typeof val === 'number' && !isNaN(val) && key !== '#') {
+                    return {
+                        value: val,
+                        year: new Date().getFullYear()
+                    };
+                }
+            }
+        }
+
+        // Fallback: retornar zero
         return {
             value: 0,
             year: new Date().getFullYear()
@@ -953,34 +1082,50 @@
             if (!grouped[indicatorName]) {
                 grouped[indicatorName] = {
                     details: item,
-                    history: []
+                    history: [],
+                    metas: [] // NOVO: array separado para metas
                 };
             }
 
-            // Adicionar valor histórico se existir
-            if (item.tipo_dado === 'VALOR' && item.valor !== null && item.valor !== undefined) {
+            // Adicionar histórico se for VALOR ou se não tiver tipo_dado definido
+            if ((item.tipo_dado === 'VALOR' || item.tipo_dado === undefined) && 
+                item.valor !== null && item.valor !== undefined) {
                 if (item.ano && item.valor !== undefined) {
                     grouped[indicatorName].history.push({
                         year: item.ano,
-                        value: item.valor
+                        value: item.valor,
+                        tipo_dado: item.tipo_dado || 'VALOR'
                     });
                 }
             }
             
-            // Atualizar detalhes se tiver informações mais completas
+            // NOVO: Adicionar metas se tipo_dado for META
+            if (item.tipo_dado === 'META' && item.valor !== null && item.valor !== undefined) {
+                if (item.ano && item.valor !== undefined) {
+                    grouped[indicatorName].metas.push({
+                        year: item.ano,
+                        value: item.valor,
+                        tipo_dado: 'META'
+                    });
+                }
+            }
+
             if (item.SUPINTENDÊNCIA || item.OBJETIVO_ESTRATÉGICO) {
                 grouped[indicatorName].details = { ...grouped[indicatorName].details, ...item };
             }
         });
-        
-        // Ordenar histórico e determinar VALOR ATUAL
+
         Object.keys(grouped).forEach(key => {
-            // Remover duplicatas no histórico
+            // Ordenar histórico
             const historyMap = new Map();
             grouped[key].history.forEach(item => historyMap.set(item.year, item));
             grouped[key].history = Array.from(historyMap.values()).sort((a, b) => a.year - b.year);
             
-            // Determinar VALOR ATUAL (agora aceita zero)
+            // Ordenar metas
+            const metasMap = new Map();
+            grouped[key].metas.forEach(item => metasMap.set(item.year, item));
+            grouped[key].metas = Array.from(metasMap.values()).sort((a, b) => a.year - b.year);
+
             const currentValueInfo = getCurrentValue(grouped[key]);
             if (currentValueInfo) {
                 grouped[key].currentValue = currentValueInfo.value;
@@ -991,46 +1136,92 @@
         return grouped;
     }
 
-    // FUNÇÃO GERATEHYPOTHETICALGOALS CORRIGIDA - arredondar números inteiros
+    // FUNÇÃO GERATEHYPOTHETICALGOALS CORRIGIDA - verifica primeiro se há metas no JSON
     function generateHypotheticalGoals(indicatorData) {
-        // Usar o VALOR ATUAL para calcular metas (mesmo se for zero)
-        const currentValue = indicatorData.currentValue;
+        // PRIMEIRO: Verificar se há metas definidas no JSON (tipo_dado: META)
+        if (indicatorData.metas && indicatorData.metas.length > 0) {
+            let meta2025 = null;
+            let meta2026 = null;
+            
+            // Procurar metas para 2025 e 2026
+            indicatorData.metas.forEach(meta => {
+                if (meta.year === 2025) {
+                    meta2025 = meta.value;
+                } else if (meta.year === 2026) {
+                    meta2026 = meta.value;
+                }
+            });
+            
+            // Se encontrou metas no JSON, retornar elas
+            if (meta2025 !== null || meta2026 !== null) {
+                return {
+                    meta2025: meta2025,
+                    meta2026: meta2026,
+                    hasExplicitMeta: true // Flag para identificar que veio do JSON
+                };
+            }
+        }
+        
+        // SEGUNDO: Se não há metas no JSON, calcular baseado no valor atual
+        let currentValue = indicatorData.currentValue;
+
+        // Se currentValue for null/undefined, tentar outras fontes
         if (currentValue === null || currentValue === undefined) {
-            return { meta2025: null, meta2026: null, max_ref: null };
+            // Tentar usar o último valor histórico (apenas VALOR, não META)
+            const valoresHistoricos = indicatorData.history ? 
+                indicatorData.history.filter(item => item.tipo_dado === 'VALOR' || item.tipo_dado === undefined) : [];
+            
+            if (valoresHistoricos.length > 0) {
+                const sortedHistory = [...valoresHistoricos].sort((a, b) => b.year - a.year);
+                currentValue = sortedHistory[0].value;
+            }
+            // Se ainda não tiver valor, usar VALOR ATUAL (mesmo que seja 0)
+            else if (indicatorData.details && indicatorData.details["VALOR ATUAL"] !== undefined) {
+                currentValue = indicatorData.details["VALOR ATUAL"];
+            }
+            else {
+                currentValue = 0;
+            }
         }
 
-        const polaridade = indicatorData.details.POLARIDADE;
-        const grandeza = indicatorData.details.GRANDEZA || '';
+        const polaridade = indicatorData.details?.POLARIDADE || '';
+        const grandeza = indicatorData.details?.GRANDEZA || '';
 
         let meta2025, meta2026;
 
-        if (polaridade.includes('Positiva') || polaridade.includes('⬆️') || polaridade.includes('arrow_upward')) {
+        if (polaridade.includes('Positiva') || polaridade.includes('⬆️') ||
+            polaridade.includes('arrow_upward') || polaridade.toString().toLowerCase().includes('positiva')) {
+            meta2025 = currentValue * 1.1; // +10%
+            meta2026 = currentValue * 1.2; // +20%
+        } else if (polaridade.includes('Negativa') || polaridade.includes('⬇️') ||
+                   polaridade.includes('arrow_downward') || polaridade.toString().toLowerCase().includes('negativa')) {
+            meta2025 = currentValue * 0.9; // -10%
+            meta2026 = currentValue * 0.8; // -20%
+        } else {
+            // Fallback para polaridade positiva
             meta2025 = currentValue * 1.1;
             meta2026 = currentValue * 1.2;
-        } else {
-            meta2025 = currentValue * 0.9;
-            meta2026 = currentValue * 0.8;
         }
 
-        // ARREDONDAR para números inteiros
         if (grandeza === '%') {
-            // Para percentuais, manter como está mas arredondar
             meta2025 = Math.round(meta2025 * 100) / 100;
             meta2026 = Math.round(meta2026 * 100) / 100;
         } else {
-            // Para outros valores, arredondar para inteiro
             meta2025 = Math.round(meta2025);
             meta2026 = Math.round(meta2026);
         }
 
-        // Calcular referência máxima (maior valor da série histórica)
-        const historyValues = indicatorData.history.map(h => h.value);
+        // Calcular referência máxima (maior valor da série histórica - apenas VALORES)
+        const valoresHistoricos = indicatorData.history ? 
+            indicatorData.history.filter(item => item.tipo_dado === 'VALOR' || item.tipo_dado === undefined) : [];
+        const historyValues = valoresHistoricos.map(h => h.value);
         const max_ref = historyValues.length > 0 ? Math.max(...historyValues) : currentValue;
 
         return {
             meta2025: meta2025,
             meta2026: meta2026,
-            max_ref: max_ref
+            max_ref: max_ref,
+            hasExplicitMeta: false // Flag para identificar que foi calculada
         };
     }
 
@@ -1044,7 +1235,6 @@
         dropdown.classList.remove('show');
     }
 
-    // FUNÇÃO CORRIGIDA: Mostrar TODOS os indicadores com status normalizados
     function loadIndicatorsDropdown(groupedData, currentIndicator) {
         const dropdownList = document.getElementById('indicators-dropdown-list');
 
@@ -1055,7 +1245,6 @@
 
         dropdownList.innerHTML = '';
 
-        // MOSTRAR TODOS os indicadores
         Object.entries(groupedData).forEach(([name, data]) => {
             const isCurrent = name === currentIndicator;
 
@@ -1069,10 +1258,9 @@
             };
 
             const statusClass = getStatusClass(data.details.Status);
-            const displayStatus = normalizeStatus(data.details.Status); // Status normalizado
+            const displayStatus = normalizeStatus(data.details.Status);
 
-            // Usar VALOR ATUAL no dropdown (mesmo se for zero)
-            const displayValue = data.currentValue !== null && data.currentValue !== undefined ? 
+            const displayValue = data.currentValue !== null && data.currentValue !== undefined ?
                 formatValue(data.currentValue, data.details.GRANDEZA) : 'N/A';
 
             item.innerHTML = `
@@ -1103,12 +1291,12 @@
     function loadIndicatorDetails() {
         const data = loadData();
         const groupedData = groupDataByIndicator(data);
-        
-        const defaultIndicatorName = Object.keys(groupedData)[0]; 
+
+        const defaultIndicatorName = Object.keys(groupedData)[0];
 
         const params = getUrlParams();
         let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
-        
+
         if (!params.indicador && Object.keys(groupedData).length > 0) {
             indicatorName = defaultIndicatorName;
             const newUrl = `?indicador=${encodeURIComponent(defaultIndicatorName)}`;
@@ -1135,30 +1323,30 @@
 
         const polaridade = (details.POLARIDADE || '').toString().trim();
 
-        if (polaridade.includes('⬆️') || polaridade.includes('Positiva') || 
+        if (polaridade.includes('⬆️') || polaridade.includes('Positiva') ||
             polaridade.includes('arrow_upward') || polaridade.includes('+') ||
             polaridade.toLowerCase().includes('positiva')) {
-            
+
             const icon = document.createElement('span');
             icon.className = 'material-symbols-outlined';
             icon.style.cssText = 'color: var(--color-positive); font-size: 24px; vertical-align: middle;';
             icon.textContent = 'arrow_upward';
             polarityElement.appendChild(icon);
-            
-        } else if (polaridade.includes('⬇️') || polaridade.includes('Negativa') || 
+
+        } else if (polaridade.includes('⬇️') || polaridade.includes('Negativa') ||
                    polaridade.includes('arrow_downward') || polaridade.includes('-') ||
                    polaridade.toLowerCase().includes('negativa')) {
-            
+
             const icon = document.createElement('span');
             icon.className = 'material-symbols-outlined';
             icon.style.cssText = 'color: var(--color-negative); font-size: 24px; vertical-align: middle;';
             icon.textContent = 'arrow_downward';
             polarityElement.appendChild(icon);
-            
+
         } else {
             polarityElement.textContent = '--';
         }
-        
+
         document.getElementById('indicator-name').textContent = details.INDICADORES;
         document.getElementById('indicator-description').textContent =
             `${details['OBJETIVO ESTRATÉGICO'] || 'Indicador'} (#${details['#'] || '-'})`;
@@ -1166,14 +1354,33 @@
         document.getElementById('detail-grandeza').textContent = details.GRANDEZA || '--';
         document.getElementById('detail-periodicidade').textContent = details['PERIODICIDADE DE MEDIÇÃO'] || '--';
 
-        // METAS ARREDONDADAS - SEM DECIMAIS
-        const meta2025Value = goals.meta2025 !== null ? 
+        // METAS - usar valores do JSON se disponíveis, senão usar os calculados
+        const meta2025Value = goals.meta2025 !== null && goals.meta2025 !== undefined ?
             formatValue(goals.meta2025, details.GRANDEZA, 0) : 'N/A';
-        const meta2026Value = goals.meta2026 !== null ? 
+        const meta2026Value = goals.meta2026 !== null && goals.meta2026 !== undefined ?
             formatValue(goals.meta2026, details.GRANDEZA, 0) : 'N/A';
 
         document.getElementById('meta-2025-value-box').textContent = meta2025Value;
         document.getElementById('meta-2026-value-box').textContent = meta2026Value;
+
+        // Adicionar tooltip para mostrar fonte da meta
+        const meta2025Element = document.querySelector('.meta-2025 .meta-value');
+        const meta2026Element = document.querySelector('.meta-2026 .meta-value');
+        
+        if (meta2025Element && goals.hasExplicitMeta) {
+            meta2025Element.title = 'Meta extraída do banco de dados';
+        }
+        if (meta2026Element && goals.hasExplicitMeta) {
+            meta2026Element.title = 'Meta extraída do banco de dados';
+        }
+
+        // Adicionar estilo visual para destacar quando as metas são zero
+        if (goals.meta2025 === 0) {
+            document.querySelector('.meta-2025 .meta-value').style.color = 'var(--color-text-light)';
+        }
+        if (goals.meta2026 === 0) {
+            document.querySelector('.meta-2026 .meta-value').style.color = 'var(--color-text-light)';
+        }
 
         const statusCard = document.getElementById('status-card');
         const displayStatus = normalizeStatus(details.Status);
@@ -1190,11 +1397,9 @@
         document.getElementById('fonte-dados').textContent = details['FONTE DOS DADOS'] || '--';
         document.getElementById('responsavel').textContent = details.SUPINTENDÊNCIA || '--';
 
-        // RENDERIZAR GRÁFICO CORRIGIDO - sem duplicar valores
         renderChart(history, details.GRANDEZA, indicatorData);
     }
 
-    // FUNÇÃO RENDERCHART CORRIGIDA - não duplica valores
     function renderChart(history, grandeza, indicatorData) {
         const chartSvg = document.getElementById('chart-svg');
         const dataPointsContainer = document.getElementById('data-points-container');
@@ -1203,7 +1408,6 @@
         const gridLinesContainer = document.getElementById('grid-lines-container');
         const barValuesContainer = document.getElementById('bar-values-container');
 
-        // Limpar
         chartSvg.innerHTML = '';
         dataPointsContainer.innerHTML = '';
         yAxisContainer.innerHTML = '';
@@ -1211,23 +1415,21 @@
         gridLinesContainer.innerHTML = '';
         if (barValuesContainer) barValuesContainer.innerHTML = '';
 
-        // Preparar dados para o gráfico - usar apenas dados históricos
-        let chartData = [...history];
-        
-        // Verificar se já temos dados para o ano atual no histórico
+        // Filtrar apenas dados do tipo VALOR para o gráfico (excluir metas)
+        let chartData = history.filter(item => item.tipo_dado === 'VALOR' || item.tipo_dado === undefined);
+
         const currentYear = new Date().getFullYear();
         const hasCurrentYearInHistory = chartData.some(item => item.year === currentYear);
-        
-        // Se temos VALOR ATUAL e não temos dados para o ano atual no histórico, adicionar
-        if (indicatorData.currentValue !== null && indicatorData.currentValue !== undefined && 
+
+        if (indicatorData.currentValue !== null && indicatorData.currentValue !== undefined &&
             !hasCurrentYearInHistory && indicatorData.currentYear === currentYear) {
             chartData.push({
                 year: currentYear,
                 value: indicatorData.currentValue,
-                isCurrent: true
+                isCurrent: true,
+                tipo_dado: 'VALOR'
             });
         } else if (hasCurrentYearInHistory) {
-            // Se já tem dados para o ano atual, marcar o último como "current"
             chartData = chartData.map(item => {
                 if (item.year === currentYear) {
                     return { ...item, isCurrent: true };
@@ -1236,10 +1438,9 @@
             });
         }
 
-        // Ordenar os dados
         const sortedData = chartData.sort((a, b) => a.year - b.year);
         const dataCount = sortedData.length;
-        
+
         if (dataCount === 0) {
             chartSvg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="12px">Sem dados históricos</text>';
             return;
@@ -1247,12 +1448,11 @@
 
         const values = sortedData.map(h => h.value);
 
-        // --- Escala Y ---
         const minVal = Math.min(...values);
         const maxVal = Math.max(...values);
         const range = maxVal - minVal;
-        const padding = range * 0.1 || (minVal === 0 ? 0.05 : minVal * 0.1); 
-        const yMin = Math.max(0, minVal - padding); 
+        const padding = range * 0.1 || (minVal === 0 ? 0.05 : minVal * 0.1);
+        const yMin = Math.max(0, minVal - padding);
         const yMax = maxVal + padding;
         const yRange = yMax - yMin;
         const effectiveYRange = (yRange === 0) ? (yMax * 0.2 || 0.1) : yRange;
@@ -1262,14 +1462,12 @@
             if (effectiveYRange === 0) return 50;
             return 100 - ((value - effectiveYMin) / effectiveYRange) * 100;
         }
-        
-        // --- CÁLCULO SIMPLIFICADO E CORRETO ---
-        const totalWidth = 100; // 100% do container SVG
-        const leftMargin = 2; // Pequena margem esquerda
-        const rightMargin = 2; // Pequena margem direita
-        const usableWidth = totalWidth - (leftMargin + rightMargin); // Largura utilizável
-        
-        // Calcular largura da barra baseada no número de dados
+
+        const totalWidth = 100;
+        const leftMargin = 2;
+        const rightMargin = 2;
+        const usableWidth = totalWidth - (leftMargin + rightMargin);
+
         let barWidth;
         if (dataCount <= 3) {
             barWidth = 20;
@@ -1280,39 +1478,32 @@
         } else {
             barWidth = 8;
         }
-        
-        // Garantir que a barra não seja muito larga
+
         barWidth = Math.min(barWidth, usableWidth / dataCount * 0.9);
-        
-        // Calcular espaçamento
+
         const totalBarWidth = barWidth * dataCount;
         const availableSpace = usableWidth - totalBarWidth;
         const spacing = availableSpace / (dataCount + 1);
-        
-        // Renderiza o SVG principal
+
         chartSvg.setAttribute('width', '100%');
         chartSvg.setAttribute('height', '100%');
         chartSvg.setAttribute('viewBox', '0 0 100 100');
         chartSvg.setAttribute('preserveAspectRatio', 'none');
 
         sortedData.forEach((item, index) => {
-            // Calcular posição X da barra (no sistema SVG 0-100%)
             const xPositionPercent = leftMargin + spacing + (index * (barWidth + spacing));
-            
-            // Calcular posições Y
+
             const yTop = scaleY(item.value);
-            const yBase = scaleY(effectiveYMin); 
+            const yBase = scaleY(effectiveYMin);
             const height = Math.max(0.5, yBase - yTop);
 
-            // Criar barra
             const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             rect.setAttribute('x', `${xPositionPercent}`);
             rect.setAttribute('y', `${yTop}`);
             rect.setAttribute('width', `${barWidth}`);
             rect.setAttribute('height', `${height}`);
-            rect.setAttribute('rx', '0'); // BORDAS RETAS
-            
-            // Adiciona destaque para a barra do VALOR ATUAL ou mais recente
+            rect.setAttribute('rx', '0');
+
             if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
                 rect.setAttribute('fill', 'var(--color-primary)');
                 rect.setAttribute('class', 'chart-bar current');
@@ -1320,42 +1511,36 @@
                 rect.setAttribute('fill', 'var(--color-chart-line)');
                 rect.setAttribute('class', 'chart-bar');
             }
-            
+
             chartSvg.appendChild(rect);
 
-            // CALCULAR POSIÇÃO DO RÓTULO
             const barCenterPercent = xPositionPercent + (barWidth / 2);
-            
-            // ADICIONAR VALOR SOBRE A BARRA
+
             if (barValuesContainer) {
                 const valueLabel = document.createElement('div');
                 valueLabel.className = 'bar-value-label';
-                
-                // Posicionar acima da barra
+
                 valueLabel.style.left = `${barCenterPercent}%`;
                 valueLabel.style.bottom = `${100 - yTop + 2}%`;
-                
-                // Formatar o valor SEM decimais
+
                 valueLabel.textContent = formatValue(item.value, grandeza, 0);
-                
-                // Estilo especial para o VALOR ATUAL
+
                 if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
                     valueLabel.style.fontWeight = 'bold';
                     valueLabel.style.color = 'var(--color-primary)';
                     valueLabel.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
                     valueLabel.style.border = '1px solid var(--color-primary)';
                 }
-                
+
                 barValuesContainer.appendChild(valueLabel);
             }
 
-            // Renderiza Rótulos X
             const label = document.createElement('div');
             label.className = 'x-axis-bar-label';
-            
+
             label.style.left = `${barCenterPercent}%`;
             label.textContent = item.year;
-            
+
             if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
                 label.style.fontWeight = 'bold';
                 label.style.color = 'var(--color-primary)';
@@ -1365,26 +1550,24 @@
 
             xAxisLabelsContainer.appendChild(label);
 
-            // Adicionar tooltip
             const point = document.createElement('div');
-            point.className = 'data-point-placeholder'; 
+            point.className = 'data-point-placeholder';
             point.style.left = `${barCenterPercent}%`;
-            point.style.top = `${yTop}%`; 
+            point.style.top = `${yTop}%`;
             point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza, 0)}`);
             dataPointsContainer.appendChild(point);
         });
 
-        // Renderizar Eixos Y (rótulos e linhas de grade)
         const numLabels = 5;
         for (let i = 0; i < numLabels; i++) {
             const percentage = i / (numLabels - 1);
-            const value = effectiveYMin + (1 - percentage) * effectiveYRange; 
+            const value = effectiveYMin + (1 - percentage) * effectiveYRange;
             const yPos = percentage * 100;
 
             const label = document.createElement('div');
             label.className = 'y-axis-label';
             label.style.top = `${yPos}%`;
-            label.textContent = formatValue(value, grandeza, 0); // SEM decimais
+            label.textContent = formatValue(value, grandeza, 0);
             yAxisContainer.appendChild(label);
 
             if (i < numLabels - 1) {
@@ -1396,17 +1579,15 @@
         }
     }
 
-    // Função para redesenhar o gráfico com alinhamento correto
     function redrawChartWithAlignment() {
         const data = loadData();
         const groupedData = groupDataByIndicator(data);
         const params = getUrlParams();
         const indicatorName = decodeURIComponent(params.indicador || Object.keys(groupedData)[0]);
-        
+
         if (groupedData[indicatorName]) {
             const indicatorData = groupedData[indicatorName];
-            
-            // Pequeno delay para garantir que o DOM esteja pronto
+
             setTimeout(() => {
                 renderChart(indicatorData.history, indicatorData.details.GRANDEZA, indicatorData);
             }, 50);
@@ -1416,28 +1597,26 @@
     document.addEventListener('DOMContentLoaded', () => {
         const data = loadData();
         const groupedData = groupDataByIndicator(data);
-        
+
         const defaultIndicatorName = Object.keys(groupedData)[0];
-        
+
         const params = getUrlParams();
         let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
-        
+
         if (!params.indicador && Object.keys(groupedData).length > 0) {
             const newUrl = `?indicador=${encodeURIComponent(indicatorName)}`;
             window.history.replaceState(null, null, newUrl);
         }
 
         loadIndicatorDetails();
-        
-        // Redesenhar após um pequeno delay para garantir layout
+
         setTimeout(redrawChartWithAlignment, 100);
-        
-        // Redesenhar quando a janela for redimensionada
+
         window.addEventListener('resize', () => {
             setTimeout(redrawChartWithAlignment, 150);
         });
     });
-</script>
-    
+    </script>
+
 </body>
 </html>
