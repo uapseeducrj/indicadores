@@ -4,1800 +4,1327 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Indicador - Painel de Monitoramento</title>
-
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-
+    
     <style>
         :root {
             --color-primary: #003d7a;
             --color-secondary: #0074d9;
-            --color-background-light: #f7f9fb;
-            --color-text-dark: #2f3e4e;
-            --color-text-light: #7a8a9c;
-            --color-positive: #2e7d32;
-            --color-negative: #c62828;
-            --color-neutral: #ffb300;
-            --color-gray: #9e9e9e;
-            --color-tactical: #005e63;
-            --color-responsible: #6a1b9a;
-            --color-source: #2e7d32;
-            --color-hiperpositive: #00f729;
-            --color-meta-2025: #9370db;
-            --color-meta-2026: #87cefa;
-            --color-gauge-track: #dcdcdc;
             --color-chart-line: #2196F3;
             --color-chart-area: #B3E5FC;
-            --color-detail-card: #eef1f4;
-            --color-detail-text: #4a4a4a;
+            --color-meta-2025: #9370db;
+            --color-meta-2026: #87cefa;
+            --color-hiperpositive: #00f729;
+            --color-positive: #2e7d32;
+            --color-negative: #c62828;
+            --color-gray: #9e9e9e;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: "Inter", "Segoe UI", sans-serif;
-            background-color: var(--color-background-light);
-            color: var(--color-text-dark);
-            margin: 0;
-            padding: 15px;
-            height: 100vh;
+        
+        body, html {
+            height: 100%;
             overflow: hidden;
         }
-
+        
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            font-size: 20px;
-            margin-right: 8px;
-            vertical-align: middle;
         }
-
-        /* CABEÇALHO COM LOGO SEEDUC E MENU DE NAVEGAÇÃO */
-        .navigation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 20px;
-            background-color: #074f8a;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            min-height: 60px;
-            margin-bottom: 15px;
-            border-radius: 8px;
+        
+        .chart-line {
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: all 0.3s ease;
         }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        
+        .chart-point {
+            transition: all 0.3s ease;
         }
-
-        .header-logo {
-            height: 45px;
-            width: auto;
-            object-fit: contain;
+        
+        .chart-point:hover {
+            r: 5;
+            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
         }
-
-        .logo-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: white;
-            line-height: 1.2;
+        
+        .chart-bar {
+            transition: all 0.3s ease;
         }
-
-        .main-nav {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
         }
-
-        .nav-link {
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            font-size: 14px;
-            padding: 6px 12px;
-            border-radius: 4px;
+        
+        .grid-line {
+            stroke: #e5e7eb;
+            stroke-width: 1;
+            stroke-dasharray: 4 2;
+        }
+        
+        .tooltip {
             transition: all 0.2s ease;
-            position: relative;
+            pointer-events: none;
+            z-index: 50;
         }
-
-        .nav-link:hover {
-            background-color: var(--color-yellow-highlight);
-            color: #333;
+        
+        .value-label {
+            font-size: 10px;
             font-weight: 600;
+            fill: #374151;
+            text-anchor: middle;
+            pointer-events: none;
+            user-select: none;
         }
-
-        .nav-link.active {
-            background-color: var(--color-yellow-highlight);
-            color: #333;
-            font-weight: 600;
-        }
-
-        /* BARRA DE BUSCA - CORREÇÕES APLICADAS */
-        .search-container {
-            position: relative;
-            margin-left: 20px;
-        }
-
-        .search-button {
-            background-color: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .search-button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .search-dropdown {
-            position: absolute;
-            top: 100%;
+        
+        /* Modal de navegação */
+        .indicator-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            min-width: 300px;
-            max-height: 400px;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+        
+        .indicator-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
             overflow-y: auto;
-            z-index: 1000;
+        }
+        
+        /* Remove scrollbars */
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        *::-webkit-scrollbar {
             display: none;
         }
-
-        .search-dropdown.show {
-            display: block;
-        }
-
-        .search-input-container {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--color-primary);
-        }
-
-        .search-results {
-            max-height: 350px;
-            overflow-y: auto;
-        }
-
-        .search-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #fff;
-            color: var(--color-text-dark);
-        }
-
-        .search-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .search-item:last-child {
-            border-bottom: none;
-        }
-
-        .search-item-name {
-            font-weight: 500;
-            font-size: 13px;
-            flex: 1;
-            color: var(--color-text-dark);
-        }
-
-        .search-item-value {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--color-primary);
-            margin-left: 10px;
-        }
-
-        .search-item-status {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 3px;
-            margin-left: 8px;
-            color: white;
-        }
-
-        /* Classes de status para as miniaturas */
-        .search-item.status-positive .search-item-status {
-            background-color: var(--color-positive);
-        }
-
-        .search-item.status-negative .search-item-status {
-            background-color: var(--color-negative);
-        }
-
-        .search-item.status-gray .search-item-status {
-            background-color: var(--color-gray);
-        }
-
-        /* Para o item atual selecionado */
-        .search-item.current {
-            background-color: #e3f2fd;
-            font-weight: 600;
-            border-left: 3px solid var(--color-primary);
-        }
-
-        .search-item.current .search-item-name {
-            color: var(--color-primary);
-        }
-
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            height: calc(100vh - 100px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* REMOVIDO O TÍTULO DO INDICADOR DAQUI (vai para dentro do card do gráfico) */
-        .indicator-title-container {
-            display: none; /* Esconde o título antigo */
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 15px;
-            flex: 1;
-            min-height: 0;
+        
+        /* Text overflow handling */
+        .text-ellipsis-multiline {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            height: calc(100vh - 110px); /* Altura aumentada */
+            text-overflow: ellipsis;
         }
-
-        .left-panel {
+        
+        /* Custom styles for responsive boxes */
+        .dynamic-content-box {
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Reduzido o gap entre gráfico e detalhes */
-            min-height: 0;
             height: 100%;
         }
-
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            min-height: 0;
-            height: 100%;
+        
+        .dynamic-content {
+            flex: 1;
+            overflow: auto;
+            padding: 4px 2px;
         }
-
-        .card {
-            background-color: #fff;
-            border-radius: 6px;
-            padding: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #eee;
+        
+        .dynamic-title {
             flex-shrink: 0;
-        }
-
-        /* --- GRÁFICO COM ALTURA AUMENTADA --- */
-        .chart-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            height: calc(100% - 120px); /* Altura aumentada */
-        }
-
-        .chart-card {
-            padding: 12px;
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        /* TÍTULO DO INDICADOR DENTRO DO CARD DO GRÁFICO */
-        .chart-indicator-title {
-            color: var(--color-primary);
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 5px 0;
-            line-height: 1.3;
-            flex-shrink: 0;
-        }
-
-        .chart-title {
-            font-size: 12px;
-            margin: 0 0 10px 0;
-            color: var(--color-text-light);
-            flex-shrink: 0;
-        }
-
-        /* CONTÊINER FLEXÍVEL PARA PLOTAGEM */
-        .chart-wrapper {
-            flex: 1;
-            display: flex;
-            position: relative;
-            min-height: 0;
-            padding-bottom: 35px;
-            width: 100%;
-            height: calc(100% - 45px); /* Ajustado para acomodar os títulos */
-        }
-
-        /* Contêiner da área de plotagem (sem Eixo Y) */
-        .chart-container {
-            flex-grow: 1;
-            position: relative;
-            border-bottom: 1px solid #ddd;
-            border-left: 1px solid #ddd;
-            margin-left: 40px;
-            overflow: visible;
-        }
-
-        /* SVG e contêineres de dados cobrindo 100% da área de plotagem */
-        .chart-svg, #grid-lines-container, #data-points-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Eixo Y (Rótulos) */
-        #y-axis-container {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 40px;
-            height: 100%;
-        }
-        .y-axis-label {
-            position: absolute;
-            right: 5px;
-            transform: translateY(-50%);
-            font-size: 11px;
-            color: var(--color-text-light);
-            text-align: right;
-            padding-right: 2px;
-        }
-
-        /* Linhas de Grade */
-        .grid-line {
-            position: absolute;
-            border-top: 1px dashed #eee;
-            width: 100%;
-            left: 0;
-            pointer-events: none;
-        }
-
-        /* Contêiner dos Rótulos X (Anos) */
-        #x-axis-labels-container {
-            position: absolute;
-            bottom: 0;
-            left: 40px;
-            width: calc(100% - 40px);
-            height: 35px;
-            pointer-events: none;
-            overflow: visible;
-        }
-
-        /* Rótulo do ano - POSIÇÃO CORRIGIDA */
-        .x-axis-bar-label {
-            font-size: 11px;
-            color: var(--color-text-light);
-            text-align: center;
-            white-space: nowrap;
-            position: absolute;
-            bottom: 5px;
-            transform: translateX(-50%);
-            pointer-events: none;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 2px 8px;
-            border-radius: 3px;
-            border: 1px solid #eee;
-            font-weight: bold;
-            z-index: 5;
-            min-width: 40px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        /* Estilo das barras no SVG */
-        .chart-bar {
-            transition: fill 0.2s;
-        }
-
-        /* Placeholder para tooltip */
-        .data-point-placeholder {
-            position: absolute;
-            width: 12px;
-            height: 100%;
-            transform: translateX(-50%);
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .data-point-placeholder:hover::after {
-            content: attr(data-value);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            white-space: nowrap;
-            z-index: 100;
-            font-weight: 600;
-        }
-
-        /* Estilo para os valores sobre as barras */
-        .bar-value-label {
-            position: absolute;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--color-text-dark);
-            text-align: center;
-            transform: translateX(-50%);
-            pointer-events: none;
-            z-index: 20;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 1px 4px;
-            border-radius: 2px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            white-space: nowrap;
-        }
-        /* --- FIM DAS MUDANÇAS NO GRÁFICO --- */
-
-        /* SEÇÃO DE DETALHES COM MENOS ESPAÇO ACIMA */
-        .details-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            height: 120px;
-            margin-top: 2px; /* Reduzido o espaço acima */
-        }
-
-        .indicator-details-card, .meta-card-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .indicator-details-card .card, .meta-card-container .card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 15px;
-        }
-
-        .indicator-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            flex: 1;
-        }
-
-        .meta-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            flex: 1;
-            height: 100%;
-        }
-
-        .indicator-detail, .meta-card {
-            text-align: center;
-            padding: 10px 0;
-            border-radius: 4px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            background-color: var(--color-detail-card);
-            color: var(--color-detail-text);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100%;
-            min-height: 60px;
-        }
-
-        .indicator-detail .label, .meta-card .meta-label {
-            font-size: 9px;
-            color: var(--color-text-light);
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-
-        .indicator-detail .value, .meta-card .meta-value {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--color-detail-text);
-            margin-bottom: 2px;
-        }
-
-        /* PAINEL DIREITO COM ELEMENTOS MAIS ALTOS */
-        .info-card {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #eee;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            flex: 1;
-            min-height: 0;
-            height: 100%;
-        }
-
-        /* Elementos com altura aumentada */
-        .formula-card,
-        .referencial-card {
-            min-height: 120px; /* Altura mínima aumentada para fórmula e referencial */
-        }
-
-        .info-card .label {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: var(--color-text-light);
-            margin-top: 8px;
-            display: block;
-            border-top: 1px solid #eee;
             padding-top: 8px;
-            text-align: center;
-            flex-shrink: 0;
+            border-top: 1px solid #f3f4f6;
         }
-
-        .info-card .status-title {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-            padding-top: 5px;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        
+        /* Chart combo fix */
+        .combo-chart-bar {
+            opacity: 0.7;
         }
-
-        /* Conteúdo com altura aumentada */
-        .formula-card .content {
-            font-size: 13px;
-            line-height: 1.4;
-            text-align: center;
-            margin: 0;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5px 0;
+        
+        .combo-chart-line {
+            stroke-width: 2.5;
         }
-
-        /* Aumentar altura do texto da fórmula e referencial */
-        #formula-content,
-        #referencial-meta {
-            min-height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+        
+        .notification-toast {
+            opacity: 0;
+            transform: translateX(100%);
         }
-
-        .info-card p {
-            margin: 0;
-            font-size: 13px;
-            line-height: 1.4;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            justify-content: center;
-        }
-
-        .footer-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 0;
-            height: 100%;
-        }
-
-        .footer-detail {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-        }
-
-        .footer-detail .label {
-            font-size: 9px;
-            text-transform: uppercase;
-            color: var(--color-text-light);
-            margin-top: auto;
-            padding-top: 8px;
-            border-top: 1px solid #eee;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .footer-detail .value {
-            font-size: 12px;
-            font-weight: bold;
-            line-height: 1.3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            flex-grow: 1;
-            margin-bottom: 5px;
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--color-text-dark);
-            margin: 0 0 10px 0;
-            flex-shrink: 0;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--color-text-light);
-        }
-
-        .polarity-icon {
-            font-size: 24px;
-            display: inline-block;
-            vertical-align: middle;
-            line-height: 1;
-        }
-
-        /* Estilo especial para as metas com cores diferentes */
-        .meta-2025 {
-            border-left: 3px solid var(--color-meta-2025);
-        }
-
-        .meta-2026 {
-            border-left: 3px solid var(--color-meta-2026);
+        
+        /* Metas no gráfico */
+        .meta-line {
+            stroke-dasharray: 5, 5;
+            stroke-width: 1.5;
         }
     </style>
 </head>
-<body>
-    <!-- CABEÇALHO COM LOGO SEEDUC E MENU DE NAVEGAÇÃO -->
-    <div class="navigation-header">
-        <div class="logo-container">
-            <img src="https://i.imgur.com/0wrUOlV.png" alt="SEEDUC" class="header-logo">
-            <div class="logo-title">Boletim de Indicadores</div>
+<body class="bg-gray-50 font-sans h-screen overflow-hidden">
+    <!-- CABEÇALHO COMPACTO -->
+    <header class="bg-[#074f8a] text-white shadow-sm h-12 flex items-center">
+        <div class="max-w-full mx-auto px-4 w-full">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="https://i.imgur.com/0wrUOlV.png" alt="SEEDUC" class="h-8 w-auto">
+                    <div class="text-sm font-bold">Boletim de Indicadores</div>
+                </div>
+                
+                <nav class="flex items-center space-x-1">
+                    <a href="index.html?page=home" class="px-2 py-1 text-xs font-medium rounded hover:bg-yellow-300 hover:text-gray-900 transition-colors">
+                        Home
+                    </a>
+                    <a href="index.html?page=estrategicos" class="px-2 py-1 text-xs font-medium rounded hover:bg-yellow-300 hover:text-gray-900 transition-colors">
+                        Estratégicos
+                    </a>
+                    <a href="index.html?page=taticos" class="px-2 py-1 text-xs font-medium rounded hover:bg-yellow-300 hover:text-gray-900 transition-colors">
+                        Táticos
+                    </a>
+                    <!-- BOTÃO LUPA PARA NAVEGAÇÃO -->
+                    <button id="indicator-navigator-btn" class="ml-2 px-2 py-1 text-xs font-medium rounded bg-white/20 hover:bg-yellow-300 hover:text-gray-900 transition-colors flex items-center space-x-1">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">search</span>
+                        <span class="hidden sm:inline">Navegar Indicadores</span>
+                    </button>
+                    <!-- BOTÃO DE COLETA DE DADOS -->
+                    <button id="coleta-dados-btn" class="ml-2 px-2 py-1 text-xs font-medium rounded bg-[#2ecc71] text-white hover:bg-[#27ae60] transition-colors flex items-center space-x-1">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">data_check</span>
+                        <span class="hidden sm:inline">Solicitar Dados</span>
+                    </button>
+                </nav>
+            </div>
         </div>
-        
-        <nav class="main-nav">
-            <a href="index.html?page=home" class="nav-link">Home</a>
-            <a href="index.html?page=estrategicos" class="nav-link">Estratégicos</a>
-            <a href="index.html?page=taticos" class="nav-link">Táticos</a>
-            
-            <!-- BARRA DE BUSCA COM LUPA -->
-            <div class="search-container">
-                <button class="search-button" onclick="toggleSearch()">
-                    <span class="material-symbols-outlined">search</span>
-                </button>
-                <div class="search-dropdown" id="search-dropdown">
-                    <div class="search-input-container">
-                        <input type="text" class="search-input" id="search-input" placeholder="Buscar indicador..." onkeyup="filterIndicators()">
-                    </div>
-                    <div class="search-results" id="search-results">
-                        <div class="search-item">
-                            <div class="search-item-name">Carregando...</div>
-                        </div>
-                    </div>
+    </header>
+
+    <!-- MODAL DE NAVEGAÇÃO DE INDICADORES -->
+    <div id="indicator-modal" class="indicator-modal">
+        <div class="indicator-modal-content">
+            <div class="bg-white rounded-xl shadow-2xl p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-gray-800">Navegar entre Indicadores</h3>
+                    <button id="close-modal-btn" class="text-gray-500 hover:text-gray-700">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
                 </div>
-            </div>
-        </nav>
-    </div>
-
-    <div class="dashboard-container" id="dashboard-container">
-        <!-- TÍTULO REMOVIDO DAQUI - AGORA ESTÁ DENTRO DO CARD DO GRÁFICO -->
-
-        <div class="main-content">
-            <div class="left-panel">
-                <div class="chart-section">
-                    <div class="card chart-card">
-                        <!-- TÍTULO DO INDICADOR AGORA AQUI, ACIMA DO NOME DO GRÁFICO -->
-                        <h1 class="chart-indicator-title" id="indicator-name">Carregando detalhes do indicador...</h1>
-                        <p class="chart-title">Série Histórica do Indicador</p>
-
-                        <div class="chart-wrapper">
-                            <div id="y-axis-container"></div>
-
-                            <div class="chart-container">
-                                <div id="grid-lines-container"></div>
-                                <svg id="chart-svg" class="chart-svg"></svg>
-                                <div id="data-points-container"></div>
-                                <div id="bar-values-container"></div>
-                            </div>
-
-                            <div id="x-axis-labels-container"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="details-section">
-                    <div class="indicator-details-card">
-                        <div class="card">
-                            <p class="section-title">Detalhes do Indicador</p>
-                            <div class="indicator-details">
-                                <div class="indicator-detail">
-                                    <div class="value" id="detail-polaridade">--</div>
-                                    <div class="label">Polaridade</div>
-                                </div>
-                                <div class="indicator-detail">
-                                    <div class="value" id="detail-grandeza">--</div>
-                                    <div class="label">Grandeza</div>
-                                </div>
-                                <div class="indicator-detail">
-                                    <div class="value" id="detail-periodicidade">--</div>
-                                    <div class="label">Periodicidade</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="meta-card-container">
-                        <div class="card">
-                            <p class="section-title">Metas</p>
-                            <div class="meta-cards">
-                                <div class="meta-card meta-2025">
-                                    <div class="meta-value" id="meta-2025-value-box">N/A</div>
-                                    <div class="meta-label">Meta 2025</div>
-                                </div>
-                                <div class="meta-card meta-2026">
-                                    <div class="meta-value" id="meta-2026-value-box">N/A</div>
-                                    <div class="meta-label">Meta 2026</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="right-panel">
-                <div class="info-card" id="status-card" style="border-top: 4px solid var(--color-text-light);">
-                    <p class="status-title" id="status-value" style="color: var(--color-text-light);">--</p>
-                    <span class="label">Status</span>
-                </div>
-
-                <div class="info-card">
-                    <p id="objetivo-estrategico">Selecione um indicador para ver os detalhes completos</p>
-                    <span class="label">Objetivo Estratégico</span>
-                </div>
-
-                <div class="info-card referencial-card">
-                    <p id="referencial-meta">--</p>
-                    <span class="label">Referencial da Meta</span>
-                </div>
-
-                <div class="info-card formula-card">
-                    <p class="content" id="formula-content">--</p>
-                    <span class="label">Fórmula</span>
-                </div>
-
-                <div class="info-card" style="padding: 15px;">
-                    <div class="footer-details">
-                        <div class="footer-detail">
-                            <div class="value" id="fonte-dados">--</div>
-                            <span class="label">Fonte dos Dados</span>
-                        </div>
-                        <div class="footer-detail">
-                            <div class="value" id="responsavel">--</div>
-                            <span class="label">Responsável</span>
-                        </div>
-                    </div>
+                <div id="indicators-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Indicadores serão carregados aqui dinamicamente -->
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- MODAL DE COLETA DE DADOS -->
+    <div id="coleta-modal" class="indicator-modal">
+        <div class="indicator-modal-content">
+            <div class="bg-white rounded-xl shadow-2xl p-6 max-w-4xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-gray-800">Solicitação de Coleta de Dados</h3>
+                    <button id="close-coleta-btn" class="text-gray-500 hover:text-gray-700">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                
+                <div id="coleta-content" class="space-y-6">
+                    <!-- Conteúdo será carregado dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL - SEM ROLAGEM -->
+    <main class="h-[calc(100vh-3rem)] overflow-hidden">
+        <div class="h-full">
+            <div class="grid grid-cols-1 lg:grid-cols-3 h-full gap-3 p-3">
+                <!-- COLUNA ESQUERDA (2/3) -->
+                <div class="lg:col-span-2 flex flex-col h-full">
+                    <!-- CARD DO GRÁFICO - ALTURA AJUSTÁVEL -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex-grow min-h-0 flex flex-col">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+                            <div class="mb-2 sm:mb-0">
+                                <h1 id="indicator-name" class="text-lg font-bold text-gray-800 truncate">Carregando detalhes do indicador...</h1>
+                                <p class="text-xs text-gray-500">Série Temporal do Indicador (VALOR_1 a VALOR_6)</p>
+                            </div>
+                            
+                            <!-- CONTROLES DISCRETOS DE VISUALIZAÇÃO -->
+                            <div>
+                                <div class="inline-flex rounded-lg border border-gray-200 p-0.5 bg-gray-50">
+                                    <button id="chart-bar-btn" 
+                                            class="chart-type-btn px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 hover:bg-white hover:shadow-sm flex items-center space-x-1 active bg-white shadow-sm text-blue-600"
+                                            data-type="bar">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">bar_chart</span>
+                                        <span class="hidden xs:inline">Barras</span>
+                                    </button>
+                                    <button id="chart-line-btn" 
+                                            class="chart-type-btn px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 hover:bg-white hover:shadow-sm flex items-center space-x-1"
+                                            data-type="line">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">show_chart</span>
+                                        <span class="hidden xs:inline">Linhas</span>
+                                    </button>
+                                    <button id="chart-both-btn" 
+                                            class="chart-type-btn px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 hover:bg-white hover:shadow-sm flex items-center space-x-1"
+                                            data-type="both">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">stacked_line_chart</span>
+                                        <span class="hidden xs:inline">Combo</span>
+                                    </button>
+                                </div>
+                                
+                                <!-- BOTÃO PARA MOSTRAR METAS NO GRÁFICO -->
+                                <div class="mt-2 flex items-center space-x-2">
+                                    <label class="flex items-center space-x-1 cursor-pointer">
+                                        <input type="checkbox" id="show-metas-checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked>
+                                        <span class="text-xs text-gray-600">Mostrar metas</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ÁREA DO GRÁFICO - FLEXÍVEL -->
+                        <div class="flex-grow min-h-0 relative">
+                            <div id="chart-container" class="absolute inset-0">
+                                <svg id="chart-svg" class="w-full h-full"></svg>
+                                <div id="tooltip" class="tooltip absolute hidden bg-gray-900 text-white text-xs rounded-lg py-1.5 px-2 shadow-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- DETALHES E METAS - ALTURA FIXA -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 flex-shrink-0">
+                        <!-- DETALHES DO INDICADOR -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 text-center">
+                            <h3 class="text-xs font-semibold text-gray-700 mb-2">Detalhes do Indicador</h3>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="text-center p-2 bg-gray-50 rounded-lg">
+                                    <div id="detail-polaridade" class="text-xl mb-1 flex justify-center">--</div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Polaridade</div>
+                                </div>
+                                <div class="text-center p-2 bg-gray-50 rounded-lg">
+                                    <div id="detail-grandeza" class="text-sm font-semibold text-gray-800 mb-1">--</div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Grandeza</div>
+                                </div>
+                                <div class="text-center p-2 bg-gray-50 rounded-lg">
+                                    <div id="detail-periodicidade" class="text-sm font-semibold text-gray-800 mb-1">--</div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Periodicidade</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- METAS -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 text-center">
+                            <h3 class="text-xs font-semibold text-gray-700 mb-2">Metas</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="p-2 rounded-lg border-l-3 border-purple-500 bg-purple-50">
+                                    <div id="meta-2025-value-box" class="text-sm font-bold text-gray-800 mb-1">N/A</div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Meta 2025</div>
+                                </div>
+                                <div class="p-2 rounded-lg border-l-3 border-blue-400 bg-blue-50">
+                                    <div id="meta-2026-value-box" class="text-sm font-bold text-gray-800 mb-1">N/A</div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Meta 2026</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- COLUNA DIREITA (1/3) - SEM ROLAGEM -->
+                <div class="flex flex-col h-full space-y-3 overflow-hidden">
+                    <!-- STATUS -->
+                    <div id="status-card" class="bg-white rounded-xl shadow-sm border-t-4 border-gray-400 p-3 text-center dynamic-content-box">
+                        <div class="dynamic-content flex items-center justify-center">
+                            <div id="status-value" class="text-lg font-bold text-gray-800">--</div>
+                        </div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Status</div>
+                    </div>
+                    
+                    <!-- OBJETIVO ESTRATÉGICO (AGORA COM ÍCONE E CENTRALIZADO) -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 dynamic-content-box">
+                        <div id="objetivo-estrategico" class="dynamic-content text-xs text-gray-700 text-ellipsis-multiline -webkit-line-clamp-4 flex items-center justify-center text-center px-2">
+                            <div class="flex flex-col items-center justify-center h-full">
+                                <!-- Ícone será inserido aqui via JavaScript -->
+                                <div id="objetivo-icon" class="mb-1"></div>
+                                <div id="objetivo-texto">Selecione um indicador para ver os detalhes completos</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Objetivo Estratégico</div>
+                    </div>
+                    
+                    <!-- REFERENCIAL DA META (CENTRALIZADO) -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 dynamic-content-box">
+                        <div id="referencial-meta" class="dynamic-content text-xs text-gray-700 text-ellipsis-multiline -webkit-line-clamp-4 flex items-center justify-center text-center px-2">--</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Referencial da Meta</div>
+                    </div>
+                    
+                    <!-- FÓRMULA (CENTRALIZADO) -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 dynamic-content-box">
+                        <div id="formula-content" class="dynamic-content text-xs text-gray-700 text-ellipsis-multiline -webkit-line-clamp-4 flex items-center justify-center text-center px-2">--</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Fórmula</div>
+                    </div>
+                    
+                    <!-- FONTE E RESPONSÁVEL -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex-shrink-0 text-center">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="text-center">
+                                <div id="fonte-dados" class="text-xs font-semibold text-gray-800 mb-2 truncate flex items-center justify-center h-8">--</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wide border-t border-gray-100 pt-1">Fonte dos Dados</div>
+                            </div>
+                            <div class="text-center">
+                                <div id="responsavel" class="text-xs font-semibold text-gray-800 mb-2 truncate flex items-center justify-center h-8">--</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wide border-t border-gray-100 pt-1">Responsável</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-    // DADOS DE FALLBACK AJUSTADOS - incluindo dados com tipo_dado: META
-    const fallbackData = [
+    // URL DO SEU APPS SCRIPT
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyK7ZP6kE-yhep_vlu4jHmp4BfYMCNx4KUbMsmrNADAKVBtKyA0hJmc6Yoqv2_AAyLW/exec';
+    
+    // LISTA DE INDICADORES PARA COLETA (mantida igual)
+    const INDICADORES_COLETA = [
         {
-            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
-            "#": 1.1,
-            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
-            "FÓRMULA": "% da população de 15 a 17 anos que frequenta o EM regular ou possui educação básica completa no estado do RJ",
-            "FONTE DOS DADOS": "PNADC",
-            "EMAIL PESSOA RESPONSÁVEL": 0.0,
-            "SUPINTENDÊNCIA": "SUPLAN ",
-            "SUBSECRETARIA": "SUBPAE",
-            "PERIODICIDADE DE MEDIÇÃO": "Trimestral",
-            "GRANDEZA": "%",
-            "POLARIDADE": "⬆️",
-            "VALOR ATUAL": 0.85,
-            "Status": "Dentro do esperado",
-            "REFERENCIAL DA META": "Considera meta prevista e pactuada pelo PNE 2014-2024",
-            "DOUBLE CHECK": "ok",
-            "OBSERVAÇÕES": "Se o indicador é trimestral, conseguimos um número atualizado?",
-            "BASE DE DADOS": 0.0,
-            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
-            "INDICADOR": "Nível Desconhecido",
-            "valor": 0.739,
-            "tipo_dado": "VALOR",
-            "ano": 2019
+            id: 'PROF_FORMADOS_EE',
+            nome: 'Profissionais formados na EE',
+            formula: 'Σ Docentes e Profissionais com Formação na Educação Especial (120h)',
+            periodicidade: 'Mensal',
+            responsavel: 'SUPPEE'
         },
         {
-            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
-            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
-            "valor": 0.82,
-            "tipo_dado": "VALOR",
-            "ano": 2021
+            id: 'ESCOLAS_COM_AEE',
+            nome: 'Escolas com salas de AEE',
+            formula: '(Nº de Escolas com salas AEE / Nº total de Escolas ) * 100',
+            periodicidade: 'Anual',
+            responsavel: 'SUPPEE'
         },
         {
-            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
-            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
-            "valor": 0.85,
-            "tipo_dado": "VALOR",
-            "ano": 2022
+            id: 'NUM_RECURSOS_MULTIFUNC',
+            nome: 'Número de recursos multifuncionais e tecnologias assistivas',
+            formula: 'Σ Escolas com recursos multifuncionais',
+            periodicidade: 'Semestral',
+            responsavel: 'SUPPEE'
         },
         {
-            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
-            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
-            "valor": 0.87,
-            "tipo_dado": "VALOR",
-            "ano": 2023
-        },
-        {
-            "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
-            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
-            "valor": 0.89,
-            "tipo_dado": "VALOR",
-            "ano": 2024
-        },
-        {
-            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
-            "valor": 0.95,
-            "tipo_dado": "META",
-            "ano": 2025
-        },
-        {
-            "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
-            "valor": 0.98,
-            "tipo_dado": "META",
-            "ano": 2026
-        },
-        {
-            "OBJETIVO ESTRATÉGICO": "Infraestrutura",
-            "#": 2.1,
-            "INDICADORES": "Salas de aula climatizadas",
-            "FÓRMULA": "Percentual de salas de aula utilizadas climatizadas na rede",
-            "FONTE DOS DADOS": "Censo escolar / Dados internos SUPIE",
-            "EMAIL PESSOA RESPONSÁVEL": 0.0,
-            "SUPINTENDÊNCIA": "SUPIE",
-            "SUBSECRETARIA": "SUBAD",
-            "PERIODICIDADE DE MEDIÇÃO": "Mensal",
-            "GRANDEZA": "%",
-            "POLARIDADE": "⬆️",
-            "VALOR ATUAL": 0.91,
-            "Status": "Meta 2025 alcançada",
-            "REFERENCIAL DA META": "Meta do plano de climatização",
-            "DOUBLE CHECK": "ok",
-            "OBSERVAÇÕES": "",
-            "BASE DE DADOS": 0.0,
-            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
-            "INDICADOR": "Estratégico",
-            "valor": 0.75,
-            "tipo_dado": "VALOR",
-            "ano": 2019
-        },
-        {
-            "INDICADORES": "Salas de aula climatizadas",
-            "valor": 0.82,
-            "tipo_dado": "VALOR",
-            "ano": 2021
-        },
-        {
-            "INDICADORES": "Salas de aula climatizadas",
-            "valor": 0.88,
-            "tipo_dado": "VALOR",
-            "ano": 2023
-        },
-        {
-            "INDICADORES": "Salas de aula climatizadas",
-            "valor": 0.95,
-            "tipo_dado": "META",
-            "ano": 2025
-        },
-        {
-            "INDICADORES": "Salas de aula climatizadas",
-            "valor": 1.0,
-            "tipo_dado": "META",
-            "ano": 2026
-        },
-        {
-            "OBJETIVO ESTRATÉGICO": "Infraestrutura",
-            "#": 2.2,
-            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
-            "FÓRMULA": "[∑{se [(Velocidade da Internet contratada / Máx(número de matrículas por turno))​≥1 Mbps] então 1 senão 0}]/1198*100",
-            "FONTE DOS DADOS": "SUPTI",
-            "EMAIL PESSOA RESPONSÁVEL": 0.0,
-            "SUPINTENDÊNCIA": "SUPTI",
-            "SUBSECRETARIA": "SUBPAE",
-            "PERIODICIDADE DE MEDIÇÃO": "Semestral",
-            "GRANDEZA": "%",
-            "POLARIDADE": "⬆️",
-            "VALOR ATUAL": 0.0,
-            "Status": "Dados em coleta",
-            "REFERENCIAL DA META": "Meta do plano de conectividade",
-            "DOUBLE CHECK": "pendente",
-            "OBSERVAÇÕES": "Aguardando dados atualizados",
-            "BASE DE DADOS": 0.0,
-            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
-            "INDICADOR": "Estratégico",
-            "valor": 0.45,
-            "tipo_dado": "VALOR",
-            "ano": 2019
-        },
-        {
-            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
-            "valor": 0.55,
-            "tipo_dado": "VALOR",
-            "ano": 2022
-        },
-        {
-            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
-            "valor": 0.70,
-            "tipo_dado": "META",
-            "ano": 2025
-        },
-        {
-            "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
-            "valor": 0.85,
-            "tipo_dado": "META",
-            "ano": 2026
-        },
-        {
-            "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
-            "#": 4.4,
-            "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
-            "FÓRMULA": "Nº de Premiações recebidas pela rede",
-            "FONTE DOS DADOS": "Olimpiando",
-            "EMAIL PESSOA RESPONSÁVEL": 0.0,
-            "SUPINTENDÊNCIA": "SUPAA",
-            "SUBSECRETARIA": "SUBGEN",
-            "PERIODICIDADE DE MEDIÇÃO": "Anual",
-            "GRANDEZA": "Nº",
-            "POLARIDADE": "⬆️",
-            "VALOR ATUAL": 0.0,
-            "Status": "Indicador em coleta",
-            "REFERENCIAL DA META": "Aumentar em 5% o número de premiações por ano ",
-            "DOUBLE CHECK": "ok",
-            "OBSERVAÇÕES": "Repensar periodicidade",
-            "BASE DE DADOS": 0.0,
-            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
-            "INDICADOR": "Nível Desconhecido",
-            "valor": 1804.0,
-            "tipo_dado": "VALOR",
-            "ano": 2024
-        },
-        {
-            "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
-            "valor": 1894.2,
-            "tipo_dado": "META",
-            "ano": 2025
-        },
-        {
-            "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
-            "valor": 1988.9,
-            "tipo_dado": "META",
-            "ano": 2026
-        },
-        {
-            "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
-            "#": 5.1,
-            "INDICADORES": "Profissionais formados na EE",
-            "FÓRMULA": "Σ Docentes e Profissionais com Formação na Educação Especial (120h)",
-            "FONTE DOS DADOS": "LabEaD / Moodle",
-            "EMAIL PESSOA RESPONSÁVEL": 0.0,
-            "SUPINTENDÊNCIA": "SUPPEE",
-            "SUBSECRETARIA": "SUBPAE",
-            "PERIODICIDADE DE MEDIÇÃO": "Mensal",
-            "GRANDEZA": "Nº",
-            "POLARIDADE": "⬆️",
-            "VALOR ATUAL": 0.0,
-            "Status": "Indicador em coleta",
-            "REFERENCIAL DA META": "Prevê 90% de conclusão da carga horária nos inscritos em 2 cursos para 2025, além de um incremento de 20% em 2026.",
-            "DOUBLE CHECK": "ok",
-            "OBSERVAÇÕES": "Coletar dados atualizados!",
-            "BASE DE DADOS": 0.0,
-            "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
-            "INDICADOR": "Nível Desconhecido",
-            "valor": 622.0,
-            "tipo_dado": "VALOR",
-            "ano": 2024
-        },
-        {
-            "INDICADORES": "Profissionais formados na EE",
-            "valor": 746.4,
-            "tipo_dado": "META",
-            "ano": 2025
-        },
-        {
-            "INDICADORES": "Profissionais formados na EE",
-            "valor": 895.7,
-            "tipo_dado": "META",
-            "ano": 2026
+            id: 'AMPLIACAO_NAPS',
+            nome: 'Ampliação NAPS',
+            formula: 'Σ número de formações do NAPS',
+            periodicidade: 'Semestral',
+            responsavel: 'SUPPEE'
         }
     ];
-
-    // Variáveis globais para busca
-    let allIndicatorsData = null;
-    let currentIndicatorName = null;
-
+    
+    // VARIÁVEIS GLOBAIS
+    let currentChartType = 'bar';
+    let currentIndicatorData = null;
+    let currentGrandeza = '';
+    let allIndicatorsData = {};
+    let showMetas = true;
+    
+    const colors = {
+        primary: '#003d7a',
+        chartLine: '#2196F3',
+        current: '#003d7a',
+        grid: '#e5e7eb',
+        text: '#374151',
+        textLight: '#6b7280',
+        meta2025: '#9370db',
+        meta2026: '#87cefa'
+    };
+    
+    // FUNÇÕES BÁSICAS
     function getUrlParams() {
         const params = new URLSearchParams(window.location.search);
         return {
-            indicador: params.get('indicador')
+            indicador: params.get('indicador'),
+            id: params.get('id')
         };
     }
-
-    function navigate(path) {
-        if (path.startsWith('?')) {
-            const targetPage = path.includes('dashboard') ? 'index.html' : 'detalhe.html';
-            window.location.href = `${targetPage}${path}`;
-            return;
-        }
-        window.location.href = path;
-    }
-
-    // FUNÇÃO FORMATVALUE CORRIGIDA - COM 1 CASA DECIMAL
+    
     function formatValue(value, grandeza, decimals = 1) {
-        if (value === null || value === undefined) return 'N/A';
+        if (value === null || value === undefined || value === 0) return 'N/A';
         const isPercentage = grandeza === '%';
-
-        if (isPercentage) {
-            // Para percentuais: multiplicar por 100 e formatar com 1 casa decimal
-            return (value * 100).toFixed(1).replace('.', ',') + '%';
-        }
-        
-        // Para números: formatar com 1 casa decimal
-        if (typeof value === 'number') {
-            // Se for número inteiro grande, formatar com separador de milhar e 1 casa decimal
-            if (value >= 1000) {
-                return value.toFixed(1).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            }
-            // Para números menores, apenas 1 casa decimal
-            return value.toFixed(1).replace('.', ',');
-        }
-        
+        if (isPercentage) return (value * 100).toFixed(decimals).replace('.', ',') + '%';
+        if (typeof value === 'number') return value.toFixed(decimals).replace('.', ',');
         return value.toString();
     }
-
-    function getStatusColor(status) {
-        const normalizedStatus = normalizeStatus(status);
-
-        switch (normalizedStatus) {
-            case 'Dentro do esperado':
-            case 'Meta 2025 alcançada':
-                return 'var(--color-positive)';
-            case 'Abaixo do esperado':
-                return 'var(--color-negative)';
-            case 'Dados em Coleta':
-            case 'Indicador em coleta':
-                return 'var(--color-gray)';
-            default:
-                return 'var(--color-text-light)';
-        }
-    }
-
+    
     function normalizeStatus(status) {
         if (!status) return 'Dados em Coleta';
-
         const normalizedStatus = status.toString().trim();
-
         if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' ||
             normalizedStatus === 'Dados em Coleta' || normalizedStatus === 'Indicador em coleta') {
             return 'Dados em Coleta';
         }
-
         return normalizedStatus;
     }
-
-    function getStatusClass(status) {
+    
+    function getStatusColor(status) {
         const normalizedStatus = normalizeStatus(status);
-
         switch (normalizedStatus) {
-            case 'Dentro do esperado':
-                return 'status-positive';
-            case 'Meta 2025 alcançada':
-                return 'status-positive';
-            case 'Abaixo do esperado':
-                return 'status-negative';
-            case 'Dados em Coleta':
-                return 'status-gray';
-            default:
-                return 'status-gray';
+            case 'Dentro do esperado': return '#00f729';
+            case 'Meta 2025 alcançada': return '#2e7d32';
+            case 'Abaixo do esperado': return '#c62828';
+            case 'Dados em Coleta': return '#9e9e9e';
+            default: return '#6b7280';
         }
     }
-
-    function loadData() {
+    
+    // FUNÇÃO PARA OBTER ÍCONES DOS OBJETIVOS (igual ao index.html)
+    function getObjectiveIcon(objName) {
+        if (!objName) return '<span class="material-symbols-outlined text-gray-400">target</span>';
+        
+        switch(objName.trim()) {
+            case "Acesso à Educação":
+                return '<span class="material-symbols-outlined text-blue-600">key</span>';
+            case "Infraestrutura":
+                return '<span class="material-symbols-outlined text-teal-600">foundation</span>';
+            case "Permanência":
+                return '<span class="material-symbols-outlined text-green-600">trending_up</span>';
+            case "Aprendizagem Equitativa":
+                return '<span class="material-symbols-outlined text-purple-600">interactive_space</span>';
+            case "Educação Inclusiva e Acessível":
+                return '<span class="material-symbols-outlined text-indigo-600">accessibility</span>';
+            case "Regime de Colaboração":
+                return '<span class="material-symbols-outlined text-orange-600">handshake</span>';
+            case "Saúde e bem-estar":
+                return '<span class="material-symbols-outlined text-pink-600">favorite</span>';
+            case "Qualidade":
+                return '<span class="material-symbols-outlined text-yellow-600">star</span>';
+            case "Eficiência Operacional":
+                return '<span class="material-symbols-outlined text-cyan-600">settings</span>';
+            case "Gestão de Pessoas":
+                return '<span class="material-symbols-outlined text-red-600">groups</span>';
+            case "Tecnologia e Inovação":
+                return '<span class="material-symbols-outlined text-blue-400">smart_toy</span>';
+            case "Finanças":
+                return '<span class="material-symbols-outlined text-green-700">payments</span>';
+            case "Comunicação":
+                return '<span class="material-symbols-outlined text-purple-400">campaign</span>';
+            case "Sustentabilidade":
+                return '<span class="material-symbols-outlined text-emerald-600">eco</span>';
+            case "Segurança":
+                return '<span class="material-symbols-outlined text-gray-700">shield</span>';
+            case "Desenvolvimento Profissional":
+                return '<span class="material-symbols-outlined text-blue-700">school</span>';
+            case "Monitoramento e Avaliação":
+                return '<span class="material-symbols-outlined text-indigo-400">analytics</span>';
+            case "Planejamento":
+                return '<span class="material-symbols-outlined text-orange-400">calendar_month</span>';
+            case "Gestão Estratégica":
+                return '<span class="material-symbols-outlined text-gray-800">strategy</span>';
+            default:
+                return '<span class="material-symbols-outlined text-gray-500">target</span>';
+        }
+    }
+    
+    // FUNÇÕES DE CARREGAMENTO DE DADOS - AGORA BUSCA DO INDEX
+    async function loadData() {
         try {
+            // Tenta carregar do localStorage (mesmo usado pelo index.html)
             const storedData = localStorage.getItem('dashboardData');
             if (storedData) {
+                console.log('Carregando dados do localStorage compartilhado com index.html');
                 return JSON.parse(storedData);
             }
-        } catch (e) {
-            console.log('Erro ao carregar do localStorage, usando fallback');
-        }
-        return fallbackData;
-    }
-
-    // FUNÇÃO CORRIGIDA: getCurrentValue com fallbacks múltiplos
-    function getCurrentValue(indicatorData) {
-        // Prioridade 1: VALOR ATUAL dos detalhes
-        if (indicatorData.details && indicatorData.details["VALOR ATUAL"] !== undefined) {
-            const valorAtual = indicatorData.details["VALOR ATUAL"];
-            if (valorAtual !== null && valorAtual !== undefined) {
-                return {
-                    value: valorAtual,
-                    year: new Date().getFullYear()
-                };
-            }
-        }
-
-        // Prioridade 2: Último valor histórico (tipo_dado: VALOR)
-        if (indicatorData.history && indicatorData.history.length > 0) {
-            // Filtrar apenas valores, não metas
-            const valoresHistoricos = indicatorData.history.filter(item => 
-                item.tipo_dado === 'VALOR' || item.tipo_dado === undefined
-            );
             
-            if (valoresHistoricos.length > 0) {
-                const sortedHistory = [...valoresHistoricos].sort((a, b) => b.year - a.year);
-                const latest = sortedHistory[0];
-
-                if (latest.value !== null && latest.value !== undefined) {
-                    return {
-                        value: latest.value,
-                        year: latest.year
-                    };
+            // Se não encontrar no localStorage, tenta buscar dados mockados como fallback
+            console.log('Buscando dados mockados como fallback');
+            
+            // Tenta encontrar dados em diferentes chaves do localStorage
+            const possibleKeys = ['dashboardDataNew', 'indicadoresData', 'rawData'];
+            for (const key of possibleKeys) {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    console.log(`Encontrado dados na chave ${key}`);
+                    return JSON.parse(data);
                 }
             }
+            
+            // Último recurso: verifica se há algum dado na página
+            console.warn('Nenhum dado encontrado no localStorage. Exibindo mensagem de erro.');
+            return [];
+            
+        } catch (error) {
+            console.error('Erro ao carregar dados:', error);
+            return [];
         }
-
-        // Prioridade 3: Tentar extrair de outros campos
-        if (indicatorData.details) {
-            for (let key in indicatorData.details) {
-                const val = indicatorData.details[key];
-                if (typeof val === 'number' && !isNaN(val) && key !== '#') {
-                    return {
-                        value: val,
-                        year: new Date().getFullYear()
-                    };
-                }
-            }
-        }
-
-        // Fallback: retornar zero
-        return {
-            value: 0,
-            year: new Date().getFullYear()
-        };
     }
-
+    
+    function extractHistoryFromIndicator(indicator) {
+        // Extrai valores temporais de VALOR_1 a VALOR_6
+        const history = [];
+        
+        for (let i = 1; i <= 6; i++) {
+            const valorKey = `VALOR_${i}`;
+            if (indicator[valorKey] && indicator[valorKey].valor !== null && indicator[valorKey].valor !== undefined) {
+                history.push({
+                    periodo: indicator[valorKey].periodo,
+                    valor: indicator[valorKey].valor,
+                    referencia: indicator[valorKey].referencia,
+                    eh_data_base: indicator[valorKey].eh_data_base,
+                    ordem_temporal: indicator[valorKey].ordem_temporal,
+                    mes: indicator[valorKey].mes,
+                    ano: indicator[valorKey].ano,
+                    trimestre: indicator[valorKey].trimestre,
+                    semestre: indicator[valorKey].semestre
+                });
+            }
+        }
+        
+        // ORDENA DO MAIS RECENTE (VALOR_1) PARA O MAIS ANTIGO (VALOR_6)
+        return history.sort((a, b) => a.ordem_temporal - b.ordem_temporal);
+    }
+    
     function groupDataByIndicator(data) {
         const grouped = {};
-
-        data.forEach(item => {
-            const indicatorName = item.INDICADORES;
+        
+        data.forEach(indicator => {
+            const indicatorName = indicator.INDICADORES;
             if (!indicatorName) return;
-
+            
             if (!grouped[indicatorName]) {
                 grouped[indicatorName] = {
-                    details: item,
-                    history: [],
-                    metas: [] // NOVO: array separado para metas
+                    details: indicator,
+                    history: extractHistoryFromIndicator(indicator),
+                    metas: indicator.METAS || {}
                 };
             }
-
-            // Adicionar histórico se for VALOR ou se não tiver tipo_dado definido
-            if ((item.tipo_dado === 'VALOR' || item.tipo_dado === undefined) && 
-                item.valor !== null && item.valor !== undefined) {
-                if (item.ano && item.valor !== undefined) {
-                    grouped[indicatorName].history.push({
-                        year: item.ano,
-                        value: item.valor,
-                        tipo_dado: item.tipo_dado || 'VALOR'
-                    });
-                }
-            }
-            
-            // NOVO: Adicionar metas se tipo_dado for META
-            if (item.tipo_dado === 'META' && item.valor !== null && item.valor !== undefined) {
-                if (item.ano && item.valor !== undefined) {
-                    grouped[indicatorName].metas.push({
-                        year: item.ano,
-                        value: item.valor,
-                        tipo_dado: 'META'
-                    });
-                }
-            }
-
-            if (item.SUPINTENDÊNCIA || item.OBJETIVO_ESTRATÉGICO) {
-                grouped[indicatorName].details = { ...grouped[indicatorName].details, ...item };
-            }
         });
-
-        Object.keys(grouped).forEach(key => {
-            // Ordenar histórico
-            const historyMap = new Map();
-            grouped[key].history.forEach(item => historyMap.set(item.year, item));
-            grouped[key].history = Array.from(historyMap.values()).sort((a, b) => a.year - b.year);
-            
-            // Ordenar metas
-            const metasMap = new Map();
-            grouped[key].metas.forEach(item => metasMap.set(item.year, item));
-            grouped[key].metas = Array.from(metasMap.values()).sort((a, b) => a.year - b.year);
-
-            const currentValueInfo = getCurrentValue(grouped[key]);
-            if (currentValueInfo) {
-                grouped[key].currentValue = currentValueInfo.value;
-                grouped[key].currentYear = currentValueInfo.year;
-            }
-        });
-
+        
         return grouped;
     }
-
-    // FUNÇÕES DE BUSCA
-    function toggleSearch() {
-        const dropdown = document.getElementById('search-dropdown');
-        dropdown.classList.toggle('show');
+    
+    // FUNÇÕES DE COLETA DE DADOS (mantidas iguais)
+    function abrirModalColeta() {
+        const modal = document.getElementById('coleta-modal');
+        const container = document.getElementById('coleta-content');
         
-        if (dropdown.classList.contains('show')) {
-            // Focar no campo de busca quando abrir
-            setTimeout(() => {
-                document.getElementById('search-input').focus();
-            }, 100);
-            
-            // Carregar lista de indicadores para busca
-            loadSearchIndicators();
-        }
-    }
-
-    function closeSearch() {
-        const dropdown = document.getElementById('search-dropdown');
-        dropdown.classList.remove('show');
-    }
-
-    function loadSearchIndicators() {
-        if (!allIndicatorsData) {
-            const data = loadData();
-            allIndicatorsData = groupDataByIndicator(data);
-        }
-
-        const searchResults = document.getElementById('search-results');
-        const searchInput = document.getElementById('search-input');
+        container.innerHTML = criarConteudoColeta();
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
         
-        // Limpar resultados anteriores
-        searchResults.innerHTML = '';
-        
-        // Mostrar todos os indicadores inicialmente
-        Object.entries(allIndicatorsData).forEach(([name, data]) => {
-            addSearchItem(name, data);
+        document.querySelectorAll('.coleta-action-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const indicadorId = e.target.dataset.indicador;
+                const acao = e.target.dataset.acao;
+                if (acao === 'autorizar') abrirSolicitacaoTI(indicadorId);
+                else if (acao === 'inserir') abrirFormularioColeta(indicadorId);
+            });
         });
-        
-        // Limpar campo de busca
-        searchInput.value = '';
     }
-
-    function addSearchItem(name, data) {
-        const searchResults = document.getElementById('search-results');
-        
-        const isCurrent = name === currentIndicatorName;
-        const statusClass = getStatusClass(data.details.Status);
-        const displayStatus = normalizeStatus(data.details.Status);
-        const displayValue = data.currentValue !== null && data.currentValue !== undefined ?
-            formatValue(data.currentValue, data.details.GRANDEZA, 1) : 'N/A';
-
-        const item = document.createElement('div');
-        item.className = `search-item ${statusClass} ${isCurrent ? 'current' : ''}`;
-        item.onclick = () => {
-            if (!isCurrent) {
-                navigate(`?indicador=${encodeURIComponent(name)}`);
-            }
-            closeSearch();
-        };
-
-        item.innerHTML = `
-            <div class="search-item-name">${data.details['#'] || '-'} - ${name}</div>
-            <div style="display: flex; align-items: center;">
-                <div class="search-item-value">${displayValue}</div>
-                <div class="search-item-status">${displayStatus}</div>
+    
+    function criarConteudoColeta() {
+        let html = `
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 mb-3">Solicite a coleta de dados para os indicadores abaixo:</p>
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                        <div class="flex items-center space-x-2">
+                            <span class="material-symbols-outlined text-blue-600" style="font-size: 18px;">check_circle</span>
+                            <span class="text-xs font-semibold text-blue-700">Autorizar TI</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">Solicitar acesso aos dados via Superintendência de TI</p>
+                    </div>
+                    <div class="bg-orange-50 p-3 rounded-lg">
+                        <div class="flex items-center space-x-2">
+                            <span class="material-symbols-outlined text-orange-600" style="font-size: 18px;">edit</span>
+                            <span class="text-xs font-semibold text-orange-700">Inserir Valor</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">Inserir manualmente os dados disponíveis</p>
+                    </div>
+                </div>
             </div>
+            <div class="space-y-4">
         `;
-
-        searchResults.appendChild(item);
-    }
-
-    function filterIndicators() {
-        const searchInput = document.getElementById('search-input');
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const searchResults = document.getElementById('search-results');
         
-        // Limpar resultados
-        searchResults.innerHTML = '';
-        
-        if (!allIndicatorsData) return;
-        
-        // Filtrar indicadores pelo termo de busca
-        Object.entries(allIndicatorsData).forEach(([name, data]) => {
-            const indicatorNumber = data.details['#'] || '';
-            const indicatorName = name.toLowerCase();
-            const objective = (data.details['OBJETIVO ESTRATÉGICO'] || '').toLowerCase();
-            
-            // Verificar se o termo de busca corresponde a qualquer campo
-            if (indicatorName.includes(searchTerm) || 
-                indicatorNumber.toString().includes(searchTerm) ||
-                objective.includes(searchTerm) ||
-                searchTerm === '') {
-                addSearchItem(name, data);
-            }
-        });
-        
-        // Se não houver resultados, mostrar mensagem
-        if (searchResults.children.length === 0 && searchTerm !== '') {
-            searchResults.innerHTML = `
-                <div class="search-item" style="text-align: center; color: var(--color-text-light);">
-                    Nenhum indicador encontrado para "${searchTerm}"
+        INDICADORES_COLETA.forEach(indicador => {
+            html += `
+                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-800">${indicador.nome}</h4>
+                            <p class="text-xs text-gray-600 mt-1">${indicador.formula}</p>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">${indicador.periodicidade}</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-xs text-gray-500">Responsável: ${indicador.responsavel}</span>
+                        <div class="space-x-2">
+                            <a href="#" class="coleta-action-link inline-block px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                               data-indicador="${indicador.id}" data-acao="autorizar">Autorizar TI</a>
+                            <a href="#" class="coleta-action-link inline-block px-3 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
+                               data-indicador="${indicador.id}" data-acao="inserir">Inserir Valor</a>
+                        </div>
+                    </div>
                 </div>
             `;
-        }
-    }
-
-    document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('search-dropdown');
-        const button = document.querySelector('.search-button');
-        if (button && dropdown && !button.contains(event.target) && !dropdown.contains(event.target)) {
-            closeSearch();
-        }
-    });
-
-    // FUNÇÃO GERATEHYPOTHETICALGOALS CORRIGIDA - verifica primeiro se há metas no JSON
-    function generateHypotheticalGoals(indicatorData) {
-        // PRIMEIRO: Verificar se há metas definidas no JSON (tipo_dado: META)
-        if (indicatorData.metas && indicatorData.metas.length > 0) {
-            let meta2025 = null;
-            let meta2026 = null;
-            
-            // Procurar metas para 2025 e 2026
-            indicatorData.metas.forEach(meta => {
-                if (meta.year === 2025) {
-                    meta2025 = meta.value;
-                } else if (meta.year === 2026) {
-                    meta2026 = meta.value;
-                }
-            });
-            
-            // Se encontrou metas no JSON, retornar elas
-            if (meta2025 !== null || meta2026 !== null) {
-                return {
-                    meta2025: meta2025,
-                    meta2026: meta2026,
-                    hasExplicitMeta: true // Flag para identificar que veio do JSON
-                };
-            }
-        }
+        });
         
-        // SEGUNDO: Se não há metas no JSON, calcular baseado no valor atual
-        let currentValue = indicatorData.currentValue;
-
-        // Se currentValue for null/undefined, tentar outras fontes
-        if (currentValue === null || currentValue === undefined) {
-            // Tentar usar o último valor histórico (apenas VALOR, não META)
-            const valoresHistoricos = indicatorData.history ? 
-                indicatorData.history.filter(item => item.tipo_dado === 'VALOR' || item.tipo_dado === undefined) : [];
-            
-            if (valoresHistoricos.length > 0) {
-                const sortedHistory = [...valoresHistoricos].sort((a, b) => b.year - a.year);
-                currentValue = sortedHistory[0].value;
-            }
-            // Se ainda não tiver valor, usar VALOR ATUAL (mesmo que seja 0)
-            else if (indicatorData.details && indicatorData.details["VALOR ATUAL"] !== undefined) {
-                currentValue = indicatorData.details["VALOR ATUAL"];
-            }
-            else {
-                currentValue = 0;
-            }
-        }
-
-        const polaridade = indicatorData.details?.POLARIDADE || '';
-        const grandeza = indicatorData.details?.GRANDEZA || '';
-
-        let meta2025, meta2026;
-
-        if (polaridade.includes('Positiva') || polaridade.includes('⬆️') ||
-            polaridade.includes('arrow_upward') || polaridade.toString().toLowerCase().includes('positiva')) {
-            meta2025 = currentValue * 1.1; // +10%
-            meta2026 = currentValue * 1.2; // +20%
-        } else if (polaridade.includes('Negativa') || polaridade.includes('⬇️') ||
-                   polaridade.includes('arrow_downward') || polaridade.toString().toLowerCase().includes('negativa')) {
-            meta2025 = currentValue * 0.9; // -10%
-            meta2026 = currentValue * 0.8; // -20%
-        } else {
-            // Fallback para polaridade positiva
-            meta2025 = currentValue * 1.1;
-            meta2026 = currentValue * 1.2;
-        }
-
-        // FORMATAR COM 1 CASA DECIMAL
-        if (grandeza === '%') {
-            meta2025 = Math.round(meta2025 * 1000) / 1000; // 3 casas para arredondamento
-            meta2026 = Math.round(meta2026 * 1000) / 1000;
-        } else {
-            // Para números, arredondar para 1 casa decimal
-            meta2025 = Math.round(meta2025 * 10) / 10;
-            meta2026 = Math.round(meta2026 * 10) / 10;
-        }
-
-        // Calcular referência máxima (maior valor da série histórica - apenas VALORES)
-        const valoresHistoricos = indicatorData.history ? 
-            indicatorData.history.filter(item => item.tipo_dado === 'VALOR' || item.tipo_dado === undefined) : [];
-        const historyValues = valoresHistoricos.map(h => h.value);
-        const max_ref = historyValues.length > 0 ? Math.max(...historyValues) : currentValue;
-
-        return {
-            meta2025: meta2025,
-            meta2026: meta2026,
-            max_ref: max_ref,
-            hasExplicitMeta: false // Flag para identificar que foi calculada
-        };
+        html += `</div>`;
+        return html;
     }
-
-    function loadIndicatorDetails() {
-        const data = loadData();
-        const groupedData = groupDataByIndicator(data);
-        allIndicatorsData = groupedData;
-
-        const defaultIndicatorName = Object.keys(groupedData)[0];
-
-        const params = getUrlParams();
-        let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
-        currentIndicatorName = indicatorName;
-
-        if (!params.indicador && Object.keys(groupedData).length > 0) {
-            indicatorName = defaultIndicatorName;
-            currentIndicatorName = indicatorName;
-            const newUrl = `?indicador=${encodeURIComponent(defaultIndicatorName)}`;
-            window.history.replaceState(null, null, newUrl);
-        }
-
-        if (!indicatorName || !groupedData[indicatorName]) {
-            document.getElementById('indicator-name').textContent = 'Indicador não encontrado';
+    
+    function abrirSolicitacaoTI(indicadorId) {
+        const indicador = INDICADORES_COLETA.find(i => i.id === indicadorId);
+        if (!indicador) return;
+        const url = `${WEB_APP_URL}?acao=autorizar&indice=${indicadorId}`;
+        window.open(url, '_blank');
+        document.getElementById('coleta-modal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    function abrirFormularioColeta(indicadorId) {
+        const indicador = INDICADORES_COLETA.find(i => i.id === indicadorId);
+        if (!indicador) return;
+        const url = `${WEB_APP_URL}?acao=editar&indice=${indicadorId}`;
+        window.open(url, '_blank');
+        document.getElementById('coleta-modal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    // FUNÇÕES PRINCIPAIS DO PAINEL
+    function renderIndicatorMiniCards() {
+        const container = document.getElementById('indicators-grid');
+        container.innerHTML = '';
+        
+        if (Object.keys(allIndicatorsData).length === 0) {
+            container.innerHTML = `
+                <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-8">
+                    <span class="material-symbols-outlined text-gray-400 text-4xl mb-2">search_off</span>
+                    <p class="text-gray-500">Nenhum indicador encontrado</p>
+                    <p class="text-xs text-gray-400 mt-1">Volte ao painel principal para carregar os dados</p>
+                </div>
+            `;
             return;
         }
-
-        const indicatorData = groupedData[indicatorName];
-
-        const details = indicatorData.details;
-        const history = indicatorData.history.sort((a, b) => a.year - b.year);
-        const goals = generateHypotheticalGoals(indicatorData);
-
-        // ATUALIZAÇÃO DA POLARIDADE
-        const polarityElement = document.getElementById('detail-polaridade');
-        polarityElement.innerHTML = '';
-
-        const polaridade = (details.POLARIDADE || '').toString().trim();
-
-        if (polaridade.includes('⬆️') || polaridade.includes('Positiva') ||
-            polaridade.includes('arrow_upward') || polaridade.includes('+') ||
-            polaridade.toLowerCase().includes('positiva')) {
-
-            const icon = document.createElement('span');
-            icon.className = 'material-symbols-outlined';
-            icon.style.cssText = 'color: var(--color-positive); font-size: 24px; vertical-align: middle;';
-            icon.textContent = 'arrow_upward';
-            polarityElement.appendChild(icon);
-
-        } else if (polaridade.includes('⬇️') || polaridade.includes('Negativa') ||
-                   polaridade.includes('arrow_downward') || polaridade.includes('-') ||
-                   polaridade.toLowerCase().includes('negativa')) {
-
-            const icon = document.createElement('span');
-            icon.className = 'material-symbols-outlined';
-            icon.style.cssText = 'color: var(--color-negative); font-size: 24px; vertical-align: middle;';
-            icon.textContent = 'arrow_downward';
-            polarityElement.appendChild(icon);
-
-        } else {
-            polarityElement.textContent = '--';
-        }
-
-        // ATUALIZAR O TÍTULO NO CARD DO GRÁFICO
-        document.getElementById('indicator-name').textContent = details.INDICADORES;
-
-        document.getElementById('detail-grandeza').textContent = details.GRANDEZA || '--';
-        document.getElementById('detail-periodicidade').textContent = details['PERIODICIDADE DE MEDIÇÃO'] || '--';
-
-        // METAS - usar valores do JSON se disponíveis, senão usar os calculados
-        const meta2025Value = goals.meta2025 !== null && goals.meta2025 !== undefined ?
-            formatValue(goals.meta2025, details.GRANDEZA, 1) : 'N/A'; // 1 casa decimal
-        const meta2026Value = goals.meta2026 !== null && goals.meta2026 !== undefined ?
-            formatValue(goals.meta2026, details.GRANDEZA, 1) : 'N/A'; // 1 casa decimal
-
-        document.getElementById('meta-2025-value-box').textContent = meta2025Value;
-        document.getElementById('meta-2026-value-box').textContent = meta2026Value;
-
-        // Adicionar tooltip para mostrar fonte da meta
-        const meta2025Element = document.querySelector('.meta-2025 .meta-value');
-        const meta2026Element = document.querySelector('.meta-2026 .meta-value');
         
-        if (meta2025Element && goals.hasExplicitMeta) {
-            meta2025Element.title = 'Meta extraída do banco de dados';
-        }
-        if (meta2026Element && goals.hasExplicitMeta) {
-            meta2026Element.title = 'Meta extraída do banco de dados';
-        }
-
-        // Adicionar estilo visual para destacar quando as metas são zero
-        if (goals.meta2025 === 0) {
-            document.querySelector('.meta-2025 .meta-value').style.color = 'var(--color-text-light)';
-        }
-        if (goals.meta2026 === 0) {
-            document.querySelector('.meta-2026 .meta-value').style.color = 'var(--color-text-light)';
-        }
-
-        const statusCard = document.getElementById('status-card');
-        const displayStatus = normalizeStatus(details.Status);
-        document.getElementById('status-value').textContent = displayStatus || '--';
-
-        const statusColor = getStatusColor(details.Status);
-        statusCard.style.borderTop = `4px solid ${statusColor}`;
-        document.getElementById('status-value').style.color = statusColor;
-
-        document.getElementById('objetivo-estrategico').textContent = details['OBJETIVO ESTRATÉGICO'] || '--';
-        document.getElementById('referencial-meta').textContent =
-            details['REFERENCIAL DA META'] || 'Baseado em crescimento histórico';
-        document.getElementById('formula-content').textContent = details.FÓRMULA || 'Fórmula não especificada';
-        document.getElementById('fonte-dados').textContent = details['FONTE DOS DADOS'] || '--';
-        document.getElementById('responsavel').textContent = details.SUPINTENDÊNCIA || '--';
-
-        renderChart(history, details.GRANDEZA, indicatorData);
+        Object.keys(allIndicatorsData).forEach(indicatorName => {
+            const indicator = allIndicatorsData[indicatorName];
+            const details = indicator.details;
+            
+            // Pega o valor mais recente (VALOR_1)
+            const currentValue = indicator.history.length > 0 
+                ? indicator.history.find(h => h.ordem_temporal === 1)?.valor 
+                : 0;
+            
+            const status = normalizeStatus(details.Status);
+            const statusColor = getStatusColor(details.Status);
+            
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer';
+            card.dataset.indicator = indicatorName;
+            
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-2">
+                    <div class="text-xs text-gray-500 font-semibold">${details['#'] || ''}</div>
+                    <div class="text-xs px-2 py-1 rounded-full" style="background-color: ${statusColor}20; color: ${statusColor};">
+                        ${status}
+                    </div>
+                </div>
+                <h4 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2">${indicatorName}</h4>
+                <div class="text-xs text-gray-600 mb-3 line-clamp-1">${details['OBJETIVO ESTRATÉGICO'] || ''}</div>
+                <div class="flex justify-between items-center">
+                    <div class="text-xs text-gray-500">
+                        Valor atual: <span class="font-semibold">${formatValue(currentValue, details.GRANDEZA || '', 2)}</span>
+                    </div>
+                    <div class="text-xs text-gray-500">${details['PERIODICIDADE DE MEDIÇÃO'] || ''}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                const url = new URL(window.location);
+                url.searchParams.set('indicador', encodeURIComponent(indicatorName));
+                window.location.href = url.toString();
+            });
+            
+            container.appendChild(card);
+        });
     }
-
-    function renderChart(history, grandeza, indicatorData) {
-        const chartSvg = document.getElementById('chart-svg');
-        const dataPointsContainer = document.getElementById('data-points-container');
-        const yAxisContainer = document.getElementById('y-axis-container');
-        const xAxisLabelsContainer = document.getElementById('x-axis-labels-container');
-        const gridLinesContainer = document.getElementById('grid-lines-container');
-        const barValuesContainer = document.getElementById('bar-values-container');
-
-        chartSvg.innerHTML = '';
-        dataPointsContainer.innerHTML = '';
-        yAxisContainer.innerHTML = '';
-        xAxisLabelsContainer.innerHTML = '';
-        gridLinesContainer.innerHTML = '';
-        if (barValuesContainer) barValuesContainer.innerHTML = '';
-
-        // Filtrar apenas dados do tipo VALOR para o gráfico (excluir metas)
-        let chartData = history.filter(item => item.tipo_dado === 'VALOR' || item.tipo_dado === undefined);
-
-        const currentYear = new Date().getFullYear();
-        const hasCurrentYearInHistory = chartData.some(item => item.year === currentYear);
-
-        if (indicatorData.currentValue !== null && indicatorData.currentValue !== undefined &&
-            !hasCurrentYearInHistory && indicatorData.currentYear === currentYear) {
-            chartData.push({
-                year: currentYear,
-                value: indicatorData.currentValue,
-                isCurrent: true,
-                tipo_dado: 'VALOR'
-            });
-        } else if (hasCurrentYearInHistory) {
-            chartData = chartData.map(item => {
-                if (item.year === currentYear) {
-                    return { ...item, isCurrent: true };
+    
+    async function loadIndicatorDetails() {
+        try {
+            const data = await loadData();
+            
+            if (!data || data.length === 0) {
+                document.getElementById('indicator-name').textContent = 'Nenhum dado encontrado';
+                document.getElementById('objetivo-texto').textContent = 'Volte ao painel principal para carregar os dados';
+                return;
+            }
+            
+            const groupedData = groupDataByIndicator(data);
+            allIndicatorsData = groupedData;
+            
+            const params = getUrlParams();
+            let indicatorName = decodeURIComponent(params.indicador || '');
+            
+            // Se não tem nome no URL, usa o primeiro indicador disponível
+            if (!indicatorName || !groupedData[indicatorName]) {
+                indicatorName = Object.keys(groupedData)[0];
+                if (indicatorName) {
+                    // Atualiza o URL sem recarregar
+                    const url = new URL(window.location);
+                    url.searchParams.set('indicador', encodeURIComponent(indicatorName));
+                    window.history.replaceState({}, '', url);
                 }
-                return item;
-            });
+            }
+            
+            if (!indicatorName || !groupedData[indicatorName]) {
+                document.getElementById('indicator-name').textContent = 'Indicador não encontrado';
+                document.getElementById('objetivo-texto').textContent = 'Selecione um indicador válido';
+                return;
+            }
+            
+            const indicatorData = groupedData[indicatorName];
+            currentIndicatorData = indicatorData;
+            const details = indicatorData.details;
+            const history = indicatorData.history; // Já vem ordenado do mais recente para o mais antigo
+            currentGrandeza = details.GRANDEZA || '';
+            
+            // Atualizar nome do indicador
+            document.getElementById('indicator-name').textContent = details.INDICADORES;
+            
+            // Atualizar polaridade
+            const polarityElement = document.getElementById('detail-polaridade');
+            polarityElement.innerHTML = '';
+            const polaridade = (details.POLARIDADE || '').toString().trim();
+            if (polaridade.includes('⬆️') || polaridade.toLowerCase().includes('positiva')) {
+                const icon = document.createElement('span');
+                icon.className = 'material-symbols-outlined';
+                icon.style.cssText = 'color: #2e7d32; font-size: 20px;';
+                icon.textContent = 'arrow_upward';
+                polarityElement.appendChild(icon);
+            } else if (polaridade.includes('⬇️') || polaridade.toLowerCase().includes('negativa')) {
+                const icon = document.createElement('span');
+                icon.className = 'material-symbols-outlined';
+                icon.style.cssText = 'color: #c62828; font-size: 20px;';
+                icon.textContent = 'arrow_downward';
+                polarityElement.appendChild(icon);
+            } else {
+                polarityElement.textContent = '--';
+            }
+            
+            // Atualizar outros detalhes
+            document.getElementById('detail-grandeza').textContent = details.GRANDEZA || '--';
+            document.getElementById('detail-periodicidade').textContent = details['PERIODICIDADE DE MEDIÇÃO'] || '--';
+            
+            // Atualizar objetivo estratégico COM ÍCONE
+            const objetivoEstrategico = details['OBJETIVO ESTRATÉGICO'] || '--';
+            const objetivoIcon = getObjectiveIcon(objetivoEstrategico);
+            document.getElementById('objetivo-icon').innerHTML = objetivoIcon;
+            document.getElementById('objetivo-texto').textContent = objetivoEstrategico;
+            
+            // Atualizar outras informações
+            document.getElementById('referencial-meta').textContent = details['REFERENCIAL DA META'] || 'Baseado em crescimento histórico';
+            document.getElementById('formula-content').textContent = details.FÓRMULA || 'Fórmula não especificada';
+            document.getElementById('fonte-dados').textContent = details['FONTE DOS DADOS'] || '--';
+            
+            // Responsável: usar SUPINTENDÊNCIA ou SUBSECRETARIA
+            const responsavel = details.SUPINTENDÊNCIA || details.SUBSECRETARIA || '--';
+            document.getElementById('responsavel').textContent = responsavel;
+            
+            // Atualizar metas
+            const meta2025 = details.METAS?.META_2025?.valor || details['META 2025'] || null;
+            const meta2026 = details.METAS?.META_2026?.valor || details['META 2026'] || null;
+            
+            document.getElementById('meta-2025-value-box').textContent = formatValue(meta2025, details.GRANDEZA || '', 1);
+            document.getElementById('meta-2026-value-box').textContent = formatValue(meta2026, details.GRANDEZA || '', 1);
+            
+            // Atualizar status
+            const displayStatus = normalizeStatus(details.Status);
+            document.getElementById('status-value').textContent = displayStatus || '--';
+            const statusColor = getStatusColor(details.Status);
+            document.getElementById('status-card').style.borderTopColor = statusColor;
+            document.getElementById('status-value').style.color = statusColor;
+            
+            // Ajustar alturas
+            adjustDynamicBoxHeights();
+            
+            // Renderizar gráfico
+            renderChart(history, meta2025, meta2026);
+            
+        } catch (error) {
+            console.error('Erro ao carregar detalhes do indicador:', error);
+            document.getElementById('indicator-name').textContent = 'Erro ao carregar dados';
+            document.getElementById('objetivo-texto').textContent = 'Ocorreu um erro ao carregar os dados do indicador';
         }
-
-        const sortedData = chartData.sort((a, b) => a.year - b.year);
-        const dataCount = sortedData.length;
-
-        if (dataCount === 0) {
-            chartSvg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="12px">Sem dados históricos</text>';
+    }
+    
+    function adjustDynamicBoxHeights() {
+        const boxes = ['objetivo-texto', 'referencial-meta', 'formula-content'];
+        boxes.forEach(elementId => {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const content = element.textContent;
+            const length = content.length;
+            
+            // Limpar classes anteriores
+            element.classList.remove('-webkit-line-clamp-2', '-webkit-line-clamp-3', '-webkit-line-clamp-4', '-webkit-line-clamp-5', '-webkit-line-clamp-6');
+            
+            // Aplicar classe baseada no tamanho do texto
+            if (length < 50) element.classList.add('-webkit-line-clamp-2');
+            else if (length < 100) element.classList.add('-webkit-line-clamp-3');
+            else if (length < 150) element.classList.add('-webkit-line-clamp-4');
+            else if (length < 200) element.classList.add('-webkit-line-clamp-5');
+            else element.classList.add('-webkit-line-clamp-6');
+        });
+    }
+    
+    function renderChart(history, meta2025, meta2026) {
+        const svg = document.getElementById('chart-svg');
+        svg.innerHTML = '';
+        
+        const container = document.getElementById('chart-container');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        if (history.length === 0) {
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', '50%');
+            text.setAttribute('y', '50%');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('fill', '#9ca3af');
+            text.setAttribute('font-size', '12px');
+            text.textContent = 'Sem dados temporais';
+            svg.appendChild(text);
             return;
         }
-
-        const values = sortedData.map(h => h.value);
-
+        
+        // Preparar dados para o gráfico - JÁ VÊM ORDENADOS DO MAIS RECENTE PARA O MAIS ANTIGO
+        const chartData = history.map(item => ({
+            label: item.periodo || item.referencia || `Período ${item.ordem_temporal}`,
+            value: item.valor,
+            ordem: item.ordem_temporal,
+            eh_data_base: item.eh_data_base,
+            referencia: item.referencia
+        }));
+        
+        const values = chartData.map(d => d.value);
         const minVal = Math.min(...values);
         const maxVal = Math.max(...values);
-        const range = maxVal - minVal;
-        const padding = range * 0.1 || (minVal === 0 ? 0.05 : minVal * 0.1);
-        const yMin = Math.max(0, minVal - padding);
-        const yMax = maxVal + padding;
+        
+        // Incluir metas no cálculo do range se necessário
+        let rangeMin = minVal;
+        let rangeMax = maxVal;
+        
+        if (showMetas) {
+            if (meta2025 !== null && meta2025 !== undefined) {
+                rangeMin = Math.min(rangeMin, meta2025);
+                rangeMax = Math.max(rangeMax, meta2025);
+            }
+            if (meta2026 !== null && meta2026 !== undefined) {
+                rangeMin = Math.min(rangeMin, meta2026);
+                rangeMax = Math.max(rangeMax, meta2026);
+            }
+        }
+        
+        const range = rangeMax - rangeMin;
+        const padding = range * 0.20 || (rangeMin === 0 ? 0.15 : rangeMin * 0.20);
+        const yMin = Math.max(0, rangeMin - padding);
+        const yMax = rangeMax + padding;
         const yRange = yMax - yMin;
-        const effectiveYRange = (yRange === 0) ? (yMax * 0.2 || 0.1) : yRange;
-        const effectiveYMin = (yRange === 0) ? (yMin - effectiveYRange / 2) : yMin;
-
-        function scaleY(value) {
-            if (effectiveYRange === 0) return 50;
-            return 100 - ((value - effectiveYMin) / effectiveYRange) * 100;
+        
+        const margin = { top: 30, right: 40, bottom: 50, left: 60 };
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+        
+        // FUNÇÕES DE ESCALA CORRIGIDAS
+        const xScale = (index) => {
+            if (chartData.length === 1) return margin.left + chartWidth / 2;
+            const effectiveWidth = chartWidth * 0.85;
+            const startOffset = chartWidth * 0.075;
+            // Agora index 0 = VALOR_1 (mais recente, ESQUERDA), index último = VALOR_6 (mais antigo, DIREITA)
+            return margin.left + startOffset + (index / (chartData.length - 1)) * effectiveWidth;
+        };
+        
+        // CORREÇÃO DO EIXO Y: valores maiores ficam EM CIMA, menores EM BAIXO
+        const yScale = (value) => {
+            // value - yMin: quão acima do mínimo está
+            // (value - yMin) / yRange: proporção (0 a 1)
+            // chartHeight * (1 - proporção): invertido para valores maiores ficarem em cima
+            const proportion = (value - yMin) / yRange;
+            return margin.top + (chartHeight * (1 - proportion));
+        };
+        
+        // Desenhar linhas de grade (corrigido para eixo Y invertido)
+        for (let i = 0; i <= 5; i++) {
+            const proportion = i / 5;
+            const y = margin.top + (chartHeight * proportion); // Agora 0 = topo, 1 = base
+            const value = yMax - (proportion * yRange); // Valor correspondente (maior no topo)
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', margin.left);
+            line.setAttribute('y1', y);
+            line.setAttribute('x2', width - margin.right);
+            line.setAttribute('y2', y);
+            line.setAttribute('class', 'grid-line');
+            svg.appendChild(line);
+            
+            const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            yLabel.setAttribute('x', margin.left - 15);
+            yLabel.setAttribute('y', y);
+            yLabel.setAttribute('text-anchor', 'end');
+            yLabel.setAttribute('dominant-baseline', 'middle');
+            yLabel.setAttribute('fill', colors.textLight);
+            yLabel.setAttribute('font-size', '11px');
+            yLabel.setAttribute('font-weight', '500');
+            yLabel.textContent = formatValue(value, currentGrandeza, 1);
+            svg.appendChild(yLabel);
         }
-
-        const totalWidth = 100;
-        const leftMargin = 2;
-        const rightMargin = 2;
-        const usableWidth = totalWidth - (leftMargin + rightMargin);
-
-        let barWidth;
-        if (dataCount <= 3) {
-            barWidth = 20;
-        } else if (dataCount <= 5) {
-            barWidth = 15;
-        } else if (dataCount <= 8) {
-            barWidth = 10;
-        } else {
-            barWidth = 8;
-        }
-
-        barWidth = Math.min(barWidth, usableWidth / dataCount * 0.9);
-
-        const totalBarWidth = barWidth * dataCount;
-        const availableSpace = usableWidth - totalBarWidth;
-        const spacing = availableSpace / (dataCount + 1);
-
-        chartSvg.setAttribute('width', '100%');
-        chartSvg.setAttribute('height', '100%');
-        chartSvg.setAttribute('viewBox', '0 0 100 100');
-        chartSvg.setAttribute('preserveAspectRatio', 'none');
-
-        sortedData.forEach((item, index) => {
-            const xPositionPercent = leftMargin + spacing + (index * (barWidth + spacing));
-
-            const yTop = scaleY(item.value);
-            const yBase = scaleY(effectiveYMin);
-            const height = Math.max(0.5, yBase - yTop);
-
-            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            rect.setAttribute('x', `${xPositionPercent}`);
-            rect.setAttribute('y', `${yTop}`);
-            rect.setAttribute('width', `${barWidth}`);
-            rect.setAttribute('height', `${height}`);
-            rect.setAttribute('rx', '0');
-
-            if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
-                rect.setAttribute('fill', 'var(--color-primary)');
-                rect.setAttribute('class', 'chart-bar current');
-            } else {
-                rect.setAttribute('fill', 'var(--color-chart-line)');
-                rect.setAttribute('class', 'chart-bar');
+        
+        // Desenhar metas se ativadas (corrigido para eixo Y invertido)
+        if (showMetas) {
+            // Meta 2025
+            if (meta2025 !== null && meta2025 !== undefined) {
+                const yMeta2025 = yScale(meta2025);
+                
+                const metaLine2025 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                metaLine2025.setAttribute('x1', margin.left);
+                metaLine2025.setAttribute('y1', yMeta2025);
+                metaLine2025.setAttribute('x2', width - margin.right);
+                metaLine2025.setAttribute('y2', yMeta2025);
+                metaLine2025.setAttribute('class', 'meta-line');
+                metaLine2025.setAttribute('stroke', colors.meta2025);
+                metaLine2025.setAttribute('stroke-width', '1.5');
+                svg.appendChild(metaLine2025);
+                
+                const metaLabel2025 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                metaLabel2025.setAttribute('x', width - margin.right + 5);
+                metaLabel2025.setAttribute('y', yMeta2025);
+                metaLabel2025.setAttribute('text-anchor', 'start');
+                metaLabel2025.setAttribute('dominant-baseline', 'middle');
+                metaLabel2025.setAttribute('fill', colors.meta2025);
+                metaLabel2025.setAttribute('font-size', '10px');
+                metaLabel2025.setAttribute('font-weight', '600');
+                metaLabel2025.textContent = `Meta 2025: ${formatValue(meta2025, currentGrandeza, 1)}`;
+                svg.appendChild(metaLabel2025);
             }
-
-            chartSvg.appendChild(rect);
-
-            const barCenterPercent = xPositionPercent + (barWidth / 2);
-
-            if (barValuesContainer) {
-                const valueLabel = document.createElement('div');
-                valueLabel.className = 'bar-value-label';
-
-                valueLabel.style.left = `${barCenterPercent}%`;
-                valueLabel.style.bottom = `${100 - yTop + 2}%`;
-
-                valueLabel.textContent = formatValue(item.value, grandeza, 1); // 1 casa decimal
-
-                if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
-                    valueLabel.style.fontWeight = 'bold';
-                    valueLabel.style.color = 'var(--color-primary)';
-                    valueLabel.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-                    valueLabel.style.border = '1px solid var(--color-primary)';
+            
+            // Meta 2026
+            if (meta2026 !== null && meta2026 !== undefined) {
+                const yMeta2026 = yScale(meta2026);
+                
+                const metaLine2026 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                metaLine2026.setAttribute('x1', margin.left);
+                metaLine2026.setAttribute('y1', yMeta2026);
+                metaLine2026.setAttribute('x2', width - margin.right);
+                metaLine2026.setAttribute('y2', yMeta2026);
+                metaLine2026.setAttribute('class', 'meta-line');
+                metaLine2026.setAttribute('stroke', colors.meta2026);
+                metaLine2026.setAttribute('stroke-width', '1.5');
+                svg.appendChild(metaLine2026);
+                
+                const metaLabel2026 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                metaLabel2026.setAttribute('x', width - margin.right + 5);
+                metaLabel2026.setAttribute('y', yMeta2026);
+                metaLabel2026.setAttribute('text-anchor', 'start');
+                metaLabel2026.setAttribute('dominant-baseline', 'middle');
+                metaLabel2026.setAttribute('fill', colors.meta2026);
+                metaLabel2026.setAttribute('font-size', '10px');
+                metaLabel2026.setAttribute('font-weight', '600');
+                metaLabel2026.textContent = `Meta 2026: ${formatValue(meta2026, currentGrandeza, 1)}`;
+                svg.appendChild(metaLabel2026);
+            }
+        }
+        
+        // Criar pontos para o gráfico (ordenados corretamente: VALOR_1 à esquerda, VALOR_6 à direita)
+        const points = chartData.map((d, i) => ({
+            x: xScale(i),
+            y: yScale(d.value),
+            value: d.value,
+            label: d.label,
+            ordem: d.ordem,
+            eh_data_base: d.eh_data_base,
+            referencia: d.referencia
+        }));
+        
+        // Desenhar barras (se bar ou both) - CORRIGIDA ALTURA DA BARRA
+        if (currentChartType === 'bar' || currentChartType === 'both') {
+            const barWidth = Math.min(30, (chartWidth * 0.85) / chartData.length * 0.7);
+            
+            points.forEach((point, i) => {
+                const barX = point.x - barWidth / 2;
+                // ALTURA CORRIGIDA: da linha de base (height - margin.bottom) até o ponto Y
+                const barHeight = (height - margin.bottom) - point.y;
+                const barY = point.y; // Topo da barra no ponto Y
+                
+                const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                bar.setAttribute('x', barX);
+                bar.setAttribute('y', barY);
+                bar.setAttribute('width', barWidth);
+                bar.setAttribute('height', barHeight);
+                bar.setAttribute('class', currentChartType === 'both' ? 'combo-chart-bar' : 'chart-bar');
+                bar.setAttribute('fill', point.eh_data_base ? colors.current : colors.chartLine);
+                if (currentChartType === 'both') bar.setAttribute('opacity', '0.6');
+                bar.setAttribute('rx', '2');
+                bar.setAttribute('data-label', point.label);
+                bar.setAttribute('data-value', point.value);
+                bar.setAttribute('data-ordem', point.ordem);
+                
+                // Adicionar rótulo de valor no TOPO da barra
+                if (barHeight > 25) {
+                    const valueLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    valueLabel.setAttribute('x', point.x);
+                    valueLabel.setAttribute('y', point.y - 10); // Acima da barra
+                    valueLabel.setAttribute('text-anchor', 'middle');
+                    valueLabel.setAttribute('class', 'value-label');
+                    valueLabel.setAttribute('font-size', '10px');
+                    valueLabel.textContent = formatValue(point.value, currentGrandeza, 2);
+                    svg.appendChild(valueLabel);
                 }
-
-                barValuesContainer.appendChild(valueLabel);
+                
+                // Eventos de hover
+                bar.addEventListener('mouseenter', (e) => {
+                    bar.style.opacity = currentChartType === 'both' ? '0.8' : '0.8';
+                    showTooltip(e, point.label, point.value);
+                });
+                
+                bar.addEventListener('mouseleave', () => {
+                    bar.style.opacity = currentChartType === 'both' ? '0.6' : '1';
+                    hideTooltip();
+                });
+                
+                svg.appendChild(bar);
+            });
+        }
+        
+        // Desenhar linha (se line ou both)
+        if (currentChartType === 'line' || currentChartType === 'both') {
+            let pathData = '';
+            points.forEach((point, i) => {
+                pathData += (i === 0 ? `M ${point.x} ${point.y}` : ` L ${point.x} ${point.y}`);
+            });
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            line.setAttribute('d', pathData);
+            line.setAttribute('class', currentChartType === 'both' ? 'combo-chart-line' : 'chart-line');
+            line.setAttribute('fill', 'none');
+            line.setAttribute('stroke', colors.chartLine);
+            line.setAttribute('stroke-width', currentChartType === 'both' ? '2.5' : '2');
+            svg.appendChild(line);
+            
+            // Adicionar pontos na linha
+            points.forEach(point => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', point.x);
+                circle.setAttribute('cy', point.y);
+                circle.setAttribute('r', '4');
+                circle.setAttribute('class', 'chart-point');
+                circle.setAttribute('fill', point.eh_data_base ? colors.current : colors.chartLine);
+                circle.setAttribute('stroke', '#ffffff');
+                circle.setAttribute('stroke-width', '2');
+                circle.setAttribute('data-label', point.label);
+                circle.setAttribute('data-value', point.value);
+                circle.setAttribute('data-ordem', point.ordem);
+                
+                // Adicionar rótulo de valor se não tiver barra ou se for tipo linha
+                if (currentChartType === 'line') {
+                    const valueLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    valueLabel.setAttribute('x', point.x);
+                    valueLabel.setAttribute('y', point.y - 15); // Acima do ponto
+                    valueLabel.setAttribute('text-anchor', 'middle');
+                    valueLabel.setAttribute('class', 'value-label');
+                    valueLabel.setAttribute('font-size', '10px');
+                    valueLabel.textContent = formatValue(point.value, currentGrandeza, 2);
+                    svg.appendChild(valueLabel);
+                }
+                
+                // Eventos de hover
+                circle.addEventListener('mouseenter', (e) => {
+                    circle.setAttribute('r', '5');
+                    showTooltip(e, point.label, point.value);
+                });
+                
+                circle.addEventListener('mouseleave', () => {
+                    circle.setAttribute('r', '4');
+                    hideTooltip();
+                });
+                
+                svg.appendChild(circle);
+            });
+        }
+        
+        // Adicionar rótulos do eixo X (ordenados corretamente: VALOR_1 à esquerda, VALOR_6 à direita)
+        points.forEach((point, i) => {
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', point.x);
+            text.setAttribute('y', height - margin.bottom / 2);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('fill', colors.text);
+            text.setAttribute('font-size', '11px');
+            text.setAttribute('font-weight', point.eh_data_base ? 'bold' : '500');
+            
+            // Formatar label para caber melhor
+            let displayLabel = point.referencia || point.label;
+            if (displayLabel.length > 10) {
+                displayLabel = displayLabel.substring(0, 8) + '...';
             }
-
-            const label = document.createElement('div');
-            label.className = 'x-axis-bar-label';
-
-            label.style.left = `${barCenterPercent}%`;
-            label.textContent = item.year;
-
-            if (item.isCurrent || (indicatorData.currentValue !== null && item.year === indicatorData.currentYear)) {
-                label.style.fontWeight = 'bold';
-                label.style.color = 'var(--color-primary)';
-                label.style.backgroundColor = 'rgba(0, 61, 122, 0.15)';
-                label.style.border = '1px solid var(--color-primary)';
-            }
-
-            xAxisLabelsContainer.appendChild(label);
-
-            const point = document.createElement('div');
-            point.className = 'data-point-placeholder';
-            point.style.left = `${barCenterPercent}%`;
-            point.style.top = `${yTop}%`;
-            point.setAttribute('data-value', `${item.year}: ${formatValue(item.value, grandeza, 1)}`); // 1 casa decimal
-            dataPointsContainer.appendChild(point);
+            
+            text.textContent = displayLabel;
+            svg.appendChild(text);
         });
-
-        const numLabels = 5;
-        for (let i = 0; i < numLabels; i++) {
-            const percentage = i / (numLabels - 1);
-            const value = effectiveYMin + (1 - percentage) * effectiveYRange;
-            const yPos = percentage * 100;
-
-            const label = document.createElement('div');
-            label.className = 'y-axis-label';
-            label.style.top = `${yPos}%`;
-            label.textContent = formatValue(value, grandeza, 1); // 1 casa decimal
-            yAxisContainer.appendChild(label);
-
-            if (i < numLabels - 1) {
-                const gridLine = document.createElement('div');
-                gridLine.className = 'grid-line';
-                gridLine.style.top = `${yPos}%`;
-                gridLinesContainer.appendChild(gridLine);
+        
+        // Desenhar eixos
+        const xAxisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        xAxisLine.setAttribute('x1', margin.left);
+        xAxisLine.setAttribute('y1', height - margin.bottom);
+        xAxisLine.setAttribute('x2', width - margin.right);
+        xAxisLine.setAttribute('y2', height - margin.bottom);
+        xAxisLine.setAttribute('stroke', colors.grid);
+        xAxisLine.setAttribute('stroke-width', '1.5');
+        svg.appendChild(xAxisLine);
+        
+        const yAxisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        yAxisLine.setAttribute('x1', margin.left);
+        yAxisLine.setAttribute('y1', margin.top);
+        yAxisLine.setAttribute('x2', margin.left);
+        yAxisLine.setAttribute('y2', height - margin.bottom);
+        yAxisLine.setAttribute('stroke', colors.grid);
+        yAxisLine.setAttribute('stroke-width', '1.5');
+        svg.appendChild(yAxisLine);
+        
+        // Título do eixo Y
+        const yAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        yAxisTitle.setAttribute('x', margin.left - 45);
+        yAxisTitle.setAttribute('y', margin.top + chartHeight / 2);
+        yAxisTitle.setAttribute('text-anchor', 'middle');
+        yAxisTitle.setAttribute('transform', `rotate(-90, ${margin.left - 45}, ${margin.top + chartHeight / 2})`);
+        yAxisTitle.setAttribute('fill', colors.textLight);
+        yAxisTitle.setAttribute('font-size', '11px');
+        yAxisTitle.setAttribute('font-weight', '500');
+        yAxisTitle.textContent = currentGrandeza || 'Valor';
+        svg.appendChild(yAxisTitle);
+    }
+    
+    function showTooltip(event, label, value) {
+        const tooltip = document.getElementById('tooltip');
+        const formattedValue = formatValue(value, currentGrandeza, 3);
+        tooltip.innerHTML = `<div class="font-semibold">${label}</div><div class="text-gray-300">${formattedValue}</div>`;
+        tooltip.style.left = (event.offsetX + 15) + 'px';
+        tooltip.style.top = (event.offsetY - 50) + 'px';
+        tooltip.classList.remove('hidden');
+    }
+    
+    function hideTooltip() {
+        document.getElementById('tooltip').classList.add('hidden');
+    }
+    
+    function changeChartType(type) {
+        currentChartType = type;
+        document.querySelectorAll('.chart-type-btn').forEach(btn => {
+            btn.classList.remove('active', 'bg-white', 'shadow-sm', 'text-blue-600');
+            if (btn.dataset.type === type) {
+                btn.classList.add('active', 'bg-white', 'shadow-sm', 'text-blue-600');
             }
+        });
+        
+        if (currentIndicatorData) {
+            const history = currentIndicatorData.history;
+            const metas = currentIndicatorData.metas;
+            const meta2025 = metas?.META_2025?.valor;
+            const meta2026 = metas?.META_2026?.valor;
+            renderChart(history, meta2025, meta2026);
         }
     }
-
-    function redrawChartWithAlignment() {
-        const data = loadData();
-        const groupedData = groupDataByIndicator(data);
-        const params = getUrlParams();
-        const indicatorName = decodeURIComponent(params.indicador || Object.keys(groupedData)[0]);
-
-        if (groupedData[indicatorName]) {
-            const indicatorData = groupedData[indicatorName];
-
-            setTimeout(() => {
-                renderChart(indicatorData.history, indicatorData.details.GRANDEZA, indicatorData);
-            }, 50);
+    
+    // INICIALIZAÇÃO
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Carregar dados
+        await loadIndicatorDetails();
+        renderIndicatorMiniCards();
+        
+        // Configurar botões de tipo de gráfico
+        document.querySelectorAll('.chart-type-btn').forEach(btn => {
+            btn.addEventListener('click', () => changeChartType(btn.dataset.type));
+        });
+        
+        // Configurar checkbox de metas
+        const metasCheckbox = document.getElementById('show-metas-checkbox');
+        if (metasCheckbox) {
+            metasCheckbox.addEventListener('change', (e) => {
+                showMetas = e.target.checked;
+                if (currentIndicatorData) {
+                    const history = currentIndicatorData.history;
+                    const metas = currentIndicatorData.metas;
+                    const meta2025 = metas?.META_2025?.valor;
+                    const meta2026 = metas?.META_2026?.valor;
+                    renderChart(history, meta2025, meta2026);
+                }
+            });
         }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const data = loadData();
-        const groupedData = groupDataByIndicator(data);
-
-        const defaultIndicatorName = Object.keys(groupedData)[0];
-
-        const params = getUrlParams();
-        let indicatorName = decodeURIComponent(params.indicador || defaultIndicatorName);
-
-        if (!params.indicador && Object.keys(groupedData).length > 0) {
-            const newUrl = `?indicador=${encodeURIComponent(indicatorName)}`;
-            window.history.replaceState(null, null, newUrl);
-        }
-
-        loadIndicatorDetails();
-
-        setTimeout(redrawChartWithAlignment, 100);
-
+        
+        // Configurar modal de navegação
+        const modal = document.getElementById('indicator-modal');
+        const openBtn = document.getElementById('indicator-navigator-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        
+        openBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+        
+        // Configurar modal de coleta
+        const coletaBtn = document.getElementById('coleta-dados-btn');
+        const coletaModal = document.getElementById('coleta-modal');
+        const closeColetaBtn = document.getElementById('close-coleta-btn');
+        
+        coletaBtn.addEventListener('click', abrirModalColeta);
+        closeColetaBtn.addEventListener('click', () => {
+            coletaModal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+        
+        // Fechar modais ao clicar fora
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+        
+        coletaModal.addEventListener('click', (e) => {
+            if (e.target === coletaModal) {
+                coletaModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Redimensionamento responsivo
+        let resizeTimer;
         window.addEventListener('resize', () => {
-            setTimeout(redrawChartWithAlignment, 150);
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (currentIndicatorData) {
+                    const history = currentIndicatorData.history;
+                    const metas = currentIndicatorData.metas;
+                    const meta2025 = metas?.META_2025?.valor;
+                    const meta2026 = metas?.META_2026?.valor;
+                    renderChart(history, meta2025, meta2026);
+                    adjustDynamicBoxHeights();
+                }
+            }, 100);
         });
+        
+        // Renderização inicial
+        setTimeout(() => {
+            if (currentIndicatorData) {
+                const history = currentIndicatorData.history;
+                const metas = currentIndicatorData.metas;
+                const meta2025 = metas?.META_2025?.valor;
+                const meta2026 = metas?.META_2026?.valor;
+                renderChart(history, meta2025, meta2026);
+                adjustDynamicBoxHeights();
+            }
+        }, 100);
     });
     </script>
-
 </body>
 </html>
