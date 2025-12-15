@@ -43,6 +43,13 @@
             --color-sunflower: #fbbf24;
             --color-lime: #84cc16;
             --color-rose: #fb7185;
+            
+            /* Cores para variações */
+            --color-up-positive: #2e7d32;
+            --color-up-negative: #c62828;
+            --color-down-positive: #2e7d32;
+            --color-down-negative: #c62828;
+            --color-neutral-change: #666666;
         }
 
         /* Estilo para os ícones Material Symbols */
@@ -896,7 +903,7 @@
             border-color: #e0e0e0;
         }
         
-        /* Status (Tarja superior) */
+        /* Status (Tarja superior) - APENAS PARA ESTRATÉGICOS */
         .status-badge {
             display: inline-block; 
             position: relative;
@@ -914,11 +921,59 @@
             border-radius: 2px 2px 0 0;
         }
 
-        /* Cores da tarja */
+        /* Cores da tarja para indicadores estratégicos */
         .status-hiperpositive { color: var(--color-hiperpositive); border-top-color: var(--color-hiperpositive); }
         .status-positive { color: var(--color-positive); border-top-color: var(--color-positive); }
         .status-negative { color: var(--color-negative); border-top-color: var(--color-negative); }
         .status-gray { color: var(--color-gray); border-top-color: var(--color-gray); }
+
+        /* Indicador de variação para táticos */
+        .variation-badge {
+            display: inline-block; 
+            position: relative;
+            font-size: 10px;
+            font-weight: 600;
+            background: none;
+            border: none;
+            padding: 0; 
+            margin: 0; 
+            line-height: 1.1;
+            padding: 3px 5px 1px 5px;
+            margin-top: 3px;
+            border-top: 3px solid var(--color-neutral-change);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .variation-positive-up { 
+            color: var(--color-up-positive); 
+            border-top-color: var(--color-up-positive); 
+        }
+
+        .variation-positive-down { 
+            color: var(--color-down-positive); 
+            border-top-color: var(--color-down-positive); 
+        }
+
+        .variation-negative-up { 
+            color: var(--color-up-negative); 
+            border-top-color: var(--color-up-negative); 
+        }
+
+        .variation-negative-down { 
+            color: var(--color-down-negative); 
+            border-top-color: var(--color-down-negative); 
+        }
+
+        .variation-neutral { 
+            color: var(--color-neutral-change); 
+            border-top-color: var(--color-neutral-change); 
+        }
+
+        .variation-value {
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 3px;
+        }
 
         /* Filtro ativo de status */
         .status-filter-active {
@@ -1574,7 +1629,7 @@
     </div>
 
     <script>
-        // Dados do novo formato JSON (exemplo fornecido)
+        // Dados do novo formato JSON - INSIRA SEU JSON COMPLETO AQUI
         const novoJsonData = [
     {
         "ID_LINHA": 1,
@@ -1582,6 +1637,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Trimestral",
         "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
         "#": 1.1,
         "INDICADORES": "Taxa líquida de matrícula do ensino médio regular no ERJ",
@@ -1710,6 +1766,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Infraestrutura",
         "#": 2.1,
         "INDICADORES": "Salas de aula climatizadas",
@@ -1808,6 +1865,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Infraestrutura",
         "#": 2.2,
         "INDICADORES": "Percentual de Escolas com velocidade de Internet adequada",
@@ -1954,6 +2012,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Infraestrutura",
         "#": 2.3,
         "INDICADORES": "Percentual de Escolas com Acessibilidade Física",
@@ -2100,6 +2159,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Infraestrutura",
         "#": 2.4,
         "INDICADORES": "Percentual de salas de aula utilizadas",
@@ -2241,6 +2301,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Permanência",
         "#": 3.1,
         "INDICADORES": "Taxa de abandono EM",
@@ -2333,6 +2394,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Permanência",
         "#": 3.2,
         "INDICADORES": "Distorção idade-série EM",
@@ -2425,6 +2487,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Bianual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": 4.1,
         "INDICADORES": "IDEB",
@@ -2506,6 +2569,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": 4.2,
         "INDICADORES": "ENEM",
@@ -2598,6 +2662,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": 4.3,
         "INDICADORES": "Taxa de Aprovação Ensino Médio",
@@ -2690,6 +2755,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": 4.4,
         "INDICADORES": "Número de premiações da rede em Olimpíadas escolares",
@@ -2782,6 +2848,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": 5.1,
         "INDICADORES": "Profissionais formados na EE",
@@ -2880,6 +2947,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": 5.2,
         "INDICADORES": "Escolas com salas de AEE",
@@ -2972,6 +3040,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": 5.3,
         "INDICADORES": "Taxa de estudantes autodeclarados",
@@ -3064,6 +3133,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": 5.4,
         "INDICADORES": "ID VAAR",
@@ -3144,6 +3214,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": 6.1,
         "INDICADORES": "Profissionais da educação com formação continuada",
@@ -3242,6 +3313,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": 6.2,
         "INDICADORES": "Esforço docente",
@@ -3334,6 +3406,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": 6.3,
         "INDICADORES": "Número de professores migrados de 18h para 30h",
@@ -3426,6 +3499,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "nan",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": 6.4,
         "INDICADORES": "Clima organizacional",
@@ -3500,6 +3574,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Regime de Colaboração",
         "#": 7.1,
         "INDICADORES": "Regime de Colaboração Institucionalizado",
@@ -3634,6 +3709,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Regime de Colaboração",
         "#": 7.2,
         "INDICADORES": "Formações Municipais",
@@ -3780,6 +3856,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Regime de Colaboração",
         "#": 7.3,
         "INDICADORES": "Alfabetização na idade certa",
@@ -3872,6 +3949,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Gestão Estratégica",
         "#": 8.1,
         "INDICADORES": "Percentual de Diretorias Regionais alcançando suas metas de aprendizagem",
@@ -4018,6 +4096,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Gestão Estratégica",
         "#": 8.2,
         "INDICADORES": "Percentual de escolas alcançando suas metas de aprendizagem",
@@ -4164,6 +4243,7 @@
         "ORIGEM": "Indicadores Estratégicos",
         "TIPO_INDICADOR": "ESTRATÉGICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Gestão Estratégica",
         "#": 8.3,
         "INDICADORES": "Taxa de alcance da meta dos projetos estratégicos (referente ao Escritório de Projetos)",
@@ -4256,6 +4336,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
         "#": "1.1.1",
         "INDICADORES": "Matrículas ativas no ensino médio regular",
@@ -4271,6 +4352,8 @@
         "VALOR 3": 731621,
         "VALOR 4": 685035,
         "VALOR 2024": 666232.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 666232.0,
         "Resultado Atual": 0,
         "Status": "Dentro do esperado",
         "DOUBLE CHECK": 0,
@@ -4329,6 +4412,30 @@
             "ordem_temporal": 6,
             "mes": 7,
             "ano": 2025
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0.18,
+                "percentual": "0.18%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_passado": 738239.0,
+                "valor_atual": 739583.0,
+                "tipo": "Variação relativa vs período anterior",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_2 como referência"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 1.09,
+                "percentual": "1.09%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 731621.0,
+                "valor_atual": 739583.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -4337,6 +4444,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
         "#": "1.1.2",
         "INDICADORES": "Matrículas ativas no ensino médio ",
@@ -4352,6 +4460,8 @@
         "VALOR 3": 447369,
         "VALOR 4": 414017,
         "VALOR 2024": 409040.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 409040.0,
         "Resultado Atual": 0,
         "Status": "Dentro do esperado",
         "DOUBLE CHECK": 0,
@@ -4410,6 +4520,30 @@
             "ordem_temporal": 6,
             "mes": 7,
             "ano": 2025
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": -1.98,
+                "percentual": "-1.98%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_passado": 441169.0,
+                "valor_atual": 432427.0,
+                "tipo": "Variação relativa vs período anterior",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_2 como referência"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": -3.34,
+                "percentual": "-3.34%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 447369.0,
+                "valor_atual": 432427.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -4418,6 +4552,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
         "#": "1.1.3",
         "INDICADORES": "Matrículas ativas em EJA EM",
@@ -4433,6 +4568,8 @@
         "VALOR 3": 97686,
         "VALOR 4": 84884,
         "VALOR 2024": 81443.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 81443.0,
         "Resultado Atual": 0,
         "Status": "Dentro do esperado",
         "DOUBLE CHECK": 0,
@@ -4491,6 +4628,30 @@
             "ordem_temporal": 6,
             "mes": 7,
             "ano": 2025
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": -0.41,
+                "percentual": "-0.41%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_passado": 108907.0,
+                "valor_atual": 108459.0,
+                "tipo": "Variação relativa vs período anterior",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_2 como referência"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 11.03,
+                "percentual": "11.03%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 97686.0,
+                "valor_atual": 108459.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -4499,6 +4660,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
         "#": "1.1.4",
         "INDICADORES": "Matrículas não renovadas",
@@ -4514,6 +4676,8 @@
         "VALOR 3": 76647,
         "VALOR 4": 59268,
         "VALOR 2024": 62649.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 62649.0,
         "Resultado Atual": 0,
         "Status": "Abaixo do Esperado",
         "DOUBLE CHECK": 0,
@@ -4566,6 +4730,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": -46.25,
+                "percentual": "-46.25%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 66930.0,
+                "valor_atual": 35973.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": -53.07,
+                "percentual": "-53.07%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 76647.0,
+                "valor_atual": 35973.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -4574,6 +4760,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
         "#": "1.1.5",
         "INDICADORES": "Matrículas confirmadas e canceladas por falta de comparecimento nos primeiros 30 dias",
@@ -4589,6 +4776,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Dentro do esperado",
         "DOUBLE CHECK": 0,
@@ -4641,6 +4830,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -4649,6 +4860,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
         "#": "1.1.6",
         "INDICADORES": "Inscrições não efetivadas",
@@ -4664,6 +4876,8 @@
         "VALOR 3": 76647,
         "VALOR 4": 59268,
         "VALOR 2024": 62649.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 62649.0,
         "Resultado Atual": 0,
         "Status": "Dentro do esperado",
         "DOUBLE CHECK": 0,
@@ -4716,6 +4930,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": -46.25,
+                "percentual": "-46.25%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 66930.0,
+                "valor_atual": 35973.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": -53.07,
+                "percentual": "-53.07%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 76647.0,
+                "valor_atual": 35973.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -4724,6 +4960,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Infraestrutura",
         "#": "2.2.1",
         "INDICADORES": "Percentual de escolas com medidores instalados",
@@ -4739,6 +4976,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -4797,6 +5036,30 @@
             "ordem_temporal": 6,
             "mes": 7,
             "ano": 2025
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs período anterior",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_2 como referência"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -4805,6 +5068,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Infraestrutura",
         "#": "2.2.2",
         "INDICADORES": "Percentual de escolas com internet disponível para uso pedagógico",
@@ -4820,6 +5084,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -4872,6 +5138,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -4880,6 +5168,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Permanência",
         "#": "3.1.1",
         "INDICADORES": "Percentual de estudantes abaixo da frequência mínima (alunos infrequentes) ",
@@ -4895,6 +5184,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -4953,6 +5244,30 @@
             "ordem_temporal": 6,
             "mes": 7,
             "ano": 2025
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs período anterior",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_2 como referência"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -4961,6 +5276,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Trimestral",
         "OBJETIVO ESTRATÉGICO": "Permanência",
         "#": "3.1.2",
         "INDICADORES": "Número de alunos na Busca Ativa",
@@ -4976,6 +5292,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5064,6 +5382,29 @@
                 "Ago",
                 "Set"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Trimestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Trimestral",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -5072,6 +5413,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Permanência",
         "#": "3.1.3",
         "INDICADORES": "% de alunos com matrícula em suspensão",
@@ -5087,6 +5429,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5193,6 +5537,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -5201,6 +5567,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Bianual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": "4.1.1",
         "INDICADORES": "IDEB Ensino Médio",
@@ -5216,6 +5583,8 @@
         "VALOR 3": "",
         "VALOR 4": "2025-03-04T00:00:00",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5270,6 +5639,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Bianual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": "4.1.2",
         "INDICADORES": "IDEB EPT",
@@ -5285,6 +5655,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5339,6 +5711,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Bianual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": "4.1.3",
         "INDICADORES": "IDEB EMTI",
@@ -5354,6 +5727,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5408,6 +5783,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Bianual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": "4.1.4",
         "INDICADORES": "Alunos com aprendizagem inadequada em LP",
@@ -5423,6 +5799,8 @@
         "VALOR 3": "x",
         "VALOR 4": "",
         "VALOR 2024": 0.92,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0.92,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5477,6 +5855,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Bianual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": "4.1.5",
         "INDICADORES": "Alunos com aprendizagem inadequada em MT",
@@ -5492,6 +5871,8 @@
         "VALOR 3": "x",
         "VALOR 4": "",
         "VALOR 2024": 0.92,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0.92,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5546,6 +5927,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": "4.2.1",
         "INDICADORES": "Taxa de Aprovação dos estudantes da rede no Ensino Superior",
@@ -5561,6 +5943,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5613,6 +5997,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -5621,6 +6027,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "A definir",
         "OBJETIVO ESTRATÉGICO": "Aprendizagem Equitativa",
         "#": "4.4.1",
         "INDICADORES": "Número de escolas da rede participantes de Olimpíadas",
@@ -5636,6 +6043,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5690,6 +6099,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": "5.1.1",
         "INDICADORES": "Ampliação NAPS",
@@ -5705,6 +6115,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 29.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 29.0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5811,6 +6223,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -5819,6 +6253,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": "5.2.1",
         "INDICADORES": "Número de recursos multifuncionais e tecnologias assistivas",
@@ -5834,6 +6269,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -5940,6 +6377,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -5948,6 +6407,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": "5.4.1",
         "INDICADORES": "Rendimento dos estudantes da educação indígena",
@@ -5963,6 +6423,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6015,6 +6477,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -6023,6 +6507,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": "5.4.2",
         "INDICADORES": "Rendimento dos estudantes autodeclarados negros",
@@ -6038,6 +6523,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6090,6 +6577,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -6098,6 +6607,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": "5.4.3",
         "INDICADORES": "Rendimento dos estudantes do sistema socioeducativo",
@@ -6113,6 +6623,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6165,6 +6677,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -6173,6 +6707,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Educação Inclusiva e Acessível",
         "#": "5.4.4",
         "INDICADORES": "Rendimento educacional de alunos em situação de vulnerabilidade social (Pé de Meia e CAD Único)",
@@ -6188,6 +6723,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6240,6 +6777,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -6248,6 +6807,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": "6.1.1",
         "INDICADORES": "Número de pólos de formação em funcionamento",
@@ -6263,6 +6823,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 17.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 17.0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6369,6 +6931,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -6377,6 +6961,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": "6.1.2",
         "INDICADORES": "Horas de encontros pedagógicos",
@@ -6392,6 +6977,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6498,6 +7085,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -6506,6 +7115,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": "6.4.1",
         "INDICADORES": "Número de profissionais afastados (lincenças médias e readaptações)",
@@ -6521,6 +7131,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6579,6 +7191,30 @@
             "ordem_temporal": 6,
             "mes": 7,
             "ano": 2025
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs período anterior",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_2 como referência"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -6587,6 +7223,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Mensal",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": "6.4.2",
         "INDICADORES": "Saídas e Exonerações",
@@ -6602,6 +7239,8 @@
         "VALOR 3": 1604,
         "VALOR 4": 2046,
         "VALOR 2024": 1873.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 1873.0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6660,6 +7299,30 @@
             "ordem_temporal": 6,
             "mes": 7,
             "ano": 2025
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 21.31,
+                "percentual": "21.31%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_passado": 2234.0,
+                "valor_atual": 2710.0,
+                "tipo": "Variação relativa vs período anterior",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_2 como referência"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 68.95,
+                "percentual": "68.95%",
+                "ano_referencia": 2025,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 1604.0,
+                "valor_atual": 2710.0,
+                "tipo": "Variação relativa vs período retrasado",
+                "periodicidade": "Mensal",
+                "observacao": "Usado VALOR_3 como referência"
+            }
         }
     },
     {
@@ -6668,6 +7331,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": "6.4.3",
         "INDICADORES": "Escolas que possuem sala dos professores",
@@ -6683,6 +7347,8 @@
         "VALOR 3": "77.64",
         "VALOR 4": "78.64",
         "VALOR 2024": 79.02,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 79.02,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6789,6 +7455,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": -1.78,
+                "percentual": "-1.78%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 77.64,
+                "valor_atual": 76.26,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": Infinity,
+                "percentual": "inf%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 76.26,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -6797,6 +7485,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": "6.4.4",
         "INDICADORES": "Escolas que possuem espaço de convivência",
@@ -6812,6 +7501,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6918,6 +7609,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -6926,6 +7639,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Anual",
         "OBJETIVO ESTRATÉGICO": "Saúde e bem-estar",
         "#": "6.4.5",
         "INDICADORES": "Formações de competências socioemocionais",
@@ -6941,6 +7655,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -6993,6 +7709,28 @@
             "eh_data_base": false,
             "ordem_temporal": 6,
             "ano": 2020
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Anual"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Anual"
+            }
         }
     },
     {
@@ -7001,6 +7739,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Regime de Colaboração",
         "#": "7.1.1",
         "INDICADORES": "Municípios aderentes",
@@ -7016,6 +7755,8 @@
         "VALOR 3": "",
         "VALOR 4": "",
         "VALOR 2024": 0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 0,
         "Resultado Atual": 0,
         "Status": "Indicador em coleta",
         "DOUBLE CHECK": 0,
@@ -7122,6 +7863,28 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     },
     {
@@ -7130,6 +7893,7 @@
         "ORIGEM": "Indicadores Táticos",
         "TIPO_INDICADOR": "TÁTICOS",
         "TOTAL_VALORES_TEMPORAIS": 6,
+        "PERIODICIDADE": "Semestral",
         "OBJETIVO ESTRATÉGICO": "Regime de Colaboração",
         "#": "7.2.1",
         "INDICADORES": "Professores Capacitados em colaboração com municípios",
@@ -7145,6 +7909,8 @@
         "VALOR 3": 2517,
         "VALOR 4": 6432,
         "VALOR 2024": 2746.0,
+        "VARIACAO_ANO_PASSADO": 0,
+        "VARIACAO_ANO_RETRASADO": 2746.0,
         "Resultado Atual": 0,
         "Status": "Abaixo do Esperado",
         "DOUBLE CHECK": 0,
@@ -7251,9 +8017,132 @@
                 "Mai",
                 "Jun"
             ]
+        },
+        "VARIACOES_RELATIVAS": {
+            "VARIACAO_ANO_PASSADO": {
+                "valor": -100.0,
+                "percentual": "-100.0%",
+                "ano_referencia": 2024,
+                "ano_atual": 2025,
+                "valor_ano_passado": 2517.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano anterior",
+                "periodicidade": "Semestral"
+            },
+            "VARIACAO_ANO_RETRASADO": {
+                "valor": 0,
+                "percentual": "0%",
+                "ano_referencia": 2023,
+                "ano_atual": 2025,
+                "valor_ano_retrasado": 0.0,
+                "valor_atual": 0.0,
+                "tipo": "Variação relativa vs ano retrasado",
+                "periodicidade": "Semestral"
+            }
         }
     }
 ];
+
+        // Adicionar alguns indicadores táticos para teste (sem status, com variação)
+        const indicadoresTaticos = [
+            {
+                "ID_LINHA": 32,
+                "NUMERO_INDICADOR": "7.1.1",
+                "ORIGEM": "Indicadores Táticos",
+                "TIPO_INDICADOR": "TÁTICOS",
+                "TOTAL_VALORES_TEMPORAIS": 6,
+                "OBJETIVO ESTRATÉGICO": "Regime de Colaboração",
+                "#": "7.1.1",
+                "INDICADORES": "Municípios aderentes",
+                "FÓRMULA": "Municípios aderentes ao regime de colaboração",
+                "FONTE DOS DADOS": "A definir",
+                "SUPINTENDÊNCIA": "Coord. Relações Municipais",
+                "SUBSECRETARIA": "SUBEX",
+                "PERIODICIDADE DE MEDIÇÃO": "Semestral",
+                "GRANDEZA": "",
+                "POLARIDADE": "⬆️",
+                "VALOR 1": "",
+                "VALOR 2": "",
+                "VALOR 3": "",
+                "VALOR 4": "",
+                "VALOR 2024": 0,
+                "Resultado Atual": 0,
+                "DOUBLE CHECK": 0,
+                "OBSERVAÇÕES": 0,
+                "DATA_BASE": "15.12.2025",
+                "VALOR_1": {"valor": 0.0, "periodo": "2º Semestre 2025", "referencia": "S2/2025", "eh_data_base": true},
+                "VALOR_2": {"valor": 0.0, "periodo": "1º Semestre 2025", "referencia": "S1/2025", "eh_data_base": false},
+                "VALOR_3": {"valor": 0.0, "periodo": "2º Semestre 2024", "referencia": "S2/2024", "eh_data_base": false},
+                "VALOR_4": {"valor": 0.0, "periodo": "1º Semestre 2024", "referencia": "S1/2024", "eh_data_base": false},
+                "VALOR_5": {"valor": 0.0, "periodo": "2º Semestre 2023", "referencia": "S2/2023", "eh_data_base": false},
+                "VALOR_6": {"valor": 0.0, "periodo": "1º Semestre 2023", "referencia": "S1/2023", "eh_data_base": false}
+            },
+            {
+                "ID_LINHA": 33,
+                "NUMERO_INDICADOR": "7.2.1",
+                "ORIGEM": "Indicadores Táticos",
+                "TIPO_INDICADOR": "TÁTICOS",
+                "TOTAL_VALORES_TEMPORAIS": 6,
+                "OBJETIVO ESTRATÉGICO": "Regime de Colaboração",
+                "#": "7.2.1",
+                "INDICADORES": "Professores Capacitados em colaboração com municípios",
+                "FÓRMULA": "Número de formações para as redes municipais do Estado",
+                "FONTE DOS DADOS": "A definir",
+                "SUPINTENDÊNCIA": "SUPDP",
+                "SUBSECRETARIA": "SUBAD",
+                "PERIODICIDADE DE MEDIÇÃO": "Semestral",
+                "GRANDEZA": "Nº",
+                "POLARIDADE": "⬆️",
+                "VALOR 1": "ND",
+                "VALOR 2": 3171,
+                "VALOR 3": 2517,
+                "VALOR 4": 6432,
+                "VALOR 2024": 2746.0,
+                "Resultado Atual": 6432,
+                "DOUBLE CHECK": 0,
+                "OBSERVAÇÕES": 0,
+                "DATA_BASE": "15.12.2025",
+                "VALOR_1": {"valor": 6432.0, "periodo": "2º Semestre 2025", "referencia": "S2/2025", "eh_data_base": true},
+                "VALOR_2": {"valor": 3171.0, "periodo": "1º Semestre 2025", "referencia": "S1/2025", "eh_data_base": false},
+                "VALOR_3": {"valor": 2517.0, "periodo": "2º Semestre 2024", "referencia": "S2/2024", "eh_data_base": false},
+                "VALOR_4": {"valor": 6432.0, "periodo": "1º Semestre 2024", "referencia": "S1/2024", "eh_data_base": false},
+                "VALOR_5": {"valor": 0.0, "periodo": "2º Semestre 2023", "referencia": "S2/2023", "eh_data_base": false},
+                "VALOR_6": {"valor": 0.0, "periodo": "1º Semestre 2023", "referencia": "S1/2023", "eh_data_base": false}
+            },
+            {
+                "ID_LINHA": 34,
+                "NUMERO_INDICADOR": "8.1.1",
+                "ORIGEM": "Indicadores Táticos",
+                "TIPO_INDICADOR": "TÁTICOS",
+                "TOTAL_VALORES_TEMPORAIS": 6,
+                "OBJETIVO ESTRATÉGICO": "Gestão de Pessoas",
+                "#": "8.1.1",
+                "INDICADORES": "Taxa de rotatividade de professores",
+                "FÓRMULA": "(Nº de professores que saíram / Total de professores) × 100",
+                "FONTE DOS DADOS": "RH",
+                "SUPINTENDÊNCIA": "SUPDP",
+                "SUBSECRETARIA": "SUBAD",
+                "PERIODICIDADE DE MEDIÇÃO": "Trimestral",
+                "GRANDEZA": "%",
+                "POLARIDADE": "⬇️",
+                "VALOR 1": 8.2,
+                "VALOR 2": 8.5,
+                "VALOR 3": 9.1,
+                "VALOR 4": 8.8,
+                "VALOR 5": 9.5,
+                "VALOR 6": 10.2,
+                "Resultado Atual": 8.2,
+                "DOUBLE CHECK": 0,
+                "OBSERVAÇÕES": 0,
+                "DATA_BASE": "15.12.2025",
+                "VALOR_1": {"valor": 8.2, "periodo": "4º Trimestre 2025", "referencia": "T4/2025", "eh_data_base": true},
+                "VALOR_2": {"valor": 8.5, "periodo": "3º Trimestre 2025", "referencia": "T3/2025", "eh_data_base": false},
+                "VALOR_3": {"valor": 9.1, "periodo": "2º Trimestre 2025", "referencia": "T2/2025", "eh_data_base": false},
+                "VALOR_4": {"valor": 8.8, "periodo": "1º Trimestre 2025", "referencia": "T1/2025", "eh_data_base": false},
+                "VALOR_5": {"valor": 9.5, "periodo": "4º Trimestre 2024", "referencia": "T4/2024", "eh_data_base": false},
+                "VALOR_6": {"valor": 10.2, "periodo": "3º Trimestre 2024", "referencia": "T3/2024", "eh_data_base": false}
+            }
+        ];
         
         // LISTA DE INDICADORES PARA COLETA (mantida igual)
         const INDICADORES_COLETA = [
@@ -7290,10 +8179,6 @@
         // URL DO APPS SCRIPT
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyK7ZP6kE-yhep_vlu4jHmp4BfYMCNx4KUbMsmrNADAKVBtKyA0hJmc6Yoqv2_AAyLW/exec';
         
-        // Configuração inicial
-        localStorage.setItem('dashboardData', JSON.stringify(novoJsonData));
-        
-        // ========== SISTEMA DE LOGIN ==========
         // Usuários autorizados (em um sistema real, isso viria de um servidor)
         const USUARIOS_AUTORIZADOS = [
             {
@@ -7327,10 +8212,9 @@
         let latestIndicators = [];
         let taticosIndicators = [];
         let estrategicosIndicators = [];
-        let taticosActiveStatusFilter = null;
         let taticosActiveSuperintendenciaFilter = null;
         let taticosActiveSubsecretariaFilter = null;
-        let selectedTaticosObjective = null; // Objetivo selecionado na página de táticos
+        let selectedTaticosObjective = null;
         
         // Estado de autenticação
         let usuarioLogado = null;
@@ -7340,16 +8224,13 @@
         // ------------------------------------------------------------------
         
         function verificarLoginParaColeta() {
-            // Verificar se o usuário já está logado
             const usuarioSalvo = localStorage.getItem('usuarioLogado');
             
             if (usuarioSalvo) {
-                // Usuário já está logado, abrir modal de coleta
                 usuarioLogado = JSON.parse(usuarioSalvo);
                 atualizarInterfaceUsuario();
                 abrirModalColeta();
             } else {
-                // Usuário não está logado, abrir modal de login
                 abrirModalLogin();
             }
         }
@@ -7359,12 +8240,10 @@
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
-            // Limpar campos
             document.getElementById('login-email').value = '';
             document.getElementById('login-senha').value = '';
             document.getElementById('login-error').classList.remove('show');
             
-            // Focar no campo de email
             setTimeout(() => {
                 document.getElementById('login-email').focus();
             }, 100);
@@ -7383,66 +8262,44 @@
             const errorElement = document.getElementById('login-error');
             const loginButton = document.getElementById('login-button');
             
-            // Desabilitar botão durante a validação
             loginButton.disabled = true;
             loginButton.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px;">hourglass_empty</span> Verificando...';
             
-            // Simular validação (em um sistema real, isso seria uma chamada AJAX)
             setTimeout(() => {
                 const usuario = USUARIOS_AUTORIZADOS.find(user => 
                     user.email === email && user.senha === senha
                 );
                 
                 if (usuario) {
-                    // Login bem-sucedido
                     usuarioLogado = {
                         email: usuario.email,
                         nome: usuario.nome,
                         dataLogin: new Date().toISOString()
                     };
                     
-                    // Salvar no localStorage
                     localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
-                    
-                    // Atualizar interface
                     atualizarInterfaceUsuario();
-                    
-                    // Fechar modal de login
                     fecharModalLogin();
-                    
-                    // Abrir modal de coleta
                     abrirModalColeta();
-                    
-                    // Mostrar mensagem de boas-vindas
                     mostrarNotificacao(`Bem-vindo(a), ${usuario.nome}!`, 'success');
                 } else {
-                    // Login falhou
                     errorElement.classList.add('show');
-                    
-                    // Animar o erro
                     errorElement.style.animation = 'none';
                     setTimeout(() => {
                         errorElement.style.animation = 'shake 0.5s ease';
                     }, 10);
                 }
                 
-                // Reabilitar botão
                 loginButton.disabled = false;
                 loginButton.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px;">login</span> Entrar';
-            }, 1000); // Simular delay de rede
+            }, 1000);
         }
         
         function logout() {
-            // Confirmar logout
             if (confirm('Deseja realmente sair?')) {
-                // Remover dados do usuário
                 usuarioLogado = null;
                 localStorage.removeItem('usuarioLogado');
-                
-                // Atualizar interface
                 atualizarInterfaceUsuario();
-                
-                // Mostrar mensagem
                 mostrarNotificacao('Você saiu do sistema.', 'info');
             }
         }
@@ -7452,17 +8309,14 @@
             const userEmailElement = document.getElementById('user-email');
             
             if (usuarioLogado) {
-                // Mostrar informações do usuário
                 userInfoContainer.style.display = 'flex';
-                userEmailElement.textContent = usuarioLogado.email.split('@')[0]; // Mostrar apenas o nome antes do @
+                userEmailElement.textContent = usuarioLogado.email.split('@')[0];
             } else {
-                // Esconder informações do usuário
                 userInfoContainer.style.display = 'none';
             }
         }
         
         function mostrarNotificacao(mensagem, tipo) {
-            // Criar elemento de notificação
             const notificacao = document.createElement('div');
             notificacao.style.cssText = `
                 position: fixed;
@@ -7478,7 +8332,6 @@
                 max-width: 300px;
             `;
             
-            // Definir cor baseada no tipo
             switch(tipo) {
                 case 'success':
                     notificacao.style.backgroundColor = '#2e7d32';
@@ -7503,10 +8356,8 @@
                 </div>
             `;
             
-            // Adicionar ao documento
             document.body.appendChild(notificacao);
             
-            // Remover após 3 segundos
             setTimeout(() => {
                 if (notificacao.parentNode) {
                     notificacao.parentNode.removeChild(notificacao);
@@ -7514,21 +8365,18 @@
             }, 3000);
         }
         
-        // Verificar se há usuário logado ao carregar a página
         function verificarSessaoAtiva() {
             const usuarioSalvo = localStorage.getItem('usuarioLogado');
             if (usuarioSalvo) {
                 usuarioLogado = JSON.parse(usuarioSalvo);
                 
-                // Verificar se a sessão expirou (1 hora)
                 const dataLogin = new Date(usuarioLogado.dataLogin);
                 const agora = new Date();
                 const diferencaHoras = (agora - dataLogin) / (1000 * 60 * 60);
                 
-                if (diferencaHoras < 1) { // Sessão de 1 hora
+                if (diferencaHoras < 1) {
                     atualizarInterfaceUsuario();
                 } else {
-                    // Sessão expirada
                     localStorage.removeItem('usuarioLogado');
                     usuarioLogado = null;
                 }
@@ -7547,7 +8395,6 @@
                     document.getElementById('search-input').focus();
                 }, 100);
                 
-                // Carregar lista de indicadores para busca
                 loadSearchIndicators();
             }
         }
@@ -7566,15 +8413,12 @@
             const searchResults = document.getElementById('search-results');
             const searchInput = document.getElementById('search-input');
             
-            // Limpar resultados anteriores
             searchResults.innerHTML = '';
             
-            // Mostrar todos os indicadores inicialmente
             allIndicatorsForSearch.forEach(indicator => {
                 addSearchItem(indicator);
             });
             
-            // Limpar campo de busca
             searchInput.value = '';
         }
 
@@ -7584,15 +8428,21 @@
             const displayValue = indicator.displayValue !== undefined ? 
                 formatValue(indicator.displayValue, indicator.GRANDEZA) : 'N/A';
             
-            const statusClass = getStatusClass(indicator.Status);
-            const displayStatus = normalizeStatus(indicator.Status);
+            let statusElement = '';
+            if (indicator.ORIGEM === 'Indicadores Táticos') {
+                const variation = calculateVariation(indicator);
+                statusElement = `<div class="search-item-status ${getVariationClass(variation)}">${variation.value > 0 ? '+' : ''}${formatVariation(variation.value)}</div>`;
+            } else {
+                const statusClass = getStatusClass(indicator.Status);
+                const displayStatus = normalizeStatus(indicator.Status);
+                statusElement = `<div class="search-item-status ${statusClass}">${displayStatus}</div>`;
+            }
             
-            // Determinar tipo de indicador
             const indicatorType = indicator.ORIGEM === 'Indicadores Táticos' ? 'Tático' : 'Estratégico';
             const typeClass = indicatorType === 'Tático' ? 'indicator-type-tatico' : 'indicator-type-estrategico';
             
             const item = document.createElement('div');
-            item.className = `search-item ${statusClass}`;
+            item.className = `search-item ${indicator.ORIGEM === 'Indicadores Táticos' ? 'tatico' : 'estrategico'}`;
             item.onclick = () => {
                 navigate(`detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}`);
                 closeSearch();
@@ -7610,7 +8460,7 @@
                 </div>
                 <div style="display: flex; align-items: center; flex-shrink: 0;">
                     <div class="search-item-value" style="margin-right: 8px;">${displayValue}</div>
-                    <div class="search-item-status">${displayStatus}</div>
+                    ${statusElement}
                 </div>
             `;
 
@@ -7622,20 +8472,17 @@
             const searchTerm = searchInput.value.toLowerCase().trim();
             const searchResults = document.getElementById('search-results');
             
-            // Limpar resultados
             searchResults.innerHTML = '';
             
             if (!allIndicatorsForSearch) return;
             
             if (searchTerm === '') {
-                // Mostrar todos os indicadores se a busca estiver vazia
                 allIndicatorsForSearch.forEach(indicator => {
                     addSearchItem(indicator);
                 });
                 return;
             }
             
-            // Filtrar indicadores pelo termo de busca
             const filtered = allIndicatorsForSearch.filter(indicator => {
                 const indicatorName = (indicator.INDICADORES || '').toLowerCase();
                 const indicatorNumber = (indicator["#"] || '').toString();
@@ -7652,13 +8499,11 @@
                        subsecretaria.includes(searchTerm);
             });
             
-            // Mostrar resultados filtrados
             if (filtered.length > 0) {
                 filtered.forEach(indicator => {
                     addSearchItem(indicator);
                 });
             } else {
-                // Mostrar mensagem de "nenhum resultado"
                 searchResults.innerHTML = `
                     <div class="search-no-results">
                         <span class="material-symbols-outlined" style="font-size: 48px; color: #ccc; margin-bottom: 10px;">
@@ -7671,7 +8516,6 @@
             }
         }
 
-        // Fechar dropdown ao clicar fora
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('search-dropdown');
             const button = document.querySelector('.search-header-button');
@@ -7680,42 +8524,197 @@
             }
         });
 
-        // Função para carregar dados
+        // ------------------------------------------------------------------
+        // FUNÇÕES PRINCIPAIS CORRIGIDAS PARA O SEU JSON
+        // ------------------------------------------------------------------
+        
+        // PRIMEIRO: Pré-processar os dados para garantir formato consistente
+        function preprocessData(data) {
+            return data.map(item => {
+                // Garantir que todos os campos VALOR_X existam
+                for (let i = 1; i <= 6; i++) {
+                    const campoValorObj = `VALOR_${i}`;
+                    const campoValorAntigo = `VALOR ${i}`;
+                    
+                    // Se não existir VALOR_X como objeto, criar a partir do campo antigo
+                    if (!item[campoValorObj] || typeof item[campoValorObj] !== 'object') {
+                        const valor = item[campoValorAntigo] !== undefined ? item[campoValorAntigo] : 0;
+                        
+                        // Criar objeto padrão
+                        item[campoValorObj] = {
+                            valor: valor,
+                            periodo: `Período ${i}`,
+                            referencia: `P${i}`,
+                            eh_data_base: i === 1
+                        };
+                    } else {
+                        // Se já existe objeto, garantir que tenha o campo valor
+                        if (item[campoValorObj].valor === undefined) {
+                            item[campoValorObj].valor = item[campoValorAntigo] || 0;
+                        }
+                    }
+                }
+                
+                // Garantir que METAS exista
+                if (!item.METAS) {
+                    item.METAS = {
+                        "META_2025": {
+                            "valor": item["META 2025"] || 0,
+                            "ano": 2025,
+                            "descricao": "Meta para 2025"
+                        },
+                        "META_2026": {
+                            "valor": item["META 2026"] || 0,
+                            "ano": 2026,
+                            "descricao": "Meta para 2026"
+                        }
+                    };
+                }
+                
+                return item;
+            });
+        }
+
         function loadData() {
             try {
                 const storedData = localStorage.getItem('dashboardData');
                 if (storedData) {
-                    return JSON.parse(storedData);
+                    const parsedData = JSON.parse(storedData);
+                    return preprocessData(parsedData);
                 }
             } catch (e) {
                 console.log('Erro ao carregar do localStorage, usando fallback');
             }
-            return novoJsonData;
+            
+            // Pré-processar os dados combinados
+            const todosDados = [...novoJsonData, ...indicadoresTaticos];
+            const processedData = preprocessData(todosDados);
+            localStorage.setItem('dashboardData', JSON.stringify(processedData));
+            return processedData;
         }
 
-        // Funções Auxiliares 
-        function formatValue(value, grandeza) {
-            if (value === null || value === undefined) return 'N/A';
+        // FUNÇÃO CORRIGIDA: Extrair valores do JSON atualizado
+        function getLatestIndicators(data) {
+            const indicatorsMap = new Map();
             
-            // Verificar se o valor é zero
+            data.forEach(item => {
+                const indicatorKey = item.INDICADORES;
+                if (!indicatorKey) return;
+                
+                // Obter valor mais recente
+                let displayValue = 0;
+                
+                // PRIMEIRO: Tentar VALOR_1
+                if (item.VALOR_1 && typeof item.VALOR_1 === 'object' && item.VALOR_1.valor !== undefined) {
+                    displayValue = item.VALOR_1.valor;
+                }
+                // SEGUNDO: Tentar "VALOR 1"
+                else if (item["VALOR 1"] !== undefined && item["VALOR 1"] !== null && item["VALOR 1"] !== "") {
+                    displayValue = item["VALOR 1"];
+                }
+                // TERCEIRO: Tentar "Resultado Atual"
+                else if (item["Resultado Atual"] !== undefined && item["Resultado Atual"] !== null && item["Resultado Atual"] !== "") {
+                    displayValue = item["Resultado Atual"];
+                }
+                // QUARTO: Tentar VALOR_2
+                else if (item.VALOR_2 && typeof item.VALOR_2 === 'object' && item.VALOR_2.valor !== undefined) {
+                    displayValue = item.VALOR_2.valor;
+                }
+                
+                // Converter para número se for string
+                if (typeof displayValue === 'string') {
+                    displayValue = parseFloat(displayValue) || 0;
+                }
+                
+                // Obter Status
+                let statusValue = item.Status || "Indicador em coleta";
+                if (statusValue === null || statusValue === undefined || statusValue === "" || statusValue === 0) {
+                    statusValue = "Indicador em coleta";
+                }
+                
+                // Converter para o formato compatível
+                const convertedItem = {
+                    // Campos principais
+                    "OBJETIVO ESTRATÉGICO": item["OBJETIVO ESTRATÉGICO"],
+                    "#": item["#"] || item.NUMERO_INDICADOR,
+                    "INDICADORES": item.INDICADORES,
+                    "FÓRMULA": item.FÓRMULA,
+                    "FONTE DOS DADOS": item["FONTE DOS DADOS"],
+                    "EMAIL PESSOA RESPONSÁVEL": item["EMAIL PESSOA RESPONSÁVEL"],
+                    "SUPINTENDÊNCIA": item.SUPINTENDÊNCIA,
+                    "SUBSECRETARIA": item.SUBSECRETARIA,
+                    "PERIODICIDADE DE MEDIÇÃO": item["PERIODICIDADE DE MEDIÇÃO"],
+                    "GRANDEZA": item.GRANDEZA,
+                    "POLARIDADE": item.POLARIDADE,
+                    "VALOR ATUAL": displayValue,
+                    "Status": statusValue,
+                    "REFERENCIAL DA META": item["REFERENCIAL DA META"],
+                    "DOUBLE CHECK": item["DOUBLE CHECK"],
+                    "OBSERVAÇÕES": item.OBSERVAÇÕES,
+                    "BASE DE DADOS": item["BASE DE DADOS"],
+                    "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
+                    "INDICADOR": item.ORIGEM === "Indicadores Táticos" ? "Tático" : "Estratégico",
+                    "valor": displayValue,
+                    "tipo_dado": "VALOR",
+                    "ano": 2025,
+                    
+                    // Campos extras
+                    "ID_LINHA": item.ID_LINHA,
+                    "NUMERO_INDICADOR": item.NUMERO_INDICADOR,
+                    "ORIGEM": item.ORIGEM,
+                    "TIPO_INDICADOR": item.TIPO_INDICADOR,
+                    "TOTAL_VALORES_TEMPORAIS": item.TOTAL_VALORES_TEMPORAIS,
+                    "DATA_BASE": item.DATA_BASE,
+                    
+                    // Valores temporais
+                    "VALOR_1": item.VALOR_1,
+                    "VALOR_2": item.VALOR_2,
+                    "VALOR_3": item.VALOR_3,
+                    "VALOR_4": item.VALOR_4,
+                    "VALOR_5": item.VALOR_5,
+                    "VALOR_6": item.VALOR_6,
+                    
+                    // Metas
+                    "METAS": item.METAS,
+                    "META 2025": item["META 2025"],
+                    "META 2026": item["META 2026"],
+                    "Resultado Atual": item["Resultado Atual"],
+                    
+                    // Para compatibilidade
+                    displayValue: displayValue,
+                    normalizedStatus: normalizeStatus(statusValue)
+                };
+                
+                indicatorsMap.set(indicatorKey, convertedItem);
+            });
+            
+            return Array.from(indicatorsMap.values());
+        }
+
+        // FUNÇÕES AUXILIARES
+        function formatValue(value, grandeza) {
+            if (value === null || value === undefined || value === '' || isNaN(value)) return 'N/A';
+            
             if (value === 0) return '0';
             
             const isPercentage = grandeza === '%';
             if (isPercentage) {
-                return Math.round(value * 100) + '%';
+                return (Math.round(value * 1000) / 10).toFixed(1) + '%';
             }
             if (grandeza === 'Nº' && value >= 1000) {
                 return Math.round(value).toLocaleString('pt-BR');
             }
             
+            if (typeof value === 'number' && value % 1 !== 0 && value < 10) {
+                return value.toFixed(2);
+            }
+            
             return Math.round(value).toLocaleString('pt-BR');
         }
 
-        // FUNÇÃO CORRIGIDA: Padronizar "Dados em Coleta" e cores corretas
         function getStatusClass(status, isButton = false) {
             if (!status) return isButton ? 'status-gray-btn' : 'status-gray';
             
-            // Normalizar o status para "Dados em Coleta"
             const normalizedStatus = status.toString().trim();
             
             if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
@@ -7736,13 +8735,11 @@
             }
         }
 
-        // FUNÇÃO CORRIGIDA: Normalizar o status para exibição
         function normalizeStatus(status) {
             if (!status) return 'Dados em Coleta';
             
             const normalizedStatus = status.toString().trim();
             
-            // Padronizar todos para "Dados em Coleta"
             if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
                 normalizedStatus === 'Dados em Coleta' || normalizedStatus === 'Indicador em coleta') {
                 return 'Dados em Coleta';
@@ -7751,77 +8748,85 @@
             return normalizedStatus;
         }
 
-        // FUNÇÃO MODIFICADA: Extrair valores do novo formato JSON
-        function getLatestIndicators(data) {
-            const indicatorsMap = new Map();
+        // NOVA FUNÇÃO: Calcular variação para indicadores táticos
+        function calculateVariation(indicator) {
+            if (!indicator || indicator.ORIGEM !== 'Indicadores Táticos') {
+                return { value: 0, direction: 'neutral', isPositive: true };
+            }
             
-            data.forEach(item => {
-                const indicatorKey = item.INDICADORES;
-                if (!indicatorKey) return;
-                
-                // Extrair o valor mais recente (VALOR_1 é o mais recente no novo formato)
-                let displayValue = 0;
-                if (item.VALOR_1 && item.VALOR_1.valor !== undefined) {
-                    displayValue = item.VALOR_1.valor;
-                } else if (item["VALOR 1"] !== undefined) {
-                    displayValue = item["VALOR 1"];
-                } else if (item["VALOR ATUAL"] !== undefined) {
-                    displayValue = item["VALOR ATUAL"];
-                }
-                
-                // Converter para o formato antigo para compatibilidade
-                const convertedItem = {
-                    // Campos do formato antigo
-                    "OBJETIVO ESTRATÉGICO": item["OBJETIVO ESTRATÉGICO"],
-                    "#": item["#"] || item.NUMERO_INDICADOR,
-                    "INDICADORES": item.INDICADORES,
-                    "FÓRMULA": item.FÓRMULA,
-                    "FONTE DOS DADOS": item["FONTE DOS DADOS"],
-                    "EMAIL PESSOA RESPONSÁVEL": item["EMAIL PESSOA RESPONSÁVEL"],
-                    "SUPINTENDÊNCIA": item.SUPINTENDÊNCIA,
-                    "SUBSECRETARIA": item.SUBSECRETARIA,
-                    "PERIODICIDADE DE MEDIÇÃO": item["PERIODICIDADE DE MEDIÇÃO"],
-                    "GRANDEZA": item.GRANDEZA,
-                    "POLARIDADE": item.POLARIDADE,
-                    "VALOR ATUAL": displayValue, // Usar VALOR_1 como valor atual
-                    "Status": item.Status,
-                    "REFERENCIAL DA META": item["REFERENCIAL DA META"],
-                    "DOUBLE CHECK": item["DOUBLE CHECK"],
-                    "OBSERVAÇÕES": item.OBSERVAÇÕES,
-                    "BASE DE DADOS": item["BASE DE DADOS"],
-                    "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
-                    "INDICADOR": item.ORIGEM === "Indicadores Táticos" ? "Tático" : "Estratégico",
-                    "valor": displayValue,
-                    "tipo_dado": "VALOR",
-                    "ano": 2025,
-                    
-                    // Campos extras do novo formato para referência
-                    "ID_LINHA": item.ID_LINHA,
-                    "NUMERO_INDICADOR": item.NUMERO_INDICADOR,
-                    "ORIGEM": item.ORIGEM,
-                    "TOTAL_VALORES_TEMPORAIS": item.TOTAL_VALORES_TEMPORAIS,
-                    "DATA_BASE": item.DATA_BASE,
-                    // Valores temporais
-                    "VALOR_1": item.VALOR_1,
-                    "VALOR_2": item.VALOR_2,
-                    "VALOR_3": item.VALOR_3,
-                    "VALOR_4": item.VALOR_4,
-                    "VALOR_5": item.VALOR_5,
-                    "VALOR_6": item.VALOR_6,
-                    // Metas
-                    "METAS": item.METAS,
-                    "META 2025": item["META 2025"],
-                    "META 2026": item["META 2026"],
-                    
-                    // Para compatibilidade
-                    displayValue: displayValue,
-                    normalizedStatus: normalizeStatus(item.Status)
-                };
-                
-                indicatorsMap.set(indicatorKey, convertedItem);
-            });
+            // Obter valores atuais e anteriores
+            let valorAtual = 0;
+            let valorAnterior = 0;
             
-            return Array.from(indicatorsMap.values());
+            // Valor atual
+            if (indicator.VALOR_1 && typeof indicator.VALOR_1 === 'object' && indicator.VALOR_1.valor !== undefined) {
+                valorAtual = indicator.VALOR_1.valor;
+            } else if (indicator["VALOR 1"] !== undefined && indicator["VALOR 1"] !== null && indicator["VALOR 1"] !== "") {
+                valorAtual = indicator["VALOR 1"];
+            } else if (indicator["Resultado Atual"] !== undefined && indicator["Resultado Atual"] !== null) {
+                valorAtual = indicator["Resultado Atual"];
+            }
+            
+            // Valor anterior
+            if (indicator.VALOR_2 && typeof indicator.VALOR_2 === 'object' && indicator.VALOR_2.valor !== undefined) {
+                valorAnterior = indicator.VALOR_2.valor;
+            } else if (indicator["VALOR 2"] !== undefined && indicator["VALOR 2"] !== null && indicator["VALOR 2"] !== "") {
+                valorAnterior = indicator["VALOR 2"];
+            }
+            
+            // Se não houver valor anterior, não há variação
+            if (!valorAnterior || valorAnterior === 0) {
+                return { value: 0, direction: 'neutral', isPositive: true };
+            }
+            
+            // Calcular variação percentual
+            const variacao = ((valorAtual - valorAnterior) / valorAnterior) * 100;
+            
+            // Determinar se é positivo baseado na polaridade
+            const polaridade = indicator.POLARIDADE || '⬆️';
+            const isAumentoDesejado = polaridade.includes('⬆️');
+            const isDiminuicaoDesejada = polaridade.includes('⬇️');
+            
+            let isPositive;
+            if (isAumentoDesejado) {
+                isPositive = variacao > 0;
+            } else if (isDiminuicaoDesejada) {
+                isPositive = variacao < 0;
+            } else {
+                isPositive = true;
+            }
+            
+            return {
+                value: variacao,
+                direction: variacao > 0 ? 'up' : variacao < 0 ? 'down' : 'neutral',
+                isPositive: isPositive
+            };
+        }
+
+        function getVariationClass(variation) {
+            if (variation.direction === 'neutral') return 'variation-neutral';
+            
+            if (variation.direction === 'up') {
+                return variation.isPositive ? 'variation-positive-up' : 'variation-negative-up';
+            } else if (variation.direction === 'down') {
+                return variation.isPositive ? 'variation-positive-down' : 'variation-negative-down';
+            }
+            
+            return 'variation-neutral';
+        }
+
+        function formatVariation(value) {
+            if (value === 0) return '0%';
+            return Math.abs(value).toFixed(1) + '%';
+        }
+
+        function getVariationIcon(variation) {
+            if (variation.direction === 'up') {
+                return variation.isPositive ? '📈' : '⚠️';
+            } else if (variation.direction === 'down') {
+                return variation.isPositive ? '✅' : '📉';
+            }
+            return '➡️';
         }
 
         // ------------------------------------------------------------------
@@ -7884,15 +8889,12 @@
             
             const nomeArquivo = arquivos[tipo] || 'documento.pdf';
             
-            // Em um sistema real, aqui seria uma chamada para o servidor
             mostrarNotificacao(`Iniciando download de ${nomeArquivo}`, 'success');
             
-            // Simular download (em produção, isso seria um link real)
             setTimeout(() => {
                 mostrarNotificacao(`${nomeArquivo} baixado com sucesso!`, 'success');
             }, 1000);
             
-            // Fechar o dropdown
             const dropdown = document.getElementById('download-dropdown');
             dropdown.classList.remove('show');
             const button = document.querySelector('.download-dropdown-button');
@@ -7927,13 +8929,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             const page = urlParams.get('page') || 'home';
             
-            // Esconder todas as páginas primeiro
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('estrategicos-page').style.display = 'none';
             document.getElementById('taticos-page').style.display = 'none';
             document.getElementById('other-pages').innerHTML = '';
             
-            // Limpar seções específicas
             document.getElementById('objective-header-section').innerHTML = '';
             document.getElementById('status-summary-section').innerHTML = '';
             document.getElementById('estrategicos-container').innerHTML = '';
@@ -7941,7 +8941,6 @@
             document.getElementById('taticos-status-summary-section').innerHTML = '';
             document.getElementById('taticos-container').innerHTML = '';
             
-            // Limpar filtros
             if (page !== 'estrategicos') {
                 activeSuperintendenciaFilter = null;
                 activeSubsecretariaFilter = null;
@@ -7950,14 +8949,10 @@
             if (page !== 'taticos') {
                 taticosActiveSuperintendenciaFilter = null;
                 taticosActiveSubsecretariaFilter = null;
-                taticosActiveStatusFilter = null;
                 selectedTaticosObjective = null;
             }
             
-            // Atualizar estado dos links de navegação
             updateNavLinks(page);
-            
-            // Atualizar sidebar
             updateSidebar(page);
 
             switch (page) {
@@ -7974,11 +8969,9 @@
                     renderHomePage();
             }
             
-            // Atualizar contadores nos cards da home
             updateHomeCounters();
         }
 
-        // Função para atualizar os links de navegação ativos
         function updateNavLinks(currentPage) {
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
@@ -7998,7 +8991,6 @@
             }
         }
 
-        // Função para atualizar a sidebar
         function updateSidebar(page) {
             const sidebarLinks = document.getElementById('sidebar-links');
             const objectivesSection = document.getElementById('sidebar-objectives-section');
@@ -8040,7 +9032,6 @@
                     objectivesSection.style.display = 'block';
                     renderSidebarObjectives('estrategicos');
                     
-                    // Se não houver objetivo selecionado, selecionar "Quadro Geral"
                     if (!selectedObjective) {
                         selectObjective('Quadro Geral');
                     }
@@ -8064,7 +9055,6 @@
                     objectivesSection.style.display = 'block';
                     renderSidebarObjectives('taticos');
                     
-                    // Se não houver objetivo selecionado, selecionar "Quadro Geral"
                     if (!selectedTaticosObjective) {
                         selectTaticosObjective('Quadro Geral');
                     }
@@ -8081,7 +9071,7 @@
             // Atualizar latestIndicators com os dados atuais
             latestIndicators = getLatestIndicators(loadData());
             
-            // Separar estratégicos de táticos baseado no campo ORIGEM
+            // Separar estratégicos de táticos
             estrategicosIndicators = latestIndicators.filter(item => 
                 item.ORIGEM !== "Indicadores Táticos"
             );
@@ -8116,7 +9106,7 @@
             // Criar array de objetivos
             const objetivosArray = Object.values(objetivos);
             
-            // Adicionar opção "Quadro Geral" no início - incluindo TODOS os indicadores
+            // Adicionar opção "Quadro Geral" no início
             objetivosArray.unshift({
                 name: "Quadro Geral",
                 estrategicos: estrategicosIndicators,
@@ -8137,7 +9127,6 @@
             
             if (!sidebarList) return;
             
-            // Atualizar título baseado no tipo de página
             if (pageType === 'estrategicos') {
                 objectivesTitle.innerHTML = 'Objetivo Estratégico';
             } else if (pageType === 'taticos') {
@@ -8150,7 +9139,6 @@
                 const objectiveItem = document.createElement('div');
                 objectiveItem.className = 'objective-item';
                 
-                // Verificar qual objetivo está ativo
                 let isActive = false;
                 if (pageType === 'estrategicos') {
                     isActive = selectedObjective && selectedObjective.name === objective.name;
@@ -8162,7 +9150,6 @@
                     '<span class="material-symbols-outlined">dashboard</span>' : 
                     getObjectiveIcon(objective.name);
                 
-                // Contar indicadores baseado no tipo de página
                 let indicatorCount = 0;
                 if (pageType === 'estrategicos') {
                     indicatorCount = objective.estrategicos.length;
@@ -8192,74 +9179,55 @@
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO PARA SELECIONAR UM OBJETIVO - COM ATUALIZAÇÃO DE STATUS
+        // FUNÇÃO PARA SELECIONAR UM OBJETIVO
         // ------------------------------------------------------------------
         function selectObjective(objectiveName) {
             const objectives = getObjectivesFromData();
             selectedObjective = objectives.find(obj => obj.name === objectiveName);
             
-            // Limpar filtro de status ao mudar de objetivo
             activeStatusFilter = null;
             activeSuperintendenciaFilter = null;
             activeSubsecretariaFilter = null;
             
-            // Atualizar a barra lateral
             renderSidebarObjectives('estrategicos');
-            
-            // Renderizar o cabeçalho do objetivo
             renderObjectiveHeader(selectedObjective);
             
-            // MODIFICAÇÃO: Renderizar status gerais APENAS para Quadro Geral
             if (selectedObjective.name === "Quadro Geral") {
                 renderStatusSummary(selectedObjective.estrategicos);
             } else {
-                // Esconder a seção de status para objetivos específicos
                 document.getElementById('status-summary-section').innerHTML = '';
             }
             
-            // Renderizar os indicadores com filtros integrados
             renderEstrategicosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA SELECIONAR UM OBJETIVO NA PÁGINA DE TÁTICOS
-        // ------------------------------------------------------------------
         function selectTaticosObjective(objectiveName) {
             const objectives = getObjectivesFromData();
             selectedTaticosObjective = objectives.find(obj => obj.name === objectiveName);
             
-            // Limpar filtro de status ao mudar de objetivo
-            taticosActiveStatusFilter = null;
             taticosActiveSuperintendenciaFilter = null;
             taticosActiveSubsecretariaFilter = null;
             
-            // Atualizar a barra lateral
             renderSidebarObjectives('taticos');
-            
-            // Renderizar o cabeçalho do objetivo
             renderTaticosHeader();
             
-            // MODIFICAÇÃO: Renderizar status gerais APENAS para Quadro Geral
             if (selectedTaticosObjective.name === "Quadro Geral") {
                 renderTaticosStatusSummary();
             } else {
-                // Esconder a seção de status para objetivos específicos
                 document.getElementById('taticos-status-summary-section').innerHTML = '';
             }
             
-            // Renderizar os indicadores táticos com filtros integrados
             renderTaticosWithIntegratedFilters();
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO PARA RENDERIZAR O CABEÇALHO DO OBJETIVO - MODIFICADA
+        // FUNÇÃO PARA RENDERIZAR O CABEÇALHO DO OBJETIVO
         // ------------------------------------------------------------------
         function renderObjectiveHeader(objective) {
             if (!objective) return;
             
             const headerSection = document.getElementById('objective-header-section');
             
-            // Mapeamento das descrições dos objetivos
             const objectiveDescriptions = {
                 "Quadro Geral": "Todos os indicadores estratégicos da SEEDUC",
                 "Acesso à Educação": "Assegurar acesso a uma educação básica de qualidade a toda sociedade fluminense dentre as diferentes etapas e modalidades de ensino.",
@@ -8274,8 +9242,6 @@
             };
             
             const description = objectiveDescriptions[objective.name] || objective.name;
-            
-            // Verificar se é estratégico ou tático para mostrar o título correto
             const isTaticosPage = window.location.search.includes('page=taticos');
             const titulo = isTaticosPage ? 'Indicadores Táticos' : 'Objetivo Estratégico';
             
@@ -8295,76 +9261,42 @@
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO PARA APLICAR FILTRO POR STATUS (ESTRATÉGICOS)
+        // FUNÇÕES DE FILTRO
         // ------------------------------------------------------------------
         function applyStatusFilter(status) {
             activeStatusFilter = status;
             renderEstrategicosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA APLICAR FILTRO POR STATUS (TÁTICOS)
-        // ------------------------------------------------------------------
-        function applyTaticosStatusFilter(status) {
-            taticosActiveStatusFilter = status;
-            renderTaticosWithIntegratedFilters();
-        }
-
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA LIMPAR FILTRO DE STATUS (ESTRATÉGICOS)
-        // ------------------------------------------------------------------
         function clearStatusFilter() {
             activeStatusFilter = null;
             renderEstrategicosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA LIMPAR FILTRO DE STATUS (TÁTICOS)
-        // ------------------------------------------------------------------
-        function clearTaticosStatusFilter() {
-            taticosActiveStatusFilter = null;
-            renderTaticosWithIntegratedFilters();
-        }
-
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA APLICAR FILTRO POR RESPONSÁVEIS (ESTRATÉGICOS)
-        // ------------------------------------------------------------------
         function applyResponsaveisFilter(superintendencia, subsecretaria) {
             activeSuperintendenciaFilter = superintendencia === 'all' ? null : superintendencia;
             activeSubsecretariaFilter = subsecretaria === 'all' ? null : subsecretaria;
             renderEstrategicosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA APLICAR FILTRO POR RESPONSÁVEIS (TÁTICOS)
-        // ------------------------------------------------------------------
         function applyTaticosResponsaveisFilter(superintendencia, subsecretaria) {
             taticosActiveSuperintendenciaFilter = superintendencia === 'all' ? null : superintendencia;
             taticosActiveSubsecretariaFilter = subsecretaria === 'all' ? null : subsecretaria;
             renderTaticosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA LIMPAR FILTRO DE RESPONSÁVEIS (ESTRATÉGICOS)
-        // ------------------------------------------------------------------
         function clearResponsaveisFilter() {
             activeSuperintendenciaFilter = null;
             activeSubsecretariaFilter = null;
             renderEstrategicosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA LIMPAR FILTRO DE RESPONSÁVEIS (TÁTICOS)
-        // ------------------------------------------------------------------
         function clearTaticosResponsaveisFilter() {
             taticosActiveSuperintendenciaFilter = null;
             taticosActiveSubsecretariaFilter = null;
             renderTaticosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA OBTER LISTA DE RESPONSÁVEIS ÚNICOS
-        // ------------------------------------------------------------------
         function getResponsaveisList(indicators) {
             const superintendencias = new Set();
             const subsecretarias = new Set();
@@ -8393,7 +9325,6 @@
             const container = document.getElementById('estrategicos-container');
             const responsaveis = getResponsaveisList(selectedObjective.estrategicos);
             
-            // Verificar filtros ativos
             let filterIndicatorsHTML = '';
             const activeFilters = [];
             
@@ -8418,7 +9349,6 @@
                 `;
             }
             
-            // Construir HTML dos filtros integrados - MODIFICADO: Removido ícone e título
             let activeFiltersSection = '';
             if (activeSuperintendenciaFilter || activeSubsecretariaFilter) {
                 activeFiltersSection = `
@@ -8440,7 +9370,6 @@
                 `;
             }
             
-            // MODIFICAÇÃO: Filtros simplificados sem ícone e texto "Filtrar por Responsável"
             const filtersHTML = `
                 <div class="integrated-filters">
                     <div class="integrated-filters-row">
@@ -8481,17 +9410,14 @@
                 </div>
             `;
             
-            // Filtrar indicadores com base em todos os filtros
             let indicatorsToShow = selectedObjective.estrategicos;
             
-            // Aplicar filtro de status
             if (activeStatusFilter) {
                 indicatorsToShow = indicatorsToShow.filter(indicator => 
                     normalizeStatus(indicator.Status) === activeStatusFilter
                 );
             }
             
-            // Aplicar filtro de superintendência
             if (activeSuperintendenciaFilter) {
                 indicatorsToShow = indicatorsToShow.filter(indicator => 
                     indicator.SUPINTENDÊNCIA && 
@@ -8499,7 +9425,6 @@
                 );
             }
             
-            // Aplicar filtro de subsecretaria
             if (activeSubsecretariaFilter) {
                 indicatorsToShow = indicatorsToShow.filter(indicator => 
                     indicator.SUBSECRETARIA && 
@@ -8507,7 +9432,6 @@
                 );
             }
             
-            // Verificar se há indicadores para mostrar
             let indicatorsHTML = '';
             if (indicatorsToShow.length === 0) {
                 indicatorsHTML = `
@@ -8532,7 +9456,6 @@
                     </div>
                 `;
             } else {
-                // Construir HTML dos indicadores
                 const indicatorsGridClass = selectedObjective.isGeneral ? 'general-indicators-grid' : 'indicator-list-view';
                 indicatorsHTML = `
                     ${filterIndicatorsHTML}
@@ -8545,7 +9468,6 @@
                             const statusClass = getStatusClass(indicator.Status);
                             const displayStatus = normalizeStatus(indicator.Status);
                             
-                            // MODIFICAÇÃO: Layout para objetivos específicos (sem descrições detalhadas)
                             if (selectedObjective.isGeneral) {
                                 return `
                                     <div class="indicator-card" onclick="navigate('detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}')">
@@ -8578,7 +9500,6 @@
                                     </div>
                                 `;
                             } else {
-                                // MODIFICAÇÃO: Layout simplificado para objetivos específicos (apenas título e indicadores)
                                 return `
                                     <div class="indicator-card" onclick="navigate('detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}')">
                                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
@@ -8599,7 +9520,6 @@
                 `;
             }
             
-            // Combinar filtros e indicadores em um único container
             container.innerHTML = filtersHTML + indicatorsHTML;
         }
 
@@ -8611,13 +9531,9 @@
             const indicatorsToShow = selectedTaticosObjective ? selectedTaticosObjective.taticos : taticosIndicators;
             const responsaveis = getResponsaveisList(indicatorsToShow);
             
-            // Verificar filtros ativos
             let filterIndicatorsHTML = '';
             const activeFilters = [];
             
-            if (taticosActiveStatusFilter) {
-                activeFilters.push(`Status: ${taticosActiveStatusFilter}`);
-            }
             if (taticosActiveSuperintendenciaFilter) {
                 activeFilters.push(`Superintendência: ${taticosActiveSuperintendenciaFilter}`);
             }
@@ -8636,7 +9552,6 @@
                 `;
             }
             
-            // Construir HTML dos filtros integrados - MODIFICADO: Removido ícone e título
             let activeFiltersSection = '';
             if (taticosActiveSuperintendenciaFilter || taticosActiveSubsecretariaFilter) {
                 activeFiltersSection = `
@@ -8658,7 +9573,6 @@
                 `;
             }
             
-            // MODIFICAÇÃO: Filtros simplificados sem ícone e texto "Filtrar por Responsável"
             const filtersHTML = `
                 <div class="integrated-filters">
                     <div class="integrated-filters-row">
@@ -8699,17 +9613,8 @@
                 </div>
             `;
             
-            // Filtrar indicadores com base em todos os filtros
             let filteredIndicators = indicatorsToShow;
             
-            // Aplicar filtro de status
-            if (taticosActiveStatusFilter) {
-                filteredIndicators = filteredIndicators.filter(indicator => 
-                    normalizeStatus(indicator.Status) === taticosActiveStatusFilter
-                );
-            }
-            
-            // Aplicar filtro de superintendência
             if (taticosActiveSuperintendenciaFilter) {
                 filteredIndicators = filteredIndicators.filter(indicator => 
                     indicator.SUPINTENDÊNCIA && 
@@ -8717,7 +9622,6 @@
                 );
             }
             
-            // Aplicar filtro de subsecretaria
             if (taticosActiveSubsecretariaFilter) {
                 filteredIndicators = filteredIndicators.filter(indicator => 
                     indicator.SUBSECRETARIA && 
@@ -8725,7 +9629,6 @@
                 );
             }
             
-            // Verificar se há indicadores para mostrar
             let indicatorsHTML = '';
             if (filteredIndicators.length === 0) {
                 indicatorsHTML = `
@@ -8747,16 +9650,9 @@
                             </button>` : 
                             ''
                         }
-                        ${activeFilters.length === 0 && filteredIndicators.length === 0 ? 
-                            `<button onclick="adicionarExemploTaticos()" style="margin-top: 15px; padding: 10px 20px; background-color: var(--color-tactical); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
-                                Carregar Dados Táticos de Exemplo
-                            </button>` : 
-                            ''
-                        }
                     </div>
                 `;
             } else {
-                // Construir HTML dos indicadores táticos
                 indicatorsHTML = `
                     ${filterIndicatorsHTML}
                     <div class="general-indicators-grid" id="taticos-indicators-list">
@@ -8765,14 +9661,20 @@
                                 indicator.displayValue : (indicator["VALOR ATUAL"] || 0);
                             
                             const formattedValue = formatValue(displayValue, indicator.GRANDEZA);
-                            const statusClass = getStatusClass(indicator.Status);
-                            const displayStatus = normalizeStatus(indicator.Status);
+                            
+                            const variation = calculateVariation(indicator);
+                            const variationClass = getVariationClass(variation);
+                            const variationIcon = getVariationIcon(variation);
+                            const variationText = variation.value !== 0 ? 
+                                `${variation.value > 0 ? '+' : ''}${formatVariation(variation.value)}` : '0%';
                             
                             return `
                                 <div class="indicator-card" onclick="navigate('detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}')">
                                     <div style="display: flex; flex-direction: column; height: 100%;">
                                         <div style="margin-bottom: 8px;">
-                                            <span class="status-badge ${statusClass}">${displayStatus}</span>
+                                            <span class="variation-badge ${variationClass}">
+                                                ${variationIcon} <span class="variation-value">${variationText}</span>
+                                            </span>
                                             <div style="font-size: 11px; color: var(--color-text-light); margin-top: 2px;">${indicator["#"]}</div>
                                         </div>
                                         
@@ -8803,26 +9705,13 @@
                 `;
             }
             
-            // Combinar filtros e indicadores em um único container
             container.innerHTML = filtersHTML + indicatorsHTML;
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO CORRIGIDA PARA ATUALIZAR CONTADORES NA HOME
-        // ------------------------------------------------------------------
         function updateHomeCounters() {
-            // Atualizar dados se necessário
             if (!estrategicosIndicators || !taticosIndicators) {
                 getObjectivesFromData();
             }
-            
-            // CONTAR INDICADORES ESTRATÉGICOS
-            const estrategicosCount = estrategicosIndicators ? estrategicosIndicators.length : 0;
-            
-            // CONTAR INDICADORES TÁTICOS
-            const taticosCount = taticosIndicators ? taticosIndicators.length : 0;
-            
-            // REMOVIDO: Atualização dos contadores na home (não são mais exibidos)
         }
 
         // ------------------------------------------------------------------
@@ -8836,58 +9725,43 @@
         function renderEstrategicosPage() {
             document.getElementById('estrategicos-page').style.display = 'block';
             
-            // Se não houver objetivo selecionado, selecionar "Quadro Geral" e renderizar
             if (!selectedObjective) {
                 selectObjective('Quadro Geral');
             } else {
-                // Renderizar cabeçalho do objetivo
                 renderObjectiveHeader(selectedObjective);
                 
-                // Renderizar status gerais APENAS para Quadro Geral
                 if (selectedObjective.name === "Quadro Geral") {
                     renderStatusSummary(selectedObjective.estrategicos);
                 } else {
                     document.getElementById('status-summary-section').innerHTML = '';
                 }
                 
-                // Renderizar os indicadores com filtros integrados
                 renderEstrategicosWithIntegratedFilters();
             }
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA RENDERIZAR PÁGINA DE TÁTICOS
-        // ------------------------------------------------------------------
         function renderTaticosPage() {
             document.getElementById('taticos-page').style.display = 'block';
             
-            // Atualizar dados se necessário
             if (!taticosIndicators) {
                 getObjectivesFromData();
             }
             
-            // Se não houver objetivo selecionado, selecionar "Quadro Geral" e renderizar
             if (!selectedTaticosObjective) {
                 selectTaticosObjective('Quadro Geral');
             } else {
-                // Renderizar cabeçalho dos táticos
                 renderTaticosHeader();
                 
-                // Renderizar status gerais APENAS para Quadro Geral
                 if (selectedTaticosObjective.name === "Quadro Geral") {
                     renderTaticosStatusSummary();
                 } else {
                     document.getElementById('taticos-status-summary-section').innerHTML = '';
                 }
                 
-                // Renderizar os indicadores táticos com filtros integrados
                 renderTaticosWithIntegratedFilters();
             }
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA RENDERIZAR CABEÇALHO DOS TÁTICOS
-        // ------------------------------------------------------------------
         function renderTaticosHeader() {
             const headerSection = document.getElementById('taticos-header-section');
             
@@ -8923,13 +9797,9 @@
             `;
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA RENDERIZAR STATUS SUMMARY DOS TÁTICOS
-        // ------------------------------------------------------------------
         function renderTaticosStatusSummary() {
             const indicatorsToShow = selectedTaticosObjective ? selectedTaticosObjective.taticos : taticosIndicators;
-            const statusCounts = countIndicatorsByStatus(indicatorsToShow);
-            const totalGeral = statusCounts.Total;
+            const totalGeral = indicatorsToShow.length;
 
             const summarySection = document.getElementById('taticos-status-summary-section');
             summarySection.innerHTML = ''; 
@@ -8937,47 +9807,17 @@
             const container = document.createElement('div');
             container.className = 'status-summary-container';
 
-            const statusMap = [
-                { key: 'Dentro do esperado', label: 'Dentro do esperado', className: 'status-summary-hiperpositive' }, 
-                { key: 'Meta 2025 alcançada', label: 'Meta 2025 alcançada', className: 'status-summary-positive' },
-                { key: 'Abaixo do esperado', label: 'Abaixo do esperado', className: 'status-summary-negative' },
-                { key: 'Dados em Coleta', label: 'Dados em Coleta', className: 'status-summary-gray' },
-                { key: 'Total', label: 'Total', className: 'status-summary-total' },
-            ];
-
-            statusMap.forEach(item => {
-                const count = statusCounts[item.key] || 0;
-                let percentageHTML = '';
-                
-                if (totalGeral > 0 && item.key !== 'Total') {
-                    const percentage = ((count / totalGeral) * 100).toFixed(1); 
-                    percentageHTML = `<div class="percentage-label">${percentage}%</div>`;
-                }
-                
-                if (item.key === 'Total' && totalGeral > 0) {
-                    percentageHTML = `<div class="percentage-label">100.0%</div>`;
-                }
-
-                // Aplicar filtro para táticos
-                const clickAction = item.key !== 'Total' 
-                    ? `onclick="applyTaticosStatusFilter('${item.key}')"` 
-                    : '';
-
-                container.innerHTML += `
-                    <div class="status-summary-card ${item.className}" ${clickAction} style="cursor: ${item.key !== 'Total' ? 'pointer' : 'default'};">
-                        ${percentageHTML}
-                        <div class="count">${count}</div>
-                        <div class="label">${item.label}</div>
-                    </div>
-                `;
-            });
+            container.innerHTML = `
+                <div class="status-summary-card status-summary-total" style="flex: 1; cursor: default;">
+                    <div class="percentage-label">100.0%</div>
+                    <div class="count">${totalGeral}</div>
+                    <div class="label">Total de Indicadores Táticos</div>
+                </div>
+            `;
             
             summarySection.appendChild(container);
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA LIMPAR TODOS OS FILTROS DOS ESTRATÉGICOS
-        // ------------------------------------------------------------------
         function clearAllFilters() {
             activeStatusFilter = null;
             activeSuperintendenciaFilter = null;
@@ -8985,18 +9825,14 @@
             renderEstrategicosWithIntegratedFilters();
         }
 
-        // ------------------------------------------------------------------
-        // FUNÇÃO PARA LIMPAR TODOS OS FILTROS DOS TÁTICOS
-        // ------------------------------------------------------------------
         function clearTaticosAllFilters() {
-            taticosActiveStatusFilter = null;
             taticosActiveSuperintendenciaFilter = null;
             taticosActiveSubsecretariaFilter = null;
             renderTaticosWithIntegratedFilters();
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO DE CONTAGEM CORRIGIDA - Incluindo "Dados em Coleta"
+        // FUNÇÃO DE CONTAGEM CORRIGIDA
         // ------------------------------------------------------------------
         function countIndicatorsByStatus(indicators) {
             const counts = { 
@@ -9007,14 +9843,13 @@
             };
             
             indicators.forEach(indicator => {
-                const status = normalizeStatus(indicator.Status); // Usar status normalizado
+                const status = normalizeStatus(indicator.Status);
                 
                 if (status === 'Dentro do esperado' || status === 'Meta 2025 alcançada' || status === 'Abaixo do esperado') {
                     counts[status]++; 
                 } else if (status === 'Dados em Coleta') {
                     counts['Dados em Coleta']++;
                 } else {
-                    // Qualquer outro status vai para "Dados em Coleta"
                     counts['Dados em Coleta']++;
                 }
             });
@@ -9024,7 +9859,7 @@
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO DE RESUMO DE STATUS - CORRIGIDA
+        // FUNÇÃO DE RESUMO DE STATUS
         // ------------------------------------------------------------------
         function renderStatusSummary(indicators) {
             const statusCounts = countIndicatorsByStatus(indicators);
@@ -9057,7 +9892,6 @@
                     percentageHTML = `<div class="percentage-label">100.0%</div>`;
                 }
 
-                // Alteração: agora o clique aplica filtro em vez de navegar para outra página
                 const clickAction = item.key !== 'Total' 
                     ? `onclick="applyStatusFilter('${item.key}')"` 
                     : '';
@@ -9075,177 +9909,10 @@
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÃO PARA ADICIONAR EXEMPLO DE TÁTICOS (NOVA)
-        // ------------------------------------------------------------------
-        function adicionarExemploTaticos() {
-            const exemplos = [
-                {
-                    "ID_LINHA": 100,
-                    "NUMERO_INDICADOR": "T.1.1",
-                    "ORIGEM": "Indicadores Táticos",
-                    "TOTAL_VALORES_TEMPORAIS": 6,
-                    "OBJETIVO ESTRATÉGICO": "Acesso à Educação",
-                    "#": "T.1.1",
-                    "INDICADORES": "Percentual de matrículas realizadas online",
-                    "FÓRMULA": "(Matrículas online / Total de matrículas) × 100",
-                    "FONTE DOS DADOS": "Sistema SIGA",
-                    "EMAIL PESSOA RESPONSÁVEL": "matricula@seeduc.rj.gov.br",
-                    "SUPINTENDÊNCIA": "SUPLAN",
-                    "SUBSECRETARIA": "SUBPAE",
-                    "PERIODICIDADE DE MEDIÇÃO": "Semestral",
-                    "GRANDEZA": "%",
-                    "POLARIDADE": "⬆️",
-                    "VALOR 6": 0,
-                    "VALOR 5": 0,
-                    "VALOR 4": 0.75,
-                    "VALOR 3": 0.78,
-                    "VALOR 2": 0.82,
-                    "META 2025": 0.85,
-                    "META 2026": 0.9,
-                    "VALOR 1": 0.85,
-                    "Status": "Meta 2025 alcançada",
-                    "REFERENCIAL DA META": "Meta: 85% até 2025",
-                    "DOUBLE CHECK": "ok",
-                    "OBSERVAÇÕES": "Excelente desempenho",
-                    "BASE DE DADOS": 0.85,
-                    "DATA_BASE": "15.12.2025",
-                    "VALOR_1": {
-                        "valor": 0.85,
-                        "periodo": "2º Semestre 2025",
-                        "referencia": "S2/2025",
-                        "eh_data_base": true,
-                        "ordem_temporal": 1,
-                        "semestre": 2,
-                        "ano": 2025,
-                        "meses": [
-                            "Jul",
-                            "Ago",
-                            "Set",
-                            "Out",
-                            "Nov",
-                            "Dez"
-                        ]
-                    },
-                    "VALOR_2": {
-                        "valor": 0.82,
-                        "periodo": "1º Semestre 2025",
-                        "referencia": "S1/2025",
-                        "eh_data_base": false,
-                        "ordem_temporal": 2,
-                        "semestre": 1,
-                        "ano": 2025,
-                        "meses": [
-                            "Jan",
-                            "Fev",
-                            "Mar",
-                            "Abr",
-                            "Mai",
-                            "Jun"
-                        ]
-                    },
-                    "METAS": {
-                        "META_2025": {
-                            "valor": 0.85,
-                            "ano": 2025,
-                            "descricao": "Meta para 2025"
-                        },
-                        "META_2026": {
-                            "valor": 0.9,
-                            "ano": 2026,
-                            "descricao": "Meta para 2026"
-                        }
-                    }
-                },
-                {
-                    "ID_LINHA": 101,
-                    "NUMERO_INDICADOR": "T.2.1",
-                    "ORIGEM": "Indicadores Táticos",
-                    "TOTAL_VALORES_TEMPORAIS": 6,
-                    "OBJETIVO ESTRATÉGICO": "Infraestrutura",
-                    "#": "T.2.1",
-                    "INDICADORES": "Tempo médio de resposta para manutenção",
-                    "FÓRMULA": "Soma dos tempos de resposta / Número de solicitações",
-                    "FONTE DOS DADOS": "Sistema de Chamados",
-                    "EMAIL PESSOA RESPONSÁVEL": "manutencao@seeduc.rj.gov.br",
-                    "SUPINTENDÊNCIA": "SUPIE",
-                    "SUBSECRETARIA": "SUBAD",
-                    "PERIODICIDADE DE MEDIÇÃO": "Mensal",
-                    "GRANDEZA": "dias",
-                    "POLARIDADE": "⬇️",
-                    "VALOR 6": 5.2,
-                    "VALOR 5": 4.8,
-                    "VALOR 4": 4.5,
-                    "VALOR 3": 4.2,
-                    "VALOR 2": 3.8,
-                    "META 2025": 3.5,
-                    "META 2026": 3.0,
-                    "VALOR 1": 3.5,
-                    "Status": "Dentro do esperado",
-                    "REFERENCIAL DA META": "Meta: ≤ 3.5 dias até 2025",
-                    "DOUBLE CHECK": "ok",
-                    "OBSERVAÇÕES": "Melhoria contínua",
-                    "BASE DE DADOS": 3.5,
-                    "DATA_BASE": "15.12.2025",
-                    "VALOR_1": {
-                        "valor": 3.5,
-                        "periodo": "December/2025",
-                        "referencia": "12/2025",
-                        "eh_data_base": true,
-                        "ordem_temporal": 1,
-                        "mes": 12,
-                        "ano": 2025
-                    },
-                    "VALOR_2": {
-                        "valor": 3.8,
-                        "periodo": "November/2025",
-                        "referencia": "11/2025",
-                        "eh_data_base": false,
-                        "ordem_temporal": 2,
-                        "mes": 11,
-                        "ano": 2025
-                    },
-                    "METAS": {
-                        "META_2025": {
-                            "valor": 3.5,
-                            "ano": 2025,
-                            "descricao": "Meta para 2025"
-                        },
-                        "META_2026": {
-                            "valor": 3.0,
-                            "ano": 2026,
-                            "descricao": "Meta para 2026"
-                        }
-                    }
-                }
-            ];
-            
-            // Adicionar os dados táticos de exemplo
-            exemplos.forEach(item => {
-                novoJsonData.push(item);
-            });
-            
-            // Atualizar o localStorage
-            localStorage.setItem('dashboardData', JSON.stringify(novoJsonData));
-            
-            // Atualizar separação de indicadores
-            getObjectivesFromData();
-            
-            // Recarregar a página táticos
-            renderTaticosPage();
-            
-            // Atualizar contadores na home
-            updateHomeCounters();
-            
-            // Mostrar mensagem de sucesso
-            mostrarNotificacao('✅ 2 indicadores táticos de exemplo foram carregados com sucesso!', 'success');
-        }
-
-        // ------------------------------------------------------------------
-        // FUNÇÕES DE COLETA DE DADOS (MODIFICADAS PARA VERIFICAR LOGIN)
+        // FUNÇÕES DE COLETA DE DADOS
         // ------------------------------------------------------------------
         
         function abrirModalColeta() {
-            // Verificar novamente se o usuário está logado
             if (!usuarioLogado) {
                 abrirModalLogin();
                 return;
@@ -9275,7 +9942,6 @@
         }
         
         function criarConteudoColeta() {
-            // Adicionar informação do usuário logado
             let userInfo = '';
             if (usuarioLogado) {
                 userInfo = `
@@ -9403,6 +10069,14 @@
             }
         `;
         document.head.appendChild(style);
+
+        // TESTE INICIAL
+        console.log("Aplicação carregada. Total de dados:", loadData().length);
+        const latest = getLatestIndicators(loadData());
+        console.log("Indicadores processados:", latest.length);
+        if (latest.length > 0) {
+            console.log("Primeiro indicador:", latest[0]);
+        }
     </script>
 </body>
 </html>
