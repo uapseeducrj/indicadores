@@ -937,6 +937,186 @@
             border-left: 3px solid #a78bfa;
         }
         
+        /* ========== ESTILOS DO MODAL DE LOGIN ========== */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .login-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            color: var(--color-text-light);
+        }
+
+        .login-logo {
+            height: 50px;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-dark);
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(0, 61, 122, 0.1);
+        }
+
+        .login-button {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            background-color: #002d5b;
+            transform: translateY(-1px);
+        }
+
+        .login-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: var(--color-text-light);
+        }
+
+        .close-login {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 20px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-login:hover {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+            padding: 4px 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .logout-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+
+        .logout-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
         /* Responsividade para dispositivos móveis */
         @media (max-width: 1200px) {
             .general-indicators-grid {
@@ -998,6 +1178,11 @@
                 justify-content: flex-start;
                 width: 100%;
             }
+
+            .login-container {
+                width: 95%;
+                padding: 20px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1054,6 +1239,13 @@
                 font-size: 11px;
                 padding: 4px 6px;
             }
+
+            .user-info {
+                margin-left: 0;
+                margin-top: 5px;
+                width: 100%;
+                justify-content: center;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1083,10 +1275,63 @@
             .indicators-container {
                 padding: 15px;
             }
+
+            .login-container {
+                padding: 15px;
+            }
+
+            .login-header h3 {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body onload="router()">
+    <!-- MODAL DE LOGIN -->
+    <div id="login-modal" class="login-modal">
+        <div class="login-container">
+            <button class="close-login" onclick="fecharModalLogin()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div class="login-header">
+                <img src="https://i.imgur.com/0wrUOlV.png" alt="SEEDUC" class="login-logo">
+                <h3>Acesso à Coleta de Dados</h3>
+                <p>Faça login para solicitar dados dos indicadores</p>
+            </div>
+            
+            <form id="login-form" class="login-form" onsubmit="fazerLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">E-mail institucional</label>
+                    <input type="email" id="login-email" placeholder="seu.email@seeduc.rj.gov.br" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-senha">Senha</label>
+                    <input type="password" id="login-senha" placeholder="Digite sua senha" required>
+                </div>
+                
+                <div class="login-error" id="login-error">
+                    E-mail ou senha incorretos. Tente novamente.
+                </div>
+                
+                <button type="submit" class="login-button" id="login-button">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px;">login</span>
+                    Entrar
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Apenas usuários autorizados da SEEDUC podem acessar a coleta de dados.</p>
+                <p style="font-size: 12px; margin-top: 8px; color: #999;">
+                    <strong>Dados de teste:</strong><br>
+                    E-mail: admin@seeduc.rj.gov.br<br>
+                    Senha: seeduc123
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- NOVO CABEÇALHO COMPACTO IGUAL AO DO DETALHES -->
     <div class="navigation-header">
         <div class="navigation-header-container">
@@ -1121,11 +1366,18 @@
                         </div>
                     </div>
                     
-                    <!-- BOTÃO DE COLETA DE DADOS -->
-                    <button class="header-button coleta-header-button" onclick="abrirModalColeta()">
+                    <!-- BOTÃO DE COLETA DE DADOS (AGORA COM VERIFICAÇÃO DE LOGIN) -->
+                    <button class="header-button coleta-header-button" onclick="verificarLoginParaColeta()">
                         <span class="material-symbols-outlined" style="font-size: 16px;">data_check</span>
                         <span class="coleta-text">Solicitar Dados</span>
                     </button>
+
+                    <!-- INFO DO USUÁRIO LOGADO (APARECE APÓS LOGIN) -->
+                    <div id="user-info-container" class="user-info" style="display: none;">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">person</span>
+                        <span id="user-email"></span>
+                        <button class="logout-button" onclick="logout()">Sair</button>
+                    </div>
                 </nav>
             </div>
         </div>
@@ -1176,7 +1428,7 @@
                                     <h3 class="home-card-title">Indicadores Estratégicos</h3>
                                     <p class="home-card-description">
                                         Indicadores de alto nível que direcionam os objetivos de longo prazo da organização. 
-                                        Monitoram o progresso em direção às metas fundamentais.
+                                        Monitoram o progresso em direção às metas fundamental.
                                     </p>
                                     <div class="home-card-count" id="estrategicos-count">Carregando...</div>
                                 </div>
@@ -6967,6 +7219,31 @@
         // Configuração inicial
         localStorage.setItem('dashboardData', JSON.stringify(novoJsonData));
         
+        // ========== SISTEMA DE LOGIN ==========
+        // Usuários autorizados (em um sistema real, isso viria de um servidor)
+        const USUARIOS_AUTORIZADOS = [
+            {
+                email: 'admin@seeduc.rj.gov.br',
+                senha: 'seeduc123',
+                nome: 'Administrador SEEDUC'
+            },
+            {
+                email: 'gestor@seeduc.rj.gov.br',
+                senha: 'gestor123',
+                nome: 'Gestor SEEDUC'
+            },
+            {
+                email: 'analista@seeduc.rj.gov.br',
+                senha: 'analista123',
+                nome: 'Analista de Dados'
+            },
+            {
+                email: 'ti@seeduc.rj.gov.br',
+                senha: 'ti123',
+                nome: 'Superintendência de TI'
+            }
+        ];
+        
         // Variáveis globais
         let selectedObjective = null;
         let activeStatusFilter = null;
@@ -6980,6 +7257,209 @@
         let taticosActiveSuperintendenciaFilter = null;
         let taticosActiveSubsecretariaFilter = null;
         let selectedTaticosObjective = null; // Objetivo selecionado na página de táticos
+        
+        // Estado de autenticação
+        let usuarioLogado = null;
+
+        // ------------------------------------------------------------------
+        // FUNÇÕES DE AUTENTICAÇÃO
+        // ------------------------------------------------------------------
+        
+        function verificarLoginParaColeta() {
+            // Verificar se o usuário já está logado
+            const usuarioSalvo = localStorage.getItem('usuarioLogado');
+            
+            if (usuarioSalvo) {
+                // Usuário já está logado, abrir modal de coleta
+                usuarioLogado = JSON.parse(usuarioSalvo);
+                atualizarInterfaceUsuario();
+                abrirModalColeta();
+            } else {
+                // Usuário não está logado, abrir modal de login
+                abrirModalLogin();
+            }
+        }
+        
+        function abrirModalLogin() {
+            const modal = document.getElementById('login-modal');
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Limpar campos
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-senha').value = '';
+            document.getElementById('login-error').classList.remove('show');
+            
+            // Focar no campo de email
+            setTimeout(() => {
+                document.getElementById('login-email').focus();
+            }, 100);
+        }
+        
+        function fecharModalLogin() {
+            document.getElementById('login-modal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        
+        function fazerLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value.trim();
+            const senha = document.getElementById('login-senha').value;
+            const errorElement = document.getElementById('login-error');
+            const loginButton = document.getElementById('login-button');
+            
+            // Desabilitar botão durante a validação
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px;">hourglass_empty</span> Verificando...';
+            
+            // Simular validação (em um sistema real, isso seria uma chamada AJAX)
+            setTimeout(() => {
+                const usuario = USUARIOS_AUTORIZADOS.find(user => 
+                    user.email === email && user.senha === senha
+                );
+                
+                if (usuario) {
+                    // Login bem-sucedido
+                    usuarioLogado = {
+                        email: usuario.email,
+                        nome: usuario.nome,
+                        dataLogin: new Date().toISOString()
+                    };
+                    
+                    // Salvar no localStorage
+                    localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+                    
+                    // Atualizar interface
+                    atualizarInterfaceUsuario();
+                    
+                    // Fechar modal de login
+                    fecharModalLogin();
+                    
+                    // Abrir modal de coleta
+                    abrirModalColeta();
+                    
+                    // Mostrar mensagem de boas-vindas
+                    mostrarNotificacao(`Bem-vindo(a), ${usuario.nome}!`, 'success');
+                } else {
+                    // Login falhou
+                    errorElement.classList.add('show');
+                    
+                    // Animar o erro
+                    errorElement.style.animation = 'none';
+                    setTimeout(() => {
+                        errorElement.style.animation = 'shake 0.5s ease';
+                    }, 10);
+                }
+                
+                // Reabilitar botão
+                loginButton.disabled = false;
+                loginButton.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px;">login</span> Entrar';
+            }, 1000); // Simular delay de rede
+        }
+        
+        function logout() {
+            // Confirmar logout
+            if (confirm('Deseja realmente sair?')) {
+                // Remover dados do usuário
+                usuarioLogado = null;
+                localStorage.removeItem('usuarioLogado');
+                
+                // Atualizar interface
+                atualizarInterfaceUsuario();
+                
+                // Mostrar mensagem
+                mostrarNotificacao('Você saiu do sistema.', 'info');
+            }
+        }
+        
+        function atualizarInterfaceUsuario() {
+            const userInfoContainer = document.getElementById('user-info-container');
+            const userEmailElement = document.getElementById('user-email');
+            
+            if (usuarioLogado) {
+                // Mostrar informações do usuário
+                userInfoContainer.style.display = 'flex';
+                userEmailElement.textContent = usuarioLogado.email.split('@')[0]; // Mostrar apenas o nome antes do @
+            } else {
+                // Esconder informações do usuário
+                userInfoContainer.style.display = 'none';
+            }
+        }
+        
+        function mostrarNotificacao(mensagem, tipo) {
+            // Criar elemento de notificação
+            const notificacao = document.createElement('div');
+            notificacao.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 3000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+                max-width: 300px;
+            `;
+            
+            // Definir cor baseada no tipo
+            switch(tipo) {
+                case 'success':
+                    notificacao.style.backgroundColor = '#2e7d32';
+                    break;
+                case 'error':
+                    notificacao.style.backgroundColor = '#c62828';
+                    break;
+                case 'info':
+                    notificacao.style.backgroundColor = '#1976d2';
+                    break;
+                default:
+                    notificacao.style.backgroundColor = '#333';
+            }
+            
+            notificacao.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">
+                        ${tipo === 'success' ? 'check_circle' : 
+                          tipo === 'error' ? 'error' : 'info'}
+                    </span>
+                    <span>${mensagem}</span>
+                </div>
+            `;
+            
+            // Adicionar ao documento
+            document.body.appendChild(notificacao);
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                if (notificacao.parentNode) {
+                    notificacao.parentNode.removeChild(notificacao);
+                }
+            }, 3000);
+        }
+        
+        // Verificar se há usuário logado ao carregar a página
+        function verificarSessaoAtiva() {
+            const usuarioSalvo = localStorage.getItem('usuarioLogado');
+            if (usuarioSalvo) {
+                usuarioLogado = JSON.parse(usuarioSalvo);
+                
+                // Verificar se a sessão expirou (1 hora)
+                const dataLogin = new Date(usuarioLogado.dataLogin);
+                const agora = new Date();
+                const diferencaHoras = (agora - dataLogin) / (1000 * 60 * 60);
+                
+                if (diferencaHoras < 1) { // Sessão de 1 hora
+                    atualizarInterfaceUsuario();
+                } else {
+                    // Sessão expirada
+                    localStorage.removeItem('usuarioLogado');
+                    usuarioLogado = null;
+                }
+            }
+        }
 
         // ------------------------------------------------------------------
         // FUNÇÕES DA LUPA DE BUSCA
@@ -8642,14 +9122,20 @@
             updateHomeCounters();
             
             // Mostrar mensagem de sucesso
-            alert('✅ 2 indicadores táticos de exemplo foram carregados com sucesso!');
+            mostrarNotificacao('✅ 2 indicadores táticos de exemplo foram carregados com sucesso!', 'success');
         }
 
         // ------------------------------------------------------------------
-        // FUNÇÕES DE COLETA DE DADOS
+        // FUNÇÕES DE COLETA DE DADOS (MODIFICADAS PARA VERIFICAR LOGIN)
         // ------------------------------------------------------------------
         
         function abrirModalColeta() {
+            // Verificar novamente se o usuário está logado
+            if (!usuarioLogado) {
+                abrirModalLogin();
+                return;
+            }
+            
             const modal = document.getElementById('coleta-modal');
             const container = document.getElementById('coleta-content');
             
@@ -8674,7 +9160,24 @@
         }
         
         function criarConteudoColeta() {
+            // Adicionar informação do usuário logado
+            let userInfo = '';
+            if (usuarioLogado) {
+                userInfo = `
+                    <div style="background-color: #e3f2fd; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--color-primary);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 18px;">person_check</span>
+                            <div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--color-primary);">Usuário logado</div>
+                                <div style="font-size: 12px; color: var(--color-text-dark);">${usuarioLogado.email}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
             let html = `
+                ${userInfo}
                 <div style="margin-bottom: 20px;">
                     <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Solicite a coleta de dados para os indicadores abaixo:</p>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
@@ -8723,23 +9226,68 @@
         }
         
         function abrirSolicitacaoTI(indicadorId) {
+            if (!usuarioLogado) {
+                abrirModalLogin();
+                return;
+            }
+            
             const indicador = INDICADORES_COLETA.find(i => i.id === indicadorId);
             if (!indicador) return;
-            const url = `${WEB_APP_URL}?acao=autorizar&indice=${indicadorId}`;
+            const url = `${WEB_APP_URL}?acao=autorizar&indice=${indicadorId}&usuario=${encodeURIComponent(usuarioLogado.email)}`;
             window.open(url, '_blank');
             fecharModalColeta();
+            mostrarNotificacao('Solicitação enviada para a Superintendência de TI', 'success');
         }
         
         function abrirFormularioColeta(indicadorId) {
+            if (!usuarioLogado) {
+                abrirModalLogin();
+                return;
+            }
+            
             const indicador = INDICADORES_COLETA.find(i => i.id === indicadorId);
             if (!indicador) return;
-            const url = `${WEB_APP_URL}?acao=editar&indice=${indicadorId}`;
+            const url = `${WEB_APP_URL}?acao=editar&indice=${indicadorId}&usuario=${encodeURIComponent(usuarioLogado.email)}`;
             window.open(url, '_blank');
             fecharModalColeta();
+            mostrarNotificacao('Formulário de coleta aberto', 'success');
         }
 
+        // ========== INICIALIZAÇÃO DA APLICAÇÃO ==========
+        
+        // Verificar sessão ativa ao carregar
+        verificarSessaoAtiva();
+        
         // Inicializar a aplicação
         router();
+        
+        // Fechar modais ao pressionar ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                fecharModalLogin();
+                fecharModalColeta();
+                closeSearch();
+            }
+        });
+        
+        // Adicionar animação shake para erros de login
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
