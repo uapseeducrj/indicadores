@@ -9121,62 +9121,59 @@
         // FUNÇÃO PARA RENDERIZAR OBJETIVOS NA BARRA LATERAL
         // ------------------------------------------------------------------
         function renderSidebarObjectives(pageType) {
-            const objectives = getObjectivesFromData();
-            const sidebarList = document.getElementById('sidebar-objectives-list');
-            const objectivesTitle = document.getElementById('sidebar-objectives-title');
-            
-            if (!sidebarList) return;
-            
-            if (pageType === 'estrategicos') {
-                objectivesTitle.innerHTML = 'Objetivo Estratégico';
-            } else if (pageType === 'taticos') {
-                objectivesTitle.innerHTML = 'Indicadores Táticos por Objetivo';
-            }
-            
-            sidebarList.innerHTML = '';
-            
-            objectives.forEach(objective => {
-                const objectiveItem = document.createElement('div');
-                objectiveItem.className = 'objective-item';
-                
-                let isActive = false;
-                if (pageType === 'estrategicos') {
-                    isActive = selectedObjective && selectedObjective.name === objective.name;
-                } else if (pageType === 'taticos') {
-                    isActive = selectedTaticosObjective && selectedTaticosObjective.name === objective.name;
-                }
-                
-                const icon = objective.isGeneral ? 
-                    '<span class="material-symbols-outlined">dashboard</span>' : 
-                    getObjectiveIcon(objective.name);
-                
-                let indicatorCount = 0;
-                if (pageType === 'estrategicos') {
-                    indicatorCount = objective.estrategicos.length;
-                } else if (pageType === 'taticos') {
-                    indicatorCount = objective.taticos.length;
-                }
-                
-                const clickAction = pageType === 'estrategicos' ? 
-                    `selectObjective('${objective.name.replace(/'/g, "\\'")}')` : 
-                    `selectTaticosObjective('${objective.name.replace(/'/g, "\\'")}')`;
-                
-                objectiveItem.innerHTML = `
-                    <button 
-                        class="objective-button ${isActive ? 'active' : ''}" 
-                        onclick="${clickAction}"
-                    >
-                        <div style="display: flex; align-items: center;">
-                            ${icon}
-                            <span style="text-align: left;">${objective.name}</span>
-                        </div>
-                        <div class="objective-indicator-count">${indicatorCount}</div>
-                    </button>
-                `;
-                
-                sidebarList.appendChild(objectiveItem);
-            });
+    const objectives = getObjectivesFromData();
+    const sidebarList = document.getElementById('sidebar-objectives-list');
+    const objectivesTitle = document.getElementById('sidebar-objectives-title');
+    
+    if (!sidebarList) return;
+    
+    // SEMPRE mostrar "Objetivos Estratégicos" independente da página
+    objectivesTitle.innerHTML = 'Objetivos Estratégicos';
+    
+    sidebarList.innerHTML = '';
+    
+    objectives.forEach(objective => {
+        const objectiveItem = document.createElement('div');
+        objectiveItem.className = 'objective-item';
+        
+        let isActive = false;
+        if (pageType === 'estrategicos') {
+            isActive = selectedObjective && selectedObjective.name === objective.name;
+        } else if (pageType === 'taticos') {
+            isActive = selectedTaticosObjective && selectedTaticosObjective.name === objective.name;
         }
+        
+        const icon = objective.isGeneral ? 
+            '<span class="material-symbols-outlined">dashboard</span>' : 
+            getObjectiveIcon(objective.name);
+        
+        let indicatorCount = 0;
+        if (pageType === 'estrategicos') {
+            indicatorCount = objective.estrategicos.length;
+        } else if (pageType === 'taticos') {
+            indicatorCount = objective.taticos.length;
+        }
+        
+        const clickAction = pageType === 'estrategicos' ? 
+            `selectObjective('${objective.name.replace(/'/g, "\\'")}')` : 
+            `selectTaticosObjective('${objective.name.replace(/'/g, "\\'")}')`;
+        
+        objectiveItem.innerHTML = `
+            <button 
+                class="objective-button ${isActive ? 'active' : ''}" 
+                onclick="${clickAction}"
+            >
+                <div style="display: flex; align-items: center;">
+                    ${icon}
+                    <span style="text-align: left;">${objective.name}</span>
+                </div>
+                <div class="objective-indicator-count">${indicatorCount}</div>
+            </button>
+        `;
+        
+        sidebarList.appendChild(objectiveItem);
+    });
+}
 
         // ------------------------------------------------------------------
         // FUNÇÃO PARA SELECIONAR UM OBJETIVO
@@ -9223,42 +9220,55 @@
         // ------------------------------------------------------------------
         // FUNÇÃO PARA RENDERIZAR O CABEÇALHO DO OBJETIVO
         // ------------------------------------------------------------------
-        function renderObjectiveHeader(objective) {
-            if (!objective) return;
-            
-            const headerSection = document.getElementById('objective-header-section');
-            
-            const objectiveDescriptions = {
-                "Quadro Geral": "Todos os indicadores estratégicos da SEEDUC",
-                "Acesso à Educação": "Assegurar acesso a uma educação básica de qualidade a toda sociedade fluminense dentre as diferentes etapas e modalidades de ensino.",
-                "Infraestrutura": "Modernizar e ampliar a infraestrutura da rede de ensino, assegurando ambientes acessíveis e seguros.",
-                "Permanência": "Desenvolver políticas que garantam a permanência dos estudantes no ambiente escolar.",
-                "Aprendizagem Equitativa": "Desenvolver práticas educacionais inovadoras que garantam uma aprendizagem equitativa e o desenvolvimento integral dos estudantes.",
-                "Educação Inclusiva e Acessível": "Ampliar o atendimento a estudantes considerando as diversidades sócio e culturais, além do cognitivo, garantindo uma educação inclusiva e acessível.",
-                "Regime de Colaboração": "Fortalecer o regime de colaboração entre a Secretaria, os municípios e as unidades escolares, impulsionando o pleno desenvolvimento do sistema educacional.",
-                "Saúde e bem-estar": "Promover a saúde, o bem-estar e a melhoria das condições de trabalho dos profissionais da educação.",
-                "Qualidade": "Promover a qualidade e a excelência do ensino em toda a rede.",
-                "Gestão Estratégica": "Promover gestão estratégica e tecnológica integrada dos resultados da Secretaria e da Rede."
-            };
-            
-            const description = objectiveDescriptions[objective.name] || objective.name;
-            const isTaticosPage = window.location.search.includes('page=taticos');
-            const titulo = isTaticosPage ? 'Indicadores Táticos' : 'Objetivo Estratégico';
-            
-            headerSection.innerHTML = `
-                <div class="objective-header-compact">
-                    <div class="objective-title-section">
-                        <h1 class="objective-main-title">
-                            ${objective.isGeneral ? 
-                                '<span class="material-symbols-outlined">dashboard</span>' : 
-                                getObjectiveIcon(objective.name)} 
-                            ${objective.name === "Quadro Geral" ? titulo : objective.name}
-                        </h1>
-                        <div class="objective-subtitle">${description}</div>
-                    </div>
-                </div>
-            `;
+        // Substitua a função renderObjectiveHeader() existente por esta versão atualizada:
+function renderObjectiveHeader(objective) {
+    if (!objective) return;
+    
+    const headerSection = document.getElementById('objective-header-section');
+    
+    const objectiveDescriptions = {
+        "Quadro Geral": "Todos os indicadores estratégicos da SEEDUC",
+        "Acesso à Educação": "Assegurar acesso a uma educação básica de qualidade a toda sociedade fluminense dentre as diferentes etapas e modalidades de ensino.",
+        "Infraestrutura": "Modernizar e ampliar a infraestrutura da rede de ensino, assegurando ambientes acessíveis e seguros.",
+        "Permanência": "Desenvolver políticas que garantam a permanência dos estudantes no ambiente escolar.",
+        "Aprendizagem Equitativa": "Desenvolver práticas educacionais inovadoras que garantam uma aprendizagem equitativa e o desenvolvimento integral dos estudantes.",
+        "Educação Inclusiva e Acessível": "Ampliar o atendimento a estudantes considerando as diversidades sócio e culturais, além do cognitivo, garantindo uma educação inclusiva e acessível.",
+        "Regime de Colaboração": "Fortalecer o regime de colaboração entre a Secretaria, os municípios e as unidades escolares, impulsionando o pleno desenvolvimento do sistema educacional.",
+        "Saúde e bem-estar": "Promover a saúde, o bem-estar e a melhoria das condições de trabalho dos profissionais da educação.",
+        "Qualidade": "Promover a qualidade e a excelência do ensino em toda a rede.",
+        "Gestão Estratégica": "Promover gestão estratégica e tecnológica integrada dos resultados da Secretaria e da Rede."
+    };
+    
+    const description = objectiveDescriptions[objective.name] || objective.name;
+    const isTaticosPage = window.location.search.includes('page=taticos');
+    
+    // Definir o título correto
+    let titulo;
+    if (isTaticosPage) {
+        titulo = 'Indicadores Táticos';
+    } else {
+        // Se for estratégicos e Quadro Geral, mostrar "Indicadores Estratégicos"
+        if (objective.name === "Quadro Geral") {
+            titulo = 'Indicadores Estratégicos';
+        } else {
+            titulo = 'Objetivo Estratégico';
         }
+    }
+    
+    headerSection.innerHTML = `
+        <div class="objective-header-compact">
+            <div class="objective-title-section">
+                <h1 class="objective-main-title">
+                    ${objective.isGeneral ? 
+                        '<span class="material-symbols-outlined">dashboard</span>' : 
+                        getObjectiveIcon(objective.name)} 
+                    ${objective.name === "Quadro Geral" ? titulo : objective.name}
+                </h1>
+                <div class="objective-subtitle">${description}</div>
+            </div>
+        </div>
+    `;
+}
 
         // ------------------------------------------------------------------
         // FUNÇÕES DE FILTRO
@@ -9763,73 +9773,103 @@
         }
 
         function renderTaticosHeader() {
-            const headerSection = document.getElementById('taticos-header-section');
-            
-            let objectiveInfo = '';
-            if (selectedTaticosObjective && !selectedTaticosObjective.isGeneral) {
-                objectiveInfo = `
-                    <div class="objective-relation-badge">
-                        <span class="material-symbols-outlined" style="font-size: 12px; vertical-align: middle; margin-right: 3px;">link</span>
-                        Relacionado ao Objetivo Estratégico: ${selectedTaticosObjective.name}
-                    </div>
-                `;
-            }
-            
-            headerSection.innerHTML = `
-                <div class="objective-header-compact">
-                    <div class="objective-title-section">
-                        <h1 class="objective-main-title">
-                            <span class="material-symbols-outlined">settings</span>
-                            Indicadores Táticos
-                            ${selectedTaticosObjective && !selectedTaticosObjective.isGeneral ? 
-                                `- ${selectedTaticosObjective.name}` : ''}
-                        </h1>
-                        <div class="objective-subtitle">
-                            Indicadores operacionais que suportam a execução das estratégias de médio prazo. 
-                            Focam na execução e acompanhamento de processos específicos.
-                            ${selectedTaticosObjective && !selectedTaticosObjective.isGeneral ? 
-                                `Estes indicadores táticos estão relacionados ao objetivo estratégico "${selectedTaticosObjective.name}".` : 
-                                ''}
-                        </div>
-                        ${objectiveInfo}
-                    </div>
+    const headerSection = document.getElementById('taticos-header-section');
+    
+    let objectiveInfo = '';
+    if (selectedTaticosObjective && !selectedTaticosObjective.isGeneral) {
+        objectiveInfo = `
+            <div class="objective-relation-badge">
+                <span class="material-symbols-outlined" style="font-size: 12px; vertical-align: middle; margin-right: 3px;">link</span>
+                Relacionado ao Objetivo Estratégico: ${selectedTaticosObjective.name}
+            </div>
+        `;
+    }
+    
+    // Título principal baseado no que está selecionado
+    let mainTitle;
+    if (selectedTaticosObjective && selectedTaticosObjective.isGeneral) {
+        mainTitle = 'Indicadores Táticos';
+    } else if (selectedTaticosObjective && !selectedTaticosObjective.isGeneral) {
+        mainTitle = `Indicadores Táticos - ${selectedTaticosObjective.name}`;
+    } else {
+        mainTitle = 'Indicadores Táticos';
+    }
+    
+    headerSection.innerHTML = `
+        <div class="objective-header-compact">
+            <div class="objective-title-section">
+                <h1 class="objective-main-title">
+                    <span class="material-symbols-outlined">settings</span>
+                    ${mainTitle}
+                </h1>
+                <div class="objective-subtitle">
+                    Indicadores operacionais que suportam a execução das estratégias de médio prazo. 
+                    Focam na execução e acompanhamento de processos específicos.
+                    ${selectedTaticosObjective && !selectedTaticosObjective.isGeneral ? 
+                        `Estes indicadores táticos estão relacionados ao objetivo estratégico "${selectedTaticosObjective.name}".` : 
+                        ''}
                 </div>
-            `;
+                ${objectiveInfo}
+            </div>
+        </div>
+    `;
+}
+
+        // Substitua a função renderTaticosStatusSummary() existente por esta versão atualizada:
+function renderTaticosStatusSummary() {
+    const indicatorsToShow = selectedTaticosObjective ? selectedTaticosObjective.taticos : taticosIndicators;
+    const totalGeral = indicatorsToShow.length;
+    
+    // Contar indicadores por tipo de variação
+    let positivos = 0;
+    let negativos = 0;
+    let neutros = 0;
+    
+    indicatorsToShow.forEach(indicator => {
+        const variation = calculateVariation(indicator);
+        if (variation.value > 0 && variation.isPositive) {
+            positivos++;
+        } else if (variation.value < 0 && !variation.isPositive) {
+            negativos++;
+        } else {
+            neutros++;
         }
+    });
 
-        function renderTaticosStatusSummary() {
-            const indicatorsToShow = selectedTaticosObjective ? selectedTaticosObjective.taticos : taticosIndicators;
-            const totalGeral = indicatorsToShow.length;
+    const summarySection = document.getElementById('taticos-status-summary-section');
+    summarySection.innerHTML = ''; 
+    
+    const container = document.createElement('div');
+    container.className = 'status-summary-container';
 
-            const summarySection = document.getElementById('taticos-status-summary-section');
-            summarySection.innerHTML = ''; 
-            
-            const container = document.createElement('div');
-            container.className = 'status-summary-container';
-
-            container.innerHTML = `
-                <div class="status-summary-card status-summary-total" style="flex: 1; cursor: default;">
-                    <div class="percentage-label">100.0%</div>
-                    <div class="count">${totalGeral}</div>
-                    <div class="label">Total de Indicadores Táticos</div>
-                </div>
-            `;
-            
-            summarySection.appendChild(container);
-        }
-
-        function clearAllFilters() {
-            activeStatusFilter = null;
-            activeSuperintendenciaFilter = null;
-            activeSubsecretariaFilter = null;
-            renderEstrategicosWithIntegratedFilters();
-        }
-
-        function clearTaticosAllFilters() {
-            taticosActiveSuperintendenciaFilter = null;
-            taticosActiveSubsecretariaFilter = null;
-            renderTaticosWithIntegratedFilters();
-        }
+    container.innerHTML = `
+        <div class="status-summary-card status-summary-total" style="flex: 1; cursor: default;">
+            <div class="percentage-label">${totalGeral > 0 ? '100.0%' : '0%'}</div>
+            <div class="count">${totalGeral}</div>
+            <div class="label">Total de Indicadores</div>
+        </div>
+        
+        <div class="status-summary-card status-summary-positive" style="flex: 1; cursor: default;">
+            <div class="percentage-label">${totalGeral > 0 ? ((positivos / totalGeral) * 100).toFixed(1) + '%' : '0%'}</div>
+            <div class="count">${positivos}</div>
+            <div class="label">Variações Positivas</div>
+        </div>
+        
+        <div class="status-summary-card status-summary-negative" style="flex: 1; cursor: default;">
+            <div class="percentage-label">${totalGeral > 0 ? ((negativos / totalGeral) * 100).toFixed(1) + '%' : '0%'}</div>
+            <div class="count">${negativos}</div>
+            <div class="label">Variações Negativas</div>
+        </div>
+        
+        <div class="status-summary-card status-summary-gray" style="flex: 1; cursor: default;">
+            <div class="percentage-label">${totalGeral > 0 ? ((neutros / totalGeral) * 100).toFixed(1) + '%' : '0%'}</div>
+            <div class="count">${neutros}</div>
+            <div class="label">Variações Neutras</div>
+        </div>
+    `;
+    
+    summarySection.appendChild(container);
+}
 
         // ------------------------------------------------------------------
         // FUNÇÃO DE CONTAGEM CORRIGIDA
