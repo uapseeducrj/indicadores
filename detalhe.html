@@ -995,31 +995,38 @@
     }
     
     function extractHistoryFromIndicator(indicator) {
-        // Extrai valores temporais de VALOR_1 a VALOR_6
-        const history = [];
+    // Extrai valores temporais de VALOR_1 a VALOR_6
+    const history = [];
+    
+    for (let i = 1; i <= 6; i++) {
+        const valorKey = `VALOR_${i}`;
+        const valorData = indicator[valorKey];
         
-        for (let i = 1; i <= 6; i++) {
-            const valorKey = `VALOR_${i}`;
-            if (indicator[valorKey] && indicator[valorKey].valor !== null && indicator[valorKey].valor !== undefined) {
-                history.push({
-                    periodo: indicator[valorKey].periodo,
-                    valor: indicator[valorKey].valor,
-                    referencia: indicator[valorKey].referencia,
-                    eh_data_base: indicator[valorKey].eh_data_base,
-                    ordem_temporal: indicator[valorKey].ordem_temporal,
-                    mes: indicator[valorKey].mes,
-                    ano: indicator[valorKey].ano,
-                    trimestre: indicator[valorKey].trimestre,
-                    semestre: indicator[valorKey].semestre
-                });
-            }
+        // Verificação mais segura
+        if (valorData && 
+            typeof valorData === 'object' && 
+            valorData.valor !== null && 
+            valorData.valor !== undefined) {
+            
+            history.push({
+                periodo: valorData.periodo,
+                valor: valorData.valor,
+                referencia: valorData.referencia,
+                eh_data_base: valorData.eh_data_base,
+                ordem_temporal: valorData.ordem_temporal,
+                mes: valorData.mes,
+                ano: valorData.ano,
+                trimestre: valorData.trimestre,
+                semestre: valorData.semestre
+            });
         }
-        
-        // ORDENA DO MAIS ANTIGO (menor ordem_temporal) PARA O MAIS RECENTE (maior ordem_temporal)
-        // VALOR_1 = 1 (mais recente), VALOR_6 = 6 (mais antigo)
-        // Queremos: mais antigo primeiro (6, 5, 4, 3, 2, 1) → maior para menor
-        return history.sort((a, b) => b.ordem_temporal - a.ordem_temporal);
     }
+    
+    // ORDENA DO MAIS ANTIGO (menor ordem_temporal) PARA O MAIS RECENTE (maior ordem_temporal)
+    // VALOR_1 = 1 (mais recente), VALOR_6 = 6 (mais antigo)
+    // Queremos: mais antigo primeiro (6, 5, 4, 3, 2, 1) → maior para menor
+    return history.sort((a, b) => b.ordem_temporal - a.ordem_temporal);
+}
     
     function groupDataByIndicator(data) {
         const grouped = {};
