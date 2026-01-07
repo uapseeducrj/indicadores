@@ -28,7 +28,10 @@
         
         body, html {
             height: 100%;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
+            font-family: 'Inter', sans-serif;
         }
         
         .material-symbols-outlined {
@@ -116,24 +119,45 @@
         }
         
         /* Text overflow handling */
-        .text-ellipsis-multiline {
+        .line-clamp-2 {
             display: -webkit-box;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .line-clamp-4 {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .line-clamp-5 {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         
         /* Custom styles for responsive boxes */
         .dynamic-content-box {
             display: flex;
             flex-direction: column;
-            height: 100%;
         }
         
         .dynamic-content {
             flex: 1;
-            overflow: auto;
-            padding: 4px 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .dynamic-title {
@@ -161,9 +185,177 @@
             stroke-dasharray: 5, 5;
             stroke-width: 1.5;
         }
+        
+        /* Estilo para variações positivas/negativas */
+        .positive-variation {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        
+        .negative-variation {
+            color: #c62828;
+            font-weight: bold;
+        }
+        
+        .neutral-variation {
+            color: #6b7280;
+            font-weight: bold;
+        }
+        
+        /* Alturas fixas para os cards da coluna direita */
+        .right-col-card {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Garantir que o conteúdo principal não tenha scroll */
+        .main-content {
+            height: calc(100vh - 3rem);
+            overflow: hidden;
+        }
+        
+        /* Altura fixa para gráfico */
+        .chart-container-wrapper {
+            height: 60vh;
+            min-height: 400px;
+        }
+        
+        /* Remover qualquer padding/margin que cause overflow */
+        .no-overflow {
+            overflow: hidden !important;
+        }
+        
+        /* Modal de login específico */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Novas classes para layout */
+        .min-h-0 {
+            min-height: 0 !important;
+        }
+        
+        .flex-shrink-0 {
+            flex-shrink: 0 !important;
+        }
+        
+        .h-32 {
+            height: 8rem !important;
+        }
+        /* Adicione no final da tag <style> */
+        .text-xs-smaller {
+            font-size: 0.7rem !important; /* 30% menor */
+            line-height: 1.1 !important;
+        }
+        
+        /* Estilos para o badge do tipo de indicador */
+        #indicator-type-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        #indicator-type-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Cores específicas para tipos de indicador */
+        .indicator-tatico-color {
+            color: #f97316 !important;
+        }
+
+        .indicator-estrategico-color {
+            color: #2196F3 !important;
+        }
+
+        /* Para os pontos do gráfico quando for tático */
+        .chart-point-tatico {
+            fill: #f97316 !important;
+        }
+
+        .chart-bar-tatico {
+            fill: #f97316 !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans h-screen overflow-hidden">
+    <!-- MODAL DE LOGIN -->
+    <div id="login-modal" class="login-modal">
+        <div class="indicator-modal-content">
+            <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md">
+                <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 close-login">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                
+                <div class="login-header text-center mb-6">
+                    <img src="https://i.imgur.com/0wrUOlV.png" alt="SEEDUC" class="h-12 mx-auto mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">Acesso à Coleta de Dados</h3>
+                    <p class="text-sm text-gray-600 mt-1">Faça login para solicitar dados dos indicadores</p>
+                </div>
+                
+                <form id="login-form" class="login-form space-y-4">
+                    <div class="form-group">
+                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">E-mail institucional</label>
+                        <input type="email" id="login-email" 
+                               placeholder="seu.email@seeduc.rj.gov.br" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-senha" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                        <input type="password" id="login-senha" 
+                               placeholder="Digite sua senha" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                               required>
+                    </div>
+                    
+                    <div class="login-error text-red-600 text-sm hidden" id="login-error">
+                        E-mail ou senha incorretos. Tente novamente.
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center" id="login-button">
+                        <span class="material-symbols-outlined mr-2" style="font-size: 18px;">login</span>
+                        Entrar
+                    </button>
+                </form>
+                
+                <div class="login-footer text-center mt-6 pt-6 border-t border-gray-200">
+                    <p class="text-xs text-gray-600">Apenas usuários autorizados da SEEDUC podem acessar a coleta de dados.</p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        <strong>Dados de teste:</strong><br>
+                        E-mail: admin@seeduc.rj.gov.br<br>
+                        Senha: seeduc123
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CABEÇALHO COMPACTO -->
     <header class="bg-[#074f8a] text-white shadow-sm h-12 flex items-center">
         <div class="max-w-full mx-auto px-4 w-full">
@@ -193,6 +385,13 @@
                         <span class="material-symbols-outlined" style="font-size: 16px;">data_check</span>
                         <span class="hidden sm:inline">Solicitar Dados</span>
                     </button>
+                    
+                    <!-- INFO DO USUÁRIO LOGADO -->
+                    <div id="user-info-container" class="user-info ml-2 hidden px-2 py-1 bg-white/20 rounded text-xs items-center space-x-1">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">person</span>
+                        <span id="user-email"></span>
+                        <button class="logout-button text-xs hover:bg-white/20 px-1 rounded" onclick="logout()">Sair</button>
+                    </div>
                 </nav>
             </div>
         </div>
@@ -234,17 +433,23 @@
     </div>
 
     <!-- CONTEÚDO PRINCIPAL - SEM ROLAGEM -->
-    <main class="h-[calc(100vh-3rem)] overflow-hidden">
+    <main class="main-content no-overflow">
         <div class="h-full">
             <div class="grid grid-cols-1 lg:grid-cols-3 h-full gap-3 p-3">
                 <!-- COLUNA ESQUERDA (2/3) -->
                 <div class="lg:col-span-2 flex flex-col h-full">
-                    <!-- CARD DO GRÁFICO - ALTURA AJUSTÁVEL -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex-grow min-h-0 flex flex-col">
+                    <!-- CARD DO GRÁFICO - ALTURA FIXA -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 chart-container-wrapper flex-shrink-0">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
                             <div class="mb-2 sm:mb-0">
                                 <h1 id="indicator-name" class="text-lg font-bold text-gray-800 truncate">Carregando detalhes do indicador...</h1>
-                                <p class="text-xs text-gray-500">Série Temporal do Indicador (VALOR_1 a VALOR_6)</p>
+                                <div class="flex items-center space-x-1">
+                                    <p class="text-xs text-gray-500">Série Temporal do Indicador</p>
+                                    <div id="indicator-type-badge" class="flex items-center space-x-1 hidden">
+                                        <span id="indicator-type-dot" class="w-2 h-2 rounded-full"></span>
+                                        <span id="indicator-type-text" class="text-xs font-medium"></span>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- CONTROLES DISCRETOS DE VISUALIZAÇÃO -->
@@ -280,8 +485,8 @@
                             </div>
                         </div>
                         
-                        <!-- ÁREA DO GRÁFICO - FLEXÍVEL -->
-                        <div class="flex-grow min-h-0 relative">
+                        <!-- ÁREA DO GRÁFICO - FLEXÍVEL MAS COM ALTURA CONTROLADA -->
+                        <div class="h-[calc(100%-60px)] relative">
                             <div id="chart-container" class="absolute inset-0">
                                 <svg id="chart-svg" class="w-full h-full"></svg>
                                 <div id="tooltip" class="tooltip absolute hidden bg-gray-900 text-white text-xs rounded-lg py-1.5 px-2 shadow-lg"></div>
@@ -289,88 +494,95 @@
                         </div>
                     </div>
                     
-                    <!-- DETALHES E METAS - ALTURA FIXA -->
+                    <!-- DETALHES E METAS/VARIAÇÕES - ALTURA FIXA -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 flex-shrink-0">
                         <!-- DETALHES DO INDICADOR -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 text-center">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 text-center h-32">
                             <h3 class="text-xs font-semibold text-gray-700 mb-2">Detalhes do Indicador</h3>
-                            <div class="grid grid-cols-3 gap-2">
-                                <div class="text-center p-2 bg-gray-50 rounded-lg">
+                            <div class="grid grid-cols-3 gap-2 h-3/4">
+                                <div class="text-center p-2 bg-gray-50 rounded-lg flex flex-col justify-center">
                                     <div id="detail-polaridade" class="text-xl mb-1 flex justify-center">--</div>
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Polaridade</div>
                                 </div>
-                                <div class="text-center p-2 bg-gray-50 rounded-lg">
+                                <div class="text-center p-2 bg-gray-50 rounded-lg flex flex-col justify-center">
                                     <div id="detail-grandeza" class="text-sm font-semibold text-gray-800 mb-1">--</div>
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Grandeza</div>
                                 </div>
-                                <div class="text-center p-2 bg-gray-50 rounded-lg">
+                                <div class="text-center p-2 bg-gray-50 rounded-lg flex flex-col justify-center">
                                     <div id="detail-periodicidade" class="text-sm font-semibold text-gray-800 mb-1">--</div>
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Periodicidade</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- METAS -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 text-center">
-                            <h3 class="text-xs font-semibold text-gray-700 mb-2">Metas</h3>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div class="p-2 rounded-lg border-l-3 border-purple-500 bg-purple-50">
+                        <!-- METAS OU VARIAÇÕES -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 text-center h-32">
+                            <h3 id="metas-var-title" class="text-xs font-semibold text-gray-700 mb-2">Metas</h3>
+                            <div class="grid grid-cols-2 gap-2 h-3/4">
+                                <div id="box-variacao-1" class="p-1 rounded-lg border-l-3 border-purple-500 bg-purple-50 flex flex-col justify-center items-center text-center">
                                     <div id="meta-2025-value-box" class="text-sm font-bold text-gray-800 mb-1">N/A</div>
-                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Meta 2025</div>
+                                    <div id="label-variacao-1" class="text-xs text-gray-500 uppercase tracking-wide">Meta 2025</div>
                                 </div>
-                                <div class="p-2 rounded-lg border-l-3 border-blue-400 bg-blue-50">
+                                <div id="box-variacao-2" class="p-1 rounded-lg border-l-3 border-blue-400 bg-blue-50 flex flex-col justify-center items-center text-center">
                                     <div id="meta-2026-value-box" class="text-sm font-bold text-gray-800 mb-1">N/A</div>
-                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Meta 2026</div>
+                                    <div id="label-variacao-2" class="text-xs text-gray-500 uppercase tracking-wide">Meta 2026</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- COLUNA DIREITA (1/3) - SEM ROLAGEM -->
-                <div class="flex flex-col h-full space-y-3 overflow-hidden">
+                <!-- COLUNA DIREITA (1/3) -->
+                <div class="flex flex-col h-full min-h-0">
                     <!-- STATUS -->
-                    <div id="status-card" class="bg-white rounded-xl shadow-sm border-t-4 border-gray-400 p-3 text-center dynamic-content-box">
-                        <div class="dynamic-content flex items-center justify-center">
+                    <div id="status-card" class="bg-white rounded-xl shadow-sm border-t-4 border-gray-400 p-3 h-20 mb-3 flex-shrink-0">
+                        <div class="flex-1 flex items-center justify-center">
                             <div id="status-value" class="text-lg font-bold text-gray-800">--</div>
                         </div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Status</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide pt-2 border-t border-gray-100 text-center">Status</div>
                     </div>
                     
-                    <!-- OBJETIVO ESTRATÉGICO (AGORA COM ÍCONE E CENTRALIZADO) -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 dynamic-content-box">
-                        <div id="objetivo-estrategico" class="dynamic-content text-xs text-gray-700 text-ellipsis-multiline -webkit-line-clamp-4 flex items-center justify-center text-center px-2">
-                            <div class="flex flex-col items-center justify-center h-full">
-                                <!-- Ícone será inserido aqui via JavaScript -->
+                    <!-- OBJETIVO ESTRATÉGICO -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-3 flex flex-col flex-1 min-h-0">
+                        <div id="objetivo-estrategico" class="flex-1 flex items-center justify-center text-center min-h-0">
+                            <div class="flex flex-col items-center justify-center w-full px-2">
                                 <div id="objetivo-icon" class="mb-1"></div>
-                                <div id="objetivo-texto">Selecione um indicador para ver os detalhes completos</div>
+                                <div id="objetivo-texto" class="w-full text-xs text-gray-700 line-clamp-2">Selecione um indicador para ver os detalhes completos</div>
                             </div>
                         </div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Objetivo Estratégico</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide pt-1 border-t border-gray-100 text-center flex-shrink-0">Objetivo Estratégico</div>
                     </div>
                     
-                    <!-- REFERENCIAL DA META (CENTRALIZADO) -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 dynamic-content-box">
-                        <div id="referencial-meta" class="dynamic-content text-xs text-gray-700 text-ellipsis-multiline -webkit-line-clamp-4 flex items-center justify-center text-center px-2">--</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Referencial da Meta</div>
+                    <!-- REFERENCIAL DA META -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-3 flex flex-col flex-1 min-h-0">
+                        <div id="referencial-meta" class="flex-1 flex items-center justify-center text-center min-h-0">
+                            <div class="flex flex-col items-center justify-center w-full">
+                                <div class="w-full text-center text-xs-smaller text-gray-700 line-clamp-3 px-1">--</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide pt-1 border-t border-gray-100 text-center flex-shrink-0">Referencial da Meta</div>
                     </div>
                     
-                    <!-- FÓRMULA (CENTRALIZADO) -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 dynamic-content-box">
-                        <div id="formula-content" class="dynamic-content text-xs text-gray-700 text-ellipsis-multiline -webkit-line-clamp-4 flex items-center justify-center text-center px-2">--</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide dynamic-title">Fórmula</div>
+                    <!-- FÓRMULA -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-3 flex flex-col flex-1 min-h-0">
+                        <div id="formula-content" class="flex-1 flex items-center justify-center text-center min-h-0">
+                            <div class="flex flex-col items-center justify-center w-full">
+                                <div class="w-full text-center text-xs-smaller text-gray-700 line-clamp-4">--</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide pt-1 border-t border-gray-100 text-center flex-shrink-0">Fórmula</div>
                     </div>
                     
                     <!-- FONTE E RESPONSÁVEL -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex-shrink-0 text-center">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="text-center">
-                                <div id="fonte-dados" class="text-xs font-semibold text-gray-800 mb-2 truncate flex items-center justify-center h-8">--</div>
-                                <div class="text-xs text-gray-500 uppercase tracking-wide border-t border-gray-100 pt-1">Fonte dos Dados</div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 h-24 flex-shrink-0">
+                        <div class="grid grid-cols-2 gap-2 h-full">
+                            <div class="text-center flex flex-col justify-center items-center space-y-1">
+                                <div id="fonte-dados" class="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight px-1">--</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wide border-t border-gray-100 pt-1 w-full">Fonte dos Dados</div>
                             </div>
-                            <div class="text-center">
-                                <div id="responsavel" class="text-xs font-semibold text-gray-800 mb-2 truncate flex items-center justify-center h-8">--</div>
-                                <div class="text-xs text-gray-500 uppercase tracking-wide border-t border-gray-100 pt-1">Responsável</div>
+                            <div class="text-center flex flex-col justify-center items-center space-y-1">
+                                <div id="responsavel" class="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight px-1">--</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wide border-t border-gray-100 pt-1 w-full">Responsável</div>
                             </div>
                         </div>
                     </div>
@@ -415,12 +627,40 @@
         }
     ];
     
+    // Usuários autorizados (igual ao código anterior)
+    const USUARIOS_AUTORIZADOS = [
+        {
+            email: 'admin@seeduc.rj.gov.br',
+            senha: 'seeduc123',
+            nome: 'Administrador SEEDUC'
+        },
+        {
+            email: 'gestor@seeduc.rj.gov.br',
+            senha: 'gestor123',
+            nome: 'Gestor SEEDUC'
+        },
+        {
+            email: 'analista@seeduc.rj.gov.br',
+            senha: 'analista123',
+            nome: 'Analista de Dados'
+        },
+        {
+            email: 'ti@seeduc.rj.gov.br',
+            senha: 'ti123',
+            nome: 'Superintendência de TI'
+        }
+    ];
+    
+    // Estado de autenticação
+    let usuarioLogado = null;
+    
     // VARIÁVEIS GLOBAIS
     let currentChartType = 'bar';
     let currentIndicatorData = null;
     let currentGrandeza = '';
     let allIndicatorsData = {};
     let showMetas = true;
+    let currentIndicatorIsTatico = false;
     
     const colors = {
         primary: '#003d7a',
@@ -430,7 +670,10 @@
         text: '#374151',
         textLight: '#6b7280',
         meta2025: '#9370db',
-        meta2026: '#87cefa'
+        meta2026: '#87cefa',
+        positive: '#2e7d32',
+        negative: '#c62828',
+        neutral: '#6b7280'
     };
     
     // FUNÇÕES BÁSICAS
@@ -442,11 +685,46 @@
         };
     }
     
+    function formatNumberWithSeparators(numberString) {
+        // Separa parte inteira e decimal
+        const parts = numberString.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts.length > 1 ? parts[1] : '';
+        
+        // Adiciona separador de milhar (ponto)
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        
+        // Junta com vírgula decimal se houver parte decimal
+        if (decimalPart) {
+            // Remove zeros à direita desnecessários
+            decimalPart = decimalPart.replace(/0+$/, '');
+            if (decimalPart === '') {
+                return integerPart;
+            }
+            return integerPart + ',' + decimalPart;
+        }
+        
+        return integerPart;
+    }
+    
     function formatValue(value, grandeza, decimals = 1) {
         if (value === null || value === undefined || value === 0) return 'N/A';
+        
         const isPercentage = grandeza === '%';
-        if (isPercentage) return (value * 100).toFixed(decimals).replace('.', ',') + '%';
-        if (typeof value === 'number') return value.toFixed(decimals).replace('.', ',');
+        
+        // Se for porcentagem, converte para percentual
+        if (isPercentage) {
+            const percentValue = (value * 100).toFixed(decimals);
+            return formatNumberWithSeparators(percentValue) + '%';
+        }
+        
+        // Para números normais
+        if (typeof value === 'number') {
+            // Fixa as casas decimais
+            const fixedValue = value.toFixed(decimals);
+            return formatNumberWithSeparators(fixedValue);
+        }
+        
         return value.toString();
     }
     
@@ -519,6 +797,170 @@
         }
     }
     
+    // FUNÇÃO PARA FORMATAR VARIAÇÃO
+    function formatVariacao(valor) {
+        if (valor === null || valor === undefined || valor === 0) return 'N/A';
+        const sinal = valor > 0 ? '+' : '';
+        const valorFormatado = Math.abs(valor).toFixed(1);
+        return `${sinal}${valorFormatado}%`;
+    }
+    
+    // FUNÇÃO PARA OBTER CLASSE CSS PARA VARIAÇÃO
+    function getVariacaoClass(valor) {
+        if (valor === null || valor === undefined || valor === 0) return 'neutral-variation';
+        return valor > 0 ? 'positive-variation' : 'negative-variation';
+    }
+    
+    // FUNÇÕES DE AUTENTICAÇÃO
+    function verificarLoginParaColeta() {
+        const usuarioSalvo = localStorage.getItem('usuarioLogado');
+        
+        if (usuarioSalvo) {
+            usuarioLogado = JSON.parse(usuarioSalvo);
+            atualizarInterfaceUsuario();
+            abrirModalColeta();
+        } else {
+            abrirModalLogin();
+        }
+    }
+    
+    function abrirModalLogin() {
+        const modal = document.getElementById('login-modal');
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-senha').value = '';
+        document.getElementById('login-error').classList.add('hidden');
+        
+        setTimeout(() => {
+            document.getElementById('login-email').focus();
+        }, 100);
+    }
+    
+    function fecharModalLogin() {
+        document.getElementById('login-modal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    function fazerLogin(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('login-email').value.trim();
+        const senha = document.getElementById('login-senha').value;
+        const errorElement = document.getElementById('login-error');
+        const loginButton = document.getElementById('login-button');
+        
+        loginButton.disabled = true;
+        loginButton.innerHTML = '<span class="material-symbols-outlined mr-2">hourglass_empty</span> Verificando...';
+        
+        setTimeout(() => {
+            const usuario = USUARIOS_AUTORIZADOS.find(user => 
+                user.email === email && user.senha === senha
+            );
+            
+            if (usuario) {
+                usuarioLogado = {
+                    email: usuario.email,
+                    nome: usuario.nome,
+                    dataLogin: new Date().toISOString()
+                };
+                
+                localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+                atualizarInterfaceUsuario();
+                fecharModalLogin();
+                abrirModalColeta();
+                mostrarNotificacao(`Bem-vindo(a), ${usuario.nome}!`, 'success');
+            } else {
+                errorElement.classList.remove('hidden');
+                errorElement.style.animation = 'none';
+                setTimeout(() => {
+                    errorElement.style.animation = 'shake 0.5s ease';
+                }, 10);
+            }
+            
+            loginButton.disabled = false;
+            loginButton.innerHTML = '<span class="material-symbols-outlined mr-2">login</span> Entrar';
+        }, 1000);
+    }
+    
+    function logout() {
+        if (confirm('Deseja realmente sair?')) {
+            usuarioLogado = null;
+            localStorage.removeItem('usuarioLogado');
+            atualizarInterfaceUsuario();
+            mostrarNotificacao('Você saiu do sistema.', 'info');
+        }
+    }
+    
+    function atualizarInterfaceUsuario() {
+        const userInfoContainer = document.getElementById('user-info-container');
+        const userEmailElement = document.getElementById('user-email');
+        
+        if (usuarioLogado) {
+            userInfoContainer.classList.remove('hidden');
+            userEmailElement.textContent = usuarioLogado.email.split('@')[0];
+        } else {
+            userInfoContainer.classList.add('hidden');
+        }
+    }
+    
+    function mostrarNotificacao(mensagem, tipo) {
+        const notificacao = document.createElement('div');
+        notificacao.className = 'fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-white font-medium text-sm flex items-center space-x-2 transition-all duration-300 transform translate-x-0 opacity-100';
+        
+        switch(tipo) {
+            case 'success':
+                notificacao.classList.add('bg-green-600');
+                break;
+            case 'error':
+                notificacao.classList.add('bg-red-600');
+                break;
+            case 'info':
+                notificacao.classList.add('bg-blue-600');
+                break;
+            default:
+                notificacao.classList.add('bg-gray-800');
+        }
+        
+        notificacao.innerHTML = `
+            <span class="material-symbols-outlined text-lg">
+                ${tipo === 'success' ? 'check_circle' : 
+                  tipo === 'error' ? 'error' : 'info'}
+            </span>
+            <span>${mensagem}</span>
+        `;
+        
+        document.body.appendChild(notificacao);
+        
+        setTimeout(() => {
+            notificacao.classList.add('opacity-0', 'translate-x-full');
+            setTimeout(() => {
+                if (notificacao.parentNode) {
+                    notificacao.parentNode.removeChild(notificacao);
+                }
+            }, 300);
+        }, 3000);
+    }
+    
+    function verificarSessaoAtiva() {
+        const usuarioSalvo = localStorage.getItem('usuarioLogado');
+        if (usuarioSalvo) {
+            usuarioLogado = JSON.parse(usuarioSalvo);
+            
+            const dataLogin = new Date(usuarioLogado.dataLogin);
+            const agora = new Date();
+            const diferencaHoras = (agora - dataLogin) / (1000 * 60 * 60);
+            
+            if (diferencaHoras < 1) {
+                atualizarInterfaceUsuario();
+            } else {
+                localStorage.removeItem('usuarioLogado');
+                usuarioLogado = null;
+            }
+        }
+    }
+    
     // FUNÇÕES DE CARREGAMENTO DE DADOS - AGORA BUSCA DO INDEX
     async function loadData() {
         try {
@@ -573,8 +1015,10 @@
             }
         }
         
-        // ORDENA DO MAIS RECENTE (VALOR_1) PARA O MAIS ANTIGO (VALOR_6)
-        return history.sort((a, b) => a.ordem_temporal - b.ordem_temporal);
+        // ORDENA DO MAIS ANTIGO (menor ordem_temporal) PARA O MAIS RECENTE (maior ordem_temporal)
+        // VALOR_1 = 1 (mais recente), VALOR_6 = 6 (mais antigo)
+        // Queremos: mais antigo primeiro (6, 5, 4, 3, 2, 1) → maior para menor
+        return history.sort((a, b) => b.ordem_temporal - a.ordem_temporal);
     }
     
     function groupDataByIndicator(data) {
@@ -596,8 +1040,13 @@
         return grouped;
     }
     
-    // FUNÇÕES DE COLETA DE DADOS (mantidas iguais)
+    // FUNÇÕES DE COLETA DE DADOS
     function abrirModalColeta() {
+        if (!usuarioLogado) {
+            abrirModalLogin();
+            return;
+        }
+        
         const modal = document.getElementById('coleta-modal');
         const container = document.getElementById('coleta-content');
         
@@ -617,7 +1066,23 @@
     }
     
     function criarConteudoColeta() {
+        let userInfo = '';
+        if (usuarioLogado) {
+            userInfo = `
+                <div class="bg-blue-50 p-3 rounded-lg mb-4 border-l-4 border-blue-500">
+                    <div class="flex items-center space-x-2">
+                        <span class="material-symbols-outlined text-blue-600" style="font-size: 18px;">person_check</span>
+                        <div>
+                            <div class="text-xs font-semibold text-blue-700">Usuário logado</div>
+                            <div class="text-xs text-gray-600">${usuarioLogado.email}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
         let html = `
+            ${userInfo}
             <div class="mb-4">
                 <p class="text-sm text-gray-600 mb-3">Solicite a coleta de dados para os indicadores abaixo:</p>
                 <div class="grid grid-cols-2 gap-2 mb-4">
@@ -670,19 +1135,169 @@
     function abrirSolicitacaoTI(indicadorId) {
         const indicador = INDICADORES_COLETA.find(i => i.id === indicadorId);
         if (!indicador) return;
-        const url = `${WEB_APP_URL}?acao=autorizar&indice=${indicadorId}`;
+        const url = `${WEB_APP_URL}?acao=autorizar&indice=${indicadorId}&usuario=${encodeURIComponent(usuarioLogado.email)}`;
         window.open(url, '_blank');
         document.getElementById('coleta-modal').style.display = 'none';
         document.body.style.overflow = '';
+        mostrarNotificacao('Solicitação enviada para a Superintendência de TI', 'success');
     }
     
     function abrirFormularioColeta(indicadorId) {
         const indicador = INDICADORES_COLETA.find(i => i.id === indicadorId);
         if (!indicador) return;
-        const url = `${WEB_APP_URL}?acao=editar&indice=${indicadorId}`;
+        const url = `${WEB_APP_URL}?acao=editar&indice=${indicadorId}&usuario=${encodeURIComponent(usuarioLogado.email)}`;
         window.open(url, '_blank');
         document.getElementById('coleta-modal').style.display = 'none';
         document.body.style.overflow = '';
+        mostrarNotificacao('Formulário de coleta aberto', 'success');
+    }
+    
+    // FUNÇÃO PARA CONFIGURAR A SEÇÃO DE METAS/VARIAÇÕES
+    function configurarMetasOuVariacoes(details) {
+        // Determinar se é indicador tático
+        currentIndicatorIsTatico = (details['TIPO_INDICADOR'] || '').toUpperCase().includes('TÁTICOS') || 
+                                  (details['TIPO_INDICADOR'] || '').toUpperCase().includes('TATICOS');
+        
+        const titleElement = document.getElementById('metas-var-title');
+        const box1 = document.getElementById('box-variacao-1');
+        const box2 = document.getElementById('box-variacao-2');
+        const label1 = document.getElementById('label-variacao-1');
+        const label2 = document.getElementById('label-variacao-2');
+        const value1 = document.getElementById('meta-2025-value-box');
+        const value2 = document.getElementById('meta-2026-value-box');
+        
+        if (currentIndicatorIsTatico) {
+            // Para indicadores táticos: mostrar variações
+            titleElement.textContent = 'Variações';
+            
+            // Obter variações do JSON
+            const variacaoAnoPassado = details.VARIACOES_RELATIVAS?.VARIACAO_ANO_PASSADO?.valor || 0;
+            const variacaoAnoRetrasado = details.VARIACOES_RELATIVAS?.VARIACAO_ANO_RETRASADO?.valor || 0;
+            
+            // Atualizar labels
+            label1.textContent = 'Ano Anterior';
+            label2.textContent = 'Ano Retrasado';
+            
+            // Atualizar valores com formatação e cores
+            value1.textContent = formatVariacao(variacaoAnoPassado);
+            value2.textContent = formatVariacao(variacaoAnoRetrasado);
+            
+            // Aplicar classes de cor
+            value1.className = `text-sm font-bold mb-1 ${getVariacaoClass(variacaoAnoPassado)}`;
+            value2.className = `text-sm font-bold mb-1 ${getVariacaoClass(variacaoAnoRetrasado)}`;
+            
+            // Atualizar cores das bordas
+            box1.className = 'p-1 rounded-lg border-l-3 bg-purple-50 flex flex-col justify-center items-center text-center';
+            box2.className = 'p-1 rounded-lg border-l-3 bg-blue-50 flex flex-col justify-center items-center text-center';
+            
+            // Para variações positivas: verde, negativas: vermelho, neutras: cinza
+            if (variacaoAnoPassado > 0) {
+                box1.classList.add('border-green-500');
+                box1.classList.remove('bg-purple-50');
+                box1.classList.add('bg-green-50');
+            } else if (variacaoAnoPassado < 0) {
+                box1.classList.add('border-red-500');
+                box1.classList.remove('bg-purple-50');
+                box1.classList.add('bg-red-50');
+            } else {
+                box1.classList.add('border-gray-400');
+                box1.classList.remove('bg-purple-50');
+                box1.classList.add('bg-gray-50');
+            }
+            
+            if (variacaoAnoRetrasado > 0) {
+                box2.classList.add('border-green-400');
+                box2.classList.remove('bg-blue-50');
+                box2.classList.add('bg-green-50');
+            } else if (variacaoAnoRetrasado < 0) {
+                box2.classList.add('border-red-400');
+                box2.classList.remove('bg-blue-50');
+                box2.classList.add('bg-red-50');
+            } else {
+                box2.classList.add('border-gray-400');
+                box2.classList.remove('bg-blue-50');
+                box2.classList.add('bg-gray-50');
+            }
+            
+        } else {
+            // Para indicadores estratégicos: mostrar metas
+            titleElement.textContent = 'Metas';
+            
+            // Obter metas
+            const meta2025 = details.METAS?.META_2025?.valor || details['META 2025'] || null;
+            const meta2026 = details.METAS?.META_2026?.valor || details['META 2026'] || null;
+            
+            // Atualizar labels
+            label1.textContent = 'Meta 2025';
+            label2.textContent = 'Meta 2026';
+            
+            // Atualizar valores
+            value1.textContent = formatValue(meta2025, details.GRANDEZA || '', 1);
+            value2.textContent = formatValue(meta2026, details.GRANDEZA || '', 1);
+            
+            // Resetar classes de cor
+            value1.className = 'text-sm font-bold text-gray-800 mb-1';
+            value2.className = 'text-sm font-bold text-gray-800 mb-1';
+            
+            // Resetar cores das bordas para as originais
+            box1.className = 'p-1 rounded-lg border-l-3 border-purple-500 bg-purple-50 flex flex-col justify-center items-center text-center';
+            box2.className = 'p-1 rounded-lg border-l-3 border-blue-400 bg-blue-50 flex flex-col justify-center items-center text-center';
+        }
+    }
+    
+    // FUNÇÃO PARA ATUALIZAR O BADGE DO TIPO DE INDICADOR
+    function atualizarBadgeTipoIndicador(details) {
+        const badgeContainer = document.getElementById('indicator-type-badge');
+        const typeDot = document.getElementById('indicator-type-dot');
+        const typeText = document.getElementById('indicator-type-text');
+        const indicatorName = document.getElementById('indicator-name');
+        
+        // Determinar se é tático ou estratégico
+        const tipoIndicador = details.TIPO_INDICADOR || details['TIPO_INDICADOR'] || '';
+        const isTatico = tipoIndicador.toUpperCase().includes('TÁTICO') || 
+                        tipoIndicador.toUpperCase().includes('TATICO') ||
+                        (details['#']?.toString() || '').length > 4;
+        
+        // Atualizar variável global
+        currentIndicatorIsTatico = isTatico;
+        
+        if (isTatico) {
+            // Indicador Tático - Laranja
+            typeDot.style.backgroundColor = '#f97316';
+            typeText.textContent = 'Indicador Tático';
+            typeText.style.color = '#f97316';
+            badgeContainer.classList.remove('hidden');
+            
+            // Atualizar cor do título
+            indicatorName.style.color = '#ea580c';
+            
+            // Atualizar cor do gráfico para laranja
+            colors.chartLine = '#f97316';
+            colors.current = '#ea580c';
+            
+            // Atualizar botões ativos
+            document.querySelectorAll('.chart-type-btn.active').forEach(btn => {
+                btn.style.color = '#f97316';
+            });
+        } else {
+            // Indicador Estratégico - Azul
+            typeDot.style.backgroundColor = '#2196F3';
+            typeText.textContent = 'Indicador Estratégico';
+            typeText.style.color = '#2196F3';
+            badgeContainer.classList.remove('hidden');
+            
+            // Atualizar cor do título
+            indicatorName.style.color = '#003d7a';
+            
+            // Resetar para cores azuis padrão
+            colors.chartLine = '#2196F3';
+            colors.current = '#003d7a';
+            
+            // Atualizar botões ativos
+            document.querySelectorAll('.chart-type-btn.active').forEach(btn => {
+                btn.style.color = '#3b82f6';
+            });
+        }
     }
     
     // FUNÇÕES PRINCIPAIS DO PAINEL
@@ -780,11 +1395,14 @@
             const indicatorData = groupedData[indicatorName];
             currentIndicatorData = indicatorData;
             const details = indicatorData.details;
-            const history = indicatorData.history; // Já vem ordenado do mais recente para o mais antigo
+            const history = indicatorData.history; // Agora vem ordenado do mais antigo para o mais recente
             currentGrandeza = details.GRANDEZA || '';
             
             // Atualizar nome do indicador
             document.getElementById('indicator-name').textContent = details.INDICADORES;
+            
+            // Atualizar badge do tipo de indicador
+            atualizarBadgeTipoIndicador(details);
             
             // Atualizar polaridade
             const polarityElement = document.getElementById('detail-polaridade');
@@ -817,20 +1435,34 @@
             document.getElementById('objetivo-texto').textContent = objetivoEstrategico;
             
             // Atualizar outras informações
-            document.getElementById('referencial-meta').textContent = details['REFERENCIAL DA META'] || 'Baseado em crescimento histórico';
-            document.getElementById('formula-content').textContent = details.FÓRMULA || 'Fórmula não especificada';
+            const referencialMeta = details['REFERENCIAL DA META'] || 'Baseado em crescimento histórico';
+            const referencialElement = document.querySelector('#referencial-meta .w-full');
+            if (referencialElement) {
+                referencialElement.innerHTML = ''; // Limpa
+                const span = document.createElement('span');
+                span.className = 'text-xs-smaller text-gray-700 line-clamp-3 px-1';
+                span.textContent = referencialMeta;
+                referencialElement.appendChild(span);
+            }
+
+            const formula = details.FÓRMULA || 'Fórmula não especificada';
+            const formulaElement = document.querySelector('#formula-content .w-full');
+            if (formulaElement) {
+                formulaElement.innerHTML = ''; // Limpa
+                const span = document.createElement('span');
+                span.className = 'text-xs-smaller text-gray-700 line-clamp-4 px-1';
+                span.textContent = formula;
+                formulaElement.appendChild(span);
+            }
+            
             document.getElementById('fonte-dados').textContent = details['FONTE DOS DADOS'] || '--';
             
             // Responsável: usar SUPINTENDÊNCIA ou SUBSECRETARIA
             const responsavel = details.SUPINTENDÊNCIA || details.SUBSECRETARIA || '--';
             document.getElementById('responsavel').textContent = responsavel;
             
-            // Atualizar metas
-            const meta2025 = details.METAS?.META_2025?.valor || details['META 2025'] || null;
-            const meta2026 = details.METAS?.META_2026?.valor || details['META 2026'] || null;
-            
-            document.getElementById('meta-2025-value-box').textContent = formatValue(meta2025, details.GRANDEZA || '', 1);
-            document.getElementById('meta-2026-value-box').textContent = formatValue(meta2026, details.GRANDEZA || '', 1);
+            // Configurar seção de metas ou variações
+            configurarMetasOuVariacoes(details);
             
             // Atualizar status
             const displayStatus = normalizeStatus(details.Status);
@@ -839,11 +1471,8 @@
             document.getElementById('status-card').style.borderTopColor = statusColor;
             document.getElementById('status-value').style.color = statusColor;
             
-            // Ajustar alturas
-            adjustDynamicBoxHeights();
-            
             // Renderizar gráfico
-            renderChart(history, meta2025, meta2026);
+            renderChart(history);
             
         } catch (error) {
             console.error('Erro ao carregar detalhes do indicador:', error);
@@ -852,28 +1481,7 @@
         }
     }
     
-    function adjustDynamicBoxHeights() {
-        const boxes = ['objetivo-texto', 'referencial-meta', 'formula-content'];
-        boxes.forEach(elementId => {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            const content = element.textContent;
-            const length = content.length;
-            
-            // Limpar classes anteriores
-            element.classList.remove('-webkit-line-clamp-2', '-webkit-line-clamp-3', '-webkit-line-clamp-4', '-webkit-line-clamp-5', '-webkit-line-clamp-6');
-            
-            // Aplicar classe baseada no tamanho do texto
-            if (length < 50) element.classList.add('-webkit-line-clamp-2');
-            else if (length < 100) element.classList.add('-webkit-line-clamp-3');
-            else if (length < 150) element.classList.add('-webkit-line-clamp-4');
-            else if (length < 200) element.classList.add('-webkit-line-clamp-5');
-            else element.classList.add('-webkit-line-clamp-6');
-        });
-    }
-    
-    function renderChart(history, meta2025, meta2026) {
+    function renderChart(history) {
         const svg = document.getElementById('chart-svg');
         svg.innerHTML = '';
         
@@ -893,7 +1501,7 @@
             return;
         }
         
-        // Preparar dados para o gráfico - JÁ VÊM ORDENADOS DO MAIS RECENTE PARA O MAIS ANTIGO
+        // Preparar dados para o gráfico - AGORA VÊM ORDENADOS DO MAIS ANTIGO PARA O MAIS RECENTE
         const chartData = history.map(item => ({
             label: item.periodo || item.referencia || `Período ${item.ordem_temporal}`,
             value: item.valor,
@@ -906,11 +1514,15 @@
         const minVal = Math.min(...values);
         const maxVal = Math.max(...values);
         
-        // Incluir metas no cálculo do range se necessário
+        // Incluir metas no cálculo do range apenas se for indicador estratégico E mostrar metas estiver ativado
         let rangeMin = minVal;
         let rangeMax = maxVal;
         
-        if (showMetas) {
+        if (showMetas && !currentIndicatorIsTatico && currentIndicatorData) {
+            const details = currentIndicatorData.details;
+            const meta2025 = details.METAS?.META_2025?.valor || details['META 2025'] || null;
+            const meta2026 = details.METAS?.META_2026?.valor || details['META 2026'] || null;
+            
             if (meta2025 !== null && meta2025 !== undefined) {
                 rangeMin = Math.min(rangeMin, meta2025);
                 rangeMax = Math.max(rangeMax, meta2025);
@@ -936,7 +1548,7 @@
             if (chartData.length === 1) return margin.left + chartWidth / 2;
             const effectiveWidth = chartWidth * 0.85;
             const startOffset = chartWidth * 0.075;
-            // Agora index 0 = VALOR_1 (mais recente, ESQUERDA), index último = VALOR_6 (mais antigo, DIREITA)
+            // Agora index 0 = VALOR_6 (mais antigo, ESQUERDA), index último = VALOR_1 (mais recente, DIREITA)
             return margin.left + startOffset + (index / (chartData.length - 1)) * effectiveWidth;
         };
         
@@ -975,8 +1587,12 @@
             svg.appendChild(yLabel);
         }
         
-        // Desenhar metas se ativadas (corrigido para eixo Y invertido)
-        if (showMetas) {
+        // Desenhar metas se ativadas e se for indicador estratégico
+        if (showMetas && !currentIndicatorIsTatico && currentIndicatorData) {
+            const details = currentIndicatorData.details;
+            const meta2025 = details.METAS?.META_2025?.valor || details['META 2025'] || null;
+            const meta2026 = details.METAS?.META_2026?.valor || details['META 2026'] || null;
+            
             // Meta 2025
             if (meta2025 !== null && meta2025 !== undefined) {
                 const yMeta2025 = yScale(meta2025);
@@ -1030,7 +1646,7 @@
             }
         }
         
-        // Criar pontos para o gráfico (ordenados corretamente: VALOR_1 à esquerda, VALOR_6 à direita)
+        // Criar pontos para o gráfico (ordenados corretamente: mais antigo à esquerda, mais recente à direita)
         const points = chartData.map((d, i) => ({
             x: xScale(i),
             y: yScale(d.value),
@@ -1147,7 +1763,7 @@
             });
         }
         
-        // Adicionar rótulos do eixo X (ordenados corretamente: VALOR_1 à esquerda, VALOR_6 à direita)
+        // Adicionar rótulos do eixo X (ordenados corretamente: mais antigo à esquerda, mais recente à direita)
         points.forEach((point, i) => {
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', point.x);
@@ -1201,7 +1817,10 @@
     
     function showTooltip(event, label, value) {
         const tooltip = document.getElementById('tooltip');
+        
+        // Usa formatação com 3 casas decimais para tooltips
         const formattedValue = formatValue(value, currentGrandeza, 3);
+        
         tooltip.innerHTML = `<div class="font-semibold">${label}</div><div class="text-gray-300">${formattedValue}</div>`;
         tooltip.style.left = (event.offsetX + 15) + 'px';
         tooltip.style.top = (event.offsetY - 50) + 'px';
@@ -1214,27 +1833,40 @@
     
     function changeChartType(type) {
         currentChartType = type;
+        
+        // Determinar cor baseada no tipo de indicador
+        const activeColor = currentIndicatorIsTatico ? '#f97316' : '#3b82f6';
+        
         document.querySelectorAll('.chart-type-btn').forEach(btn => {
-            btn.classList.remove('active', 'bg-white', 'shadow-sm', 'text-blue-600');
+            btn.classList.remove('active', 'bg-white', 'shadow-sm');
+            btn.style.color = ''; // Resetar cor
+            
             if (btn.dataset.type === type) {
-                btn.classList.add('active', 'bg-white', 'shadow-sm', 'text-blue-600');
+                btn.classList.add('active', 'bg-white', 'shadow-sm');
+                btn.style.color = activeColor;
             }
         });
         
         if (currentIndicatorData) {
             const history = currentIndicatorData.history;
-            const metas = currentIndicatorData.metas;
-            const meta2025 = metas?.META_2025?.valor;
-            const meta2026 = metas?.META_2026?.valor;
-            renderChart(history, meta2025, meta2026);
+            renderChart(history);
         }
     }
     
     // INICIALIZAÇÃO
     document.addEventListener('DOMContentLoaded', async () => {
+        // Verificar sessão ativa
+        verificarSessaoAtiva();
+        
         // Carregar dados
         await loadIndicatorDetails();
         renderIndicatorMiniCards();
+        
+        // Configurar formulário de login
+        document.getElementById('login-form').addEventListener('submit', fazerLogin);
+        document.querySelectorAll('.close-login').forEach(btn => {
+            btn.addEventListener('click', fecharModalLogin);
+        });
         
         // Configurar botões de tipo de gráfico
         document.querySelectorAll('.chart-type-btn').forEach(btn => {
@@ -1248,10 +1880,7 @@
                 showMetas = e.target.checked;
                 if (currentIndicatorData) {
                     const history = currentIndicatorData.history;
-                    const metas = currentIndicatorData.metas;
-                    const meta2025 = metas?.META_2025?.valor;
-                    const meta2026 = metas?.META_2026?.valor;
-                    renderChart(history, meta2025, meta2026);
+                    renderChart(history);
                 }
             });
         }
@@ -1271,12 +1900,14 @@
             document.body.style.overflow = '';
         });
         
-        // Configurar modal de coleta
+        // Configurar modal de coleta COM VERIFICAÇÃO DE LOGIN
         const coletaBtn = document.getElementById('coleta-dados-btn');
         const coletaModal = document.getElementById('coleta-modal');
         const closeColetaBtn = document.getElementById('close-coleta-btn');
         
-        coletaBtn.addEventListener('click', abrirModalColeta);
+        // Alterar para usar a nova função com verificação de login
+        coletaBtn.addEventListener('click', verificarLoginParaColeta);
+        
         closeColetaBtn.addEventListener('click', () => {
             coletaModal.style.display = 'none';
             document.body.style.overflow = '';
@@ -1297,6 +1928,23 @@
             }
         });
         
+        // Fechar modal de login ao clicar fora
+        document.getElementById('login-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'login-modal' || e.target.classList.contains('close-login')) {
+                fecharModalLogin();
+            }
+        });
+        
+        // Fechar modais ao pressionar ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                fecharModalLogin();
+                document.getElementById('coleta-modal').style.display = 'none';
+                document.getElementById('indicator-modal').style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+        
         // Redimensionamento responsivo
         let resizeTimer;
         window.addEventListener('resize', () => {
@@ -1304,11 +1952,7 @@
             resizeTimer = setTimeout(() => {
                 if (currentIndicatorData) {
                     const history = currentIndicatorData.history;
-                    const metas = currentIndicatorData.metas;
-                    const meta2025 = metas?.META_2025?.valor;
-                    const meta2026 = metas?.META_2026?.valor;
-                    renderChart(history, meta2025, meta2026);
-                    adjustDynamicBoxHeights();
+                    renderChart(history);
                 }
             }, 100);
         });
@@ -1317,11 +1961,7 @@
         setTimeout(() => {
             if (currentIndicatorData) {
                 const history = currentIndicatorData.history;
-                const metas = currentIndicatorData.metas;
-                const meta2025 = metas?.META_2025?.valor;
-                const meta2026 = metas?.META_2026?.valor;
-                renderChart(history, meta2025, meta2026);
-                adjustDynamicBoxHeights();
+                renderChart(history);
             }
         }, 100);
     });
