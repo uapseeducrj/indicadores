@@ -963,36 +963,47 @@
     
     // FUNÇÕES DE CARREGAMENTO DE DADOS - AGORA BUSCA DO INDEX
     async function loadData() {
-        try {
-            // Tenta carregar do localStorage (mesmo usado pelo index.html)
-            const storedData = localStorage.getItem('dashboardData');
-            if (storedData) {
-                console.log('Carregando dados do localStorage compartilhado com index.html');
-                return JSON.parse(storedData);
+    try {
+        console.log('🔄 Tentando carregar dados do localStorage...');
+        
+        // Primeiro tenta do localStorage (mesmo usado pelo index.html)
+        const storedData = localStorage.getItem('dashboardData');
+        
+        if (storedData) {
+            console.log('✅ Dados encontrados no localStorage');
+            console.log('Tamanho dos dados:', storedData.length);
+            
+            const parsedData = JSON.parse(storedData);
+            console.log('Número de registros:', parsedData.length);
+            
+            // Verificar se os dados contêm VARIACOES_RELATIVAS
+            if (parsedData.length > 0) {
+                console.log('📊 Primeiro indicador:', parsedData[0].INDICADORES);
+                console.log('Tem VARIACOES_RELATIVAS?', !!parsedData[0].VARIACOES_RELATIVAS);
+                console.log('Tem METAS?', !!parsedData[0].METAS);
+                console.log('TIPO_INDICADOR:', parsedData[0].TIPO_INDICADOR);
             }
             
-            // Se não encontrar no localStorage, tenta buscar dados mockados como fallback
-            console.log('Buscando dados mockados como fallback');
+            return parsedData;
+        } else {
+            console.warn('⚠️ Nenhum dado encontrado no localStorage com chave "dashboardData"');
             
-            // Tenta encontrar dados em diferentes chaves do localStorage
-            const possibleKeys = ['dashboardDataNew', 'indicadoresData', 'rawData'];
-            for (const key of possibleKeys) {
-                const data = localStorage.getItem(key);
-                if (data) {
-                    console.log(`Encontrado dados na chave ${key}`);
-                    return JSON.parse(data);
-                }
+            // Lista todas as chaves do localStorage para debug
+            console.log('Chaves disponíveis no localStorage:');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                console.log(`Chave ${i}: ${key} (${value ? value.length : 0} chars)`);
             }
-            
-            // Último recurso: verifica se há algum dado na página
-            console.warn('Nenhum dado encontrado no localStorage. Exibindo mensagem de erro.');
-            return [];
-            
-        } catch (error) {
-            console.error('Erro ao carregar dados:', error);
-            return [];
         }
+        
+        return [];
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar dados:', error);
+        return [];
     }
+}
     
     function extractHistoryFromIndicator(indicator) {
     // Extrai valores temporais de VALOR_1 a VALOR_6
@@ -1161,96 +1172,143 @@
     
     // FUNÇÃO PARA CONFIGURAR A SEÇÃO DE METAS/VARIAÇÕES
     function configurarMetasOuVariacoes(details) {
-        // Determinar se é indicador tático
-        currentIndicatorIsTatico = (details['TIPO_INDICADOR'] || '').toUpperCase().includes('TÁTICOS') || 
-                                  (details['TIPO_INDICADOR'] || '').toUpperCase().includes('TATICOS');
+    console.log('🔍 DEBUG: INICIANDO configurarMetasOuVariacoes');
+    console.log('Nome do indicador:', details.INDICADORES);
+    console.log('TIPO_INDICADOR:', details.TIPO_INDICADOR);
+    console.log('Details completo:', details);
+    
+    // Determinar se é indicador tático - BUSCA MAIS AMPLA
+    currentIndicatorIsTatico = (details['TIPO_INDICADOR'] || '').toUpperCase().includes('TÁTICOS') || 
+                              (details['TIPO_INDICADOR'] || '').toUpperCase().includes('TATICOS') ||
+                              (details['ORIGEM'] || '').toUpperCase().includes('TÁTICOS') ||
+                              (details['ORIGEM'] || '').toUpperCase().includes('TATICOS') ||
+                              (details['INDICADOR'] || '').toUpperCase().includes('TÁTICO') ||
+                              (details['INDICADOR'] || '').toUpperCase().includes('TATICO');
+    
+    console.log('É indicador tático?', currentIndicatorIsTatico);
+    
+    const titleElement = document.getElementById('metas-var-title');
+    const box1 = document.getElementById('box-variacao-1');
+    const box2 = document.getElementById('box-variacao-2');
+    const label1 = document.getElementById('label-variacao-1');
+    const label2 = document.getElementById('label-variacao-2');
+    const value1 = document.getElementById('meta-2025-value-box');
+    const value2 = document.getElementById('meta-2026-value-box');
+    
+    if (currentIndicatorIsTatico) {
+        console.log('🎯 TRATANDO COMO INDICADOR TÁTICO');
+        console.log('VARIACOES_RELATIVAS disponíveis?', details.VARIACOES_RELATIVAS);
+        console.log('Keys do objeto:', Object.keys(details));
         
-        const titleElement = document.getElementById('metas-var-title');
-        const box1 = document.getElementById('box-variacao-1');
-        const box2 = document.getElementById('box-variacao-2');
-        const label1 = document.getElementById('label-variacao-1');
-        const label2 = document.getElementById('label-variacao-2');
-        const value1 = document.getElementById('meta-2025-value-box');
-        const value2 = document.getElementById('meta-2026-value-box');
+        titleElement.textContent = 'Variações';
         
-        if (currentIndicatorIsTatico) {
-            // Para indicadores táticos: mostrar variações
-            titleElement.textContent = 'Variações';
+        // BUSCA FLEXÍVEL DAS VARIAÇÕES
+        let variacaoAnoPassado = 0;
+        let variacaoAnoRetrasado = 0;
+        
+        // Tenta múltiplas formas de encontrar as variações
+        if (details.VARIACOES_RELATIVAS) {
+            // Formato 1: Objeto com sub-objetos
+            console.log('Encontrou VARIACOES_RELATIVAS:', details.VARIACOES_RELATIVAS);
             
-            // Obter variações do JSON
-            const variacaoAnoPassado = details.VARIACOES_RELATIVAS?.VARIACAO_ANO_PASSADO?.valor || 0;
-            const variacaoAnoRetrasado = details.VARIACOES_RELATIVAS?.VARIACAO_ANO_RETRASADO?.valor || 0;
-            
-            // Atualizar labels
-            label1.textContent = 'Ano Anterior';
-            label2.textContent = 'Ano Retrasado';
-            
-            // Atualizar valores com formatação e cores
-            value1.textContent = formatVariacao(variacaoAnoPassado);
-            value2.textContent = formatVariacao(variacaoAnoRetrasado);
-            
-            // Aplicar classes de cor
-            value1.className = `text-sm font-bold mb-1 ${getVariacaoClass(variacaoAnoPassado)}`;
-            value2.className = `text-sm font-bold mb-1 ${getVariacaoClass(variacaoAnoRetrasado)}`;
-            
-            // Atualizar cores das bordas
-            box1.className = 'p-1 rounded-lg border-l-3 bg-purple-50 flex flex-col justify-center items-center text-center';
-            box2.className = 'p-1 rounded-lg border-l-3 bg-blue-50 flex flex-col justify-center items-center text-center';
-            
-            // Para variações positivas: verde, negativas: vermelho, neutras: cinza
-            if (variacaoAnoPassado > 0) {
-                box1.classList.add('border-green-500');
-                box1.classList.remove('bg-purple-50');
-                box1.classList.add('bg-green-50');
-            } else if (variacaoAnoPassado < 0) {
-                box1.classList.add('border-red-500');
-                box1.classList.remove('bg-purple-50');
-                box1.classList.add('bg-red-50');
-            } else {
-                box1.classList.add('border-gray-400');
-                box1.classList.remove('bg-purple-50');
-                box1.classList.add('bg-gray-50');
+            // Tenta acessar de diferentes formas
+            if (details.VARIACOES_RELATIVAS.VARIACAO_ANO_PASSADO) {
+                variacaoAnoPassado = details.VARIACOES_RELATIVAS.VARIACAO_ANO_PASSADO.valor || 
+                                    details.VARIACOES_RELATIVAS.VARIACAO_ANO_PASSADO || 0;
+                console.log('Variação ano passado encontrada:', variacaoAnoPassado);
             }
             
-            if (variacaoAnoRetrasado > 0) {
-                box2.classList.add('border-green-400');
-                box2.classList.remove('bg-blue-50');
-                box2.classList.add('bg-green-50');
-            } else if (variacaoAnoRetrasado < 0) {
-                box2.classList.add('border-red-400');
-                box2.classList.remove('bg-blue-50');
-                box2.classList.add('bg-red-50');
-            } else {
-                box2.classList.add('border-gray-400');
-                box2.classList.remove('bg-blue-50');
-                box2.classList.add('bg-gray-50');
+            if (details.VARIACOES_RELATIVAS.VARIACAO_ANO_RETRASADO) {
+                variacaoAnoRetrasado = details.VARIACOES_RELATIVAS.VARIACAO_ANO_RETRASADO.valor || 
+                                      details.VARIACOES_RELATIVAS.VARIACAO_ANO_RETRASADO || 0;
+                console.log('Variação ano retrasado encontrada:', variacaoAnoRetrasado);
             }
-            
-        } else {
-            // Para indicadores estratégicos: mostrar metas
-            titleElement.textContent = 'Metas';
-            
-            // Obter metas
-            const meta2025 = details.METAS?.META_2025?.valor || details['META 2025'] || null;
-            const meta2026 = details.METAS?.META_2026?.valor || details['META 2026'] || null;
-            
-            // Atualizar labels
-            label1.textContent = 'Meta 2025';
-            label2.textContent = 'Meta 2026';
-            
-            // Atualizar valores
-            value1.textContent = formatValue(meta2025, details.GRANDEZA || '', 1);
-            value2.textContent = formatValue(meta2026, details.GRANDEZA || '', 1);
-            
-            // Resetar classes de cor
-            value1.className = 'text-sm font-bold text-gray-800 mb-1';
-            value2.className = 'text-sm font-bold text-gray-800 mb-1';
-            
-            // Resetar cores das bordas para as originais
-            box1.className = 'p-1 rounded-lg border-l-3 border-purple-500 bg-purple-50 flex flex-col justify-center items-center text-center';
-            box2.className = 'p-1 rounded-lg border-l-3 border-blue-400 bg-blue-50 flex flex-col justify-center items-center text-center';
         }
+        
+        // Se não encontrou, tenta outras chaves
+        if (variacaoAnoPassado === 0) {
+            // Procura por variações em outras chaves
+            const keys = Object.keys(details);
+            const variacaoKeys = keys.filter(key => key.includes('VARIA') || key.includes('VARIAC'));
+            console.log('Chaves de variação encontradas:', variacaoKeys);
+            
+            variacaoKeys.forEach(key => {
+                console.log(`${key}:`, details[key]);
+            });
+        }
+        
+        console.log('VALORES FINAIS:');
+        console.log('- Variação Ano Passado:', variacaoAnoPassado);
+        console.log('- Variação Ano Retrasado:', variacaoAnoRetrasado);
+        
+        // Atualizar labels
+        label1.textContent = 'Ano Anterior';
+        label2.textContent = 'Ano Retrasado';
+        
+        // Atualizar valores com formatação e cores
+        value1.textContent = formatVariacao(variacaoAnoPassado);
+        value2.textContent = formatVariacao(variacaoAnoRetrasado);
+        
+        // Aplicar classes de cor
+        value1.className = `text-sm font-bold mb-1 ${getVariacaoClass(variacaoAnoPassado)}`;
+        value2.className = `text-sm font-bold mb-1 ${getVariacaoClass(variacaoAnoRetrasado)}`;
+        
+        // Atualizar cores das bordas
+        if (variacaoAnoPassado > 0) {
+            box1.className = 'p-1 rounded-lg border-l-3 border-green-500 bg-green-50 flex flex-col justify-center items-center text-center';
+        } else if (variacaoAnoPassado < 0) {
+            box1.className = 'p-1 rounded-lg border-l-3 border-red-500 bg-red-50 flex flex-col justify-center items-center text-center';
+        } else {
+            box1.className = 'p-1 rounded-lg border-l-3 border-gray-400 bg-gray-50 flex flex-col justify-center items-center text-center';
+        }
+        
+        if (variacaoAnoRetrasado > 0) {
+            box2.className = 'p-1 rounded-lg border-l-3 border-green-400 bg-green-50 flex flex-col justify-center items-center text-center';
+        } else if (variacaoAnoRetrasado < 0) {
+            box2.className = 'p-1 rounded-lg border-l-3 border-red-400 bg-red-50 flex flex-col justify-center items-center text-center';
+        } else {
+            box2.className = 'p-1 rounded-lg border-l-3 border-gray-400 bg-gray-50 flex flex-col justify-center items-center text-center';
+        }
+        
+    } else {
+        console.log('🎯 TRATANDO COMO INDICADOR ESTRATÉGICO');
+        console.log('METAS disponíveis?', details.METAS);
+        console.log('Meta 2025:', details['META 2025']);
+        console.log('Meta 2026:', details['META 2026']);
+        
+        titleElement.textContent = 'Metas';
+        
+        // Obter metas
+        let meta2025 = 0;
+        let meta2026 = 0;
+        
+        if (details.METAS) {
+            meta2025 = details.METAS.META_2025?.valor || details['META 2025'] || null;
+            meta2026 = details.METAS.META_2026?.valor || details['META 2026'] || null;
+        } else {
+            meta2025 = details['META 2025'] || null;
+            meta2026 = details['META 2026'] || null;
+        }
+        
+        console.log('Metas encontradas:', { meta2025, meta2026 });
+        
+        // Atualizar labels
+        label1.textContent = 'Meta 2025';
+        label2.textContent = 'Meta 2026';
+        
+        // Atualizar valores
+        value1.textContent = formatValue(meta2025, details.GRANDEZA || '', 1);
+        value2.textContent = formatValue(meta2026, details.GRANDEZA || '', 1);
+        
+        // Resetar classes de cor
+        value1.className = 'text-sm font-bold text-gray-800 mb-1';
+        value2.className = 'text-sm font-bold text-gray-800 mb-1';
+        
+        // Resetar cores das bordas
+        box1.className = 'p-1 rounded-lg border-l-3 border-purple-500 bg-purple-50 flex flex-col justify-center items-center text-center';
+        box2.className = 'p-1 rounded-lg border-l-3 border-blue-400 bg-blue-50 flex flex-col justify-center items-center text-center';
     }
+}
     
     // FUNÇÃO PARA ATUALIZAR O BADGE DO TIPO DE INDICADOR
     function atualizarBadgeTipoIndicador(details) {
