@@ -8874,22 +8874,37 @@
         }
 
         function loadData() {
-            try {
-                const storedData = localStorage.getItem('dashboardData');
-                if (storedData) {
-                    const parsedData = JSON.parse(storedData);
-                    return preprocessData(parsedData);
-                }
-            } catch (e) {
-                console.log('Erro ao carregar do localStorage, usando fallback');
-            }
-            
-            // Pré-processar os dados combinados
-            const todosDados = [...novoJsonData, ...indicadoresTaticos];
-            const processedData = preprocessData(todosDados);
-            localStorage.setItem('dashboardData', JSON.stringify(processedData));
-            return processedData;
-        }
+    console.log('========== CARREGANDO DADOS ==========');
+    
+    // 1. SEMPRE limpar localStorage para garantir dados frescos
+    localStorage.removeItem('dashboardData');
+    
+    // 2. Usar APENAS os dados do array novoJsonData
+    if (!novoJsonData || novoJsonData.length === 0) {
+        console.error('ERRO CRÍTICO: novoJsonData está VAZIO ou não existe!');
+        console.log('Verifique se o array novoJsonData foi definido corretamente.');
+        return [];
+    }
+    
+    console.log('✅ Dados encontrados no código:', novoJsonData.length, 'indicadores');
+    
+    // 3. Processar os dados
+    const processedData = preprocessData(novoJsonData);
+    console.log('✅ Dados processados:', processedData.length, 'indicadores');
+    
+    // 4. Mostrar preview dos dados
+    console.log('📋 PREVIEW DOS DADOS:');
+    for (let i = 0; i < Math.min(5, processedData.length); i++) {
+        const item = processedData[i];
+        console.log(`${i+1}. [${item["#"]}] ${item.INDICADORES} - ${item.Status}`);
+    }
+    
+    // 5. Salvar no localStorage (opcional, mas mantém consistência)
+    localStorage.setItem('dashboardData', JSON.stringify(processedData));
+    console.log('✅ Dados salvos no localStorage');
+    
+    return processedData;
+}
 
         // FUNÇÃO CORRIGIDA: Extrair valores do JSON atualizado
         function getLatestIndicators(data) {
