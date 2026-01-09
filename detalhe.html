@@ -676,6 +676,9 @@
         neutral: '#6b7280'
     };
     
+    // Array fixo de anos na ordem desejada (do mais antigo ao mais recente)
+    const ANOS_DISPONIVEIS = [2019, 2021, 2022, 2023, 2024, 2025];
+    
     // FUNÇÕES BÁSICAS
     function getUrlParams() {
         const params = new URLSearchParams(window.location.search);
@@ -1005,9 +1008,22 @@
     }
 }
     
+    // FUNÇÃO MODIFICADA: Extrai histórico e atribui anos fixos
     function extractHistoryFromIndicator(indicator) {
-    // Extrai valores temporais de VALOR_1 a VALOR_6
     const history = [];
+    
+    // Mapeamento dos anos disponíveis (do mais antigo ao mais recente)
+    // VALOR_6 (mais antigo) → 2019, VALOR_5 → 2021, VALOR_4 → 2022, 
+    // VALOR_3 → 2023, VALOR_2 → 2024, VALOR_1 (mais recente) → 2025
+    
+    const anoPorOrdem = {
+        6: 2019, // Mais antigo
+        5: 2021,
+        4: 2022,
+        3: 2023,
+        2: 2024,
+        1: 2025  // Mais recente
+    };
     
     for (let i = 1; i <= 6; i++) {
         const valorKey = `VALOR_${i}`;
@@ -1019,24 +1035,39 @@
             valorData.valor !== null && 
             valorData.valor !== undefined) {
             
+            const anoCorrespondente = anoPorOrdem[i] || 2019 + (i - 1);
+            
             history.push({
-                periodo: valorData.periodo,
+                periodo: `${anoCorrespondente}`, // Usar apenas o ano como período
                 valor: valorData.valor,
-                referencia: valorData.referencia,
+                referencia: `${anoCorrespondente}`, // Também usar ano como referência
                 eh_data_base: valorData.eh_data_base,
-                ordem_temporal: valorData.ordem_temporal,
-                mes: valorData.mes,
-                ano: valorData.ano,
-                trimestre: valorData.trimestre,
-                semestre: valorData.semestre
+                ordem_temporal: i, // Manter a ordem original
+                mes: null, // Não usar informações mensais/semestrais
+                ano: anoCorrespondente,
+                trimestre: null,
+                semestre: null
+            });
+        } else if (valorData !== null && valorData !== undefined) {
+            // Caso o valor não esteja no formato objeto
+            const anoCorrespondente = anoPorOrdem[i] || 2019 + (i - 1);
+            
+            history.push({
+                periodo: `${anoCorrespondente}`,
+                valor: valorData,
+                referencia: `${anoCorrespondente}`,
+                eh_data_base: false,
+                ordem_temporal: i,
+                mes: null,
+                ano: anoCorrespondente,
+                trimestre: null,
+                semestre: null
             });
         }
     }
     
-    // ORDENA DO MAIS ANTIGO (menor ordem_temporal) PARA O MAIS RECENTE (maior ordem_temporal)
-    // VALOR_1 = 1 (mais recente), VALOR_6 = 6 (mais antigo)
-    // Queremos: mais antigo primeiro (6, 5, 4, 3, 2, 1) → maior para menor
-    return history.sort((a, b) => b.ordem_temporal - a.ordem_temporal);
+    // ORDENA DO MAIS ANTIGO (menor ano) PARA O MAIS RECENTE (maior ano)
+    return history.sort((a, b) => a.ano - b.ano);
 }
     
     function groupDataByIndicator(data) {
@@ -1385,10 +1416,10 @@
             const indicator = allIndicatorsData[indicatorName];
             const details = indicator.details;
             
-            // Pega o valor mais recente (VALOR_1)
+            // Pega o valor mais recente (ano 2025)
             const currentValue = indicator.history.length > 0 
-                ? indicator.history.find(h => h.ordem_temporal === 1)?.valor 
-                : 0;
+                ? indicator.history.find(h => h.ano === 2025)?.valor 
+                : indicator.history[indicator.history.length - 1]?.valor;
             
             const status = normalizeStatus(details.Status);
             const statusColor = getStatusColor(details.Status);
@@ -1460,7 +1491,7 @@
             const indicatorData = groupedData[indicatorName];
             currentIndicatorData = indicatorData;
             const details = indicatorData.details;
-            const history = indicatorData.history; // Agora vem ordenado do mais antigo para o mais recente
+            const history = indicatorData.history; // Agora vem ordenado por ano (2019, 2021, 2022, 2023, 2024, 2025)
             currentGrandeza = details.GRANDEZA || '';
             
             // Atualizar nome do indicador
@@ -1566,11 +1597,11 @@
             return;
         }
         
-        // Preparar dados para o gráfico - AGORA VÊM ORDENADOS DO MAIS ANTIGO PARA O MAIS RECENTE
+        // Preparar dados para o gráfico - AGORA VÊM ORDENADOS POR ANO (2019, 2021, 2022, 2023, 2024, 2025)
         const chartData = history.map(item => ({
-            label: item.periodo || item.referencia || `Período ${item.ordem_temporal}`,
+            label: item.periodo || `Ano ${item.ano}`,
             value: item.valor,
-            ordem: item.ordem_temporal,
+            ano: item.ano,
             eh_data_base: item.eh_data_base,
             referencia: item.referencia
         }));
@@ -1613,7 +1644,7 @@
             if (chartData.length === 1) return margin.left + chartWidth / 2;
             const effectiveWidth = chartWidth * 0.85;
             const startOffset = chartWidth * 0.075;
-            // Agora index 0 = VALOR_6 (mais antigo, ESQUERDA), index último = VALOR_1 (mais recente, DIREITA)
+            // Agora index 0 = 2019 (mais antigo, ESQUERDA), index último = 2025 (mais recente, DIREITA)
             return margin.left + startOffset + (index / (chartData.length - 1)) * effectiveWidth;
         };
         
@@ -1711,13 +1742,13 @@
             }
         }
         
-        // Criar pontos para o gráfico (ordenados corretamente: mais antigo à esquerda, mais recente à direita)
+        // Criar pontos para o gráfico (ordenados corretamente: 2019 à esquerda, 2025 à direita)
         const points = chartData.map((d, i) => ({
             x: xScale(i),
             y: yScale(d.value),
             value: d.value,
             label: d.label,
-            ordem: d.ordem,
+            ano: d.ano,
             eh_data_base: d.eh_data_base,
             referencia: d.referencia
         }));
@@ -1743,7 +1774,7 @@
                 bar.setAttribute('rx', '2');
                 bar.setAttribute('data-label', point.label);
                 bar.setAttribute('data-value', point.value);
-                bar.setAttribute('data-ordem', point.ordem);
+                bar.setAttribute('data-ano', point.ano);
                 
                 // Adicionar rótulo de valor no TOPO da barra
                 if (barHeight > 25) {
@@ -1799,7 +1830,7 @@
                 circle.setAttribute('stroke-width', '2');
                 circle.setAttribute('data-label', point.label);
                 circle.setAttribute('data-value', point.value);
-                circle.setAttribute('data-ordem', point.ordem);
+                circle.setAttribute('data-ano', point.ano);
                 
                 // Adicionar rótulo de valor se não tiver barra ou se for tipo linha
                 if (currentChartType === 'line') {
@@ -1828,7 +1859,7 @@
             });
         }
         
-        // Adicionar rótulos do eixo X (ordenados corretamente: mais antigo à esquerda, mais recente à direita)
+        // Adicionar rótulos do eixo X (ordenados corretamente: anos de 2019 a 2025)
         points.forEach((point, i) => {
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', point.x);
@@ -1838,11 +1869,8 @@
             text.setAttribute('font-size', '11px');
             text.setAttribute('font-weight', point.eh_data_base ? 'bold' : '500');
             
-            // Formatar label para caber melhor
-            let displayLabel = point.referencia || point.label;
-            if (displayLabel.length > 10) {
-                displayLabel = displayLabel.substring(0, 8) + '...';
-            }
+            // Usar apenas o ano como label
+            const displayLabel = point.ano.toString();
             
             text.textContent = displayLabel;
             svg.appendChild(text);
