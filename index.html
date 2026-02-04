@@ -1524,7 +1524,7 @@
                     <!-- BOTÃO DE COLETA DE DADOS (AGORA COM VERIFICAÇÃO DE LOGIN) -->
                     <button class="header-button coleta-header-button" onclick="verificarLoginParaColeta()">
                         <span class="material-symbols-outlined" style="font-size: 16px;">data_check</span>
-                        <span class="coleta-text">Solicitar Dados</span>
+                        <span class="coleta-text">Coletar Dados</span>
                     </button>
 
                     <!-- INFO DO USUÁRIO LOGADO (APARECE APÓS LOGIN) -->
@@ -9078,102 +9078,53 @@
 
         // FUNÇÃO CORRIGIDA: Extrair valores do JSON atualizado
         function getLatestIndicators(data) {
-            const indicatorsMap = new Map();
+    const indicatorsMap = new Map();
+    
+    data.forEach(item => {
+        const indicatorKey = item.INDICADORES;
+        if (!indicatorKey) return;
+        
+        let displayValue = 0;
+        let lastPeriodLabel = "";
+        let isHistorical = false;
+        
+        // 1. Tentar obter o valor mais recente (VALOR_1)
+        const v1 = item.VALOR_1?.valor;
+        
+        if (v1 !== undefined && v1 !== 0 && v1 !== "" && v1 !== null) {
+            displayValue = v1;
+            lastPeriodLabel = item.VALOR_1.ano || item.VALOR_1.periodo || "Atual";
+            isHistorical = false;
+        } else {
+            // 2. FALLBACK: Se o VALOR_1 for zero/vazio, percorre do VALOR_2 ao VALOR_6
+            const historico = [item.VALOR_2, item.VALOR_3, item.VALOR_4, item.VALOR_5, item.VALOR_6];
+            const ultimoValido = historico.find(v => v && v.valor !== 0 && v.valor !== "" && v.valor !== null);
             
-            data.forEach(item => {
-                const indicatorKey = item.INDICADORES;
-                if (!indicatorKey) return;
-                
-                // Obter valor mais recente
-                let displayValue = 0;
-                
-                // PRIMEIRO: Tentar VALOR_1
-                if (item.VALOR_1 && typeof item.VALOR_1 === 'object' && item.VALOR_1.valor !== undefined) {
-                    displayValue = item.VALOR_1.valor;
-                }
-                // SEGUNDO: Tentar "VALOR 1"
-                else if (item["VALOR 1"] !== undefined && item["VALOR 1"] !== null && item["VALOR 1"] !== "") {
-                    displayValue = item["VALOR 1"];
-                }
-                // TERCEIRO: Tentar "Resultado Atual"
-                else if (item["Resultado Atual"] !== undefined && item["Resultado Atual"] !== null && item["Resultado Atual"] !== "") {
-                    displayValue = item["Resultado Atual"];
-                }
-                // QUARTO: Tentar VALOR_2
-                else if (item.VALOR_2 && typeof item.VALOR_2 === 'object' && item.VALOR_2.valor !== undefined) {
-                    displayValue = item.VALOR_2.valor;
-                }
-                
-                // Converter para número se for string
-                if (typeof displayValue === 'string') {
-                    displayValue = parseFloat(displayValue) || 0;
-                }
-                
-                // Obter Status
-                let statusValue = item.Status || "Indicador em coleta";
-                if (statusValue === null || statusValue === undefined || statusValue === "" || statusValue === 0) {
-                    statusValue = "Indicador em coleta";
-                }
-                
-                // Converter para o formato compatível
-                const convertedItem = {
-                    // Campos principais
-                    "OBJETIVO ESTRATÉGICO": item["OBJETIVO ESTRATÉGICO"],
-                    "#": item["#"] || item.NUMERO_INDICADOR,
-                    "INDICADORES": item.INDICADORES,
-                    "FÓRMULA": item.FÓRMULA,
-                    "FONTE DOS DADOS": item["FONTE DOS DADOS"],
-                    "EMAIL PESSOA RESPONSÁVEL": item["EMAIL PESSOA RESPONSÁVEL"],
-                    "SUPINTENDÊNCIA": item.SUPINTENDÊNCIA,
-                    "SUBSECRETARIA": item.SUBSECRETARIA,
-                    "PERIODICIDADE DE MEDIÇÃO": item["PERIODICIDADE DE MEDIÇÃO"],
-                    "GRANDEZA": item.GRANDEZA,
-                    "POLARIDADE": item.POLARIDADE,
-                    "VALOR ATUAL": displayValue,
-                    "Status": statusValue,
-                    "REFERENCIAL DA META": item["REFERENCIAL DA META"],
-                    "DOUBLE CHECK": item["DOUBLE CHECK"],
-                    "OBSERVAÇÕES": item.OBSERVAÇÕES,
-                    "BASE DE DADOS": item["BASE DE DADOS"],
-                    "Origem Arquivo": "SEEDUC RJ_Monitoramento de Projetos.xlsx",
-                    "INDICADOR": item.ORIGEM === "Indicadores Táticos" ? "Tático" : "Estratégico",
-                    "valor": displayValue,
-                    "tipo_dado": "VALOR",
-                    "ano": 2025,
-                    
-                    // Campos extras
-                    "ID_LINHA": item.ID_LINHA,
-                    "NUMERO_INDICADOR": item.NUMERO_INDICADOR,
-                    "ORIGEM": item.ORIGEM,
-                    "TIPO_INDICADOR": item.TIPO_INDICADOR,
-                    "TOTAL_VALORES_TEMPORAIS": item.TOTAL_VALORES_TEMPORAIS,
-                    "DATA_BASE": item.DATA_BASE,
-                    
-                    // Valores temporais
-                    "VALOR_1": item.VALOR_1,
-                    "VALOR_2": item.VALOR_2,
-                    "VALOR_3": item.VALOR_3,
-                    "VALOR_4": item.VALOR_4,
-                    "VALOR_5": item.VALOR_5,
-                    "VALOR_6": item.VALOR_6,
-                    
-                    // Metas
-                    "METAS": item.METAS,
-                    "META 2025": item["META 2025"],
-                    "META 2026": item["META 2026"],
-                    "Resultado Atual": item["Resultado Atual"],
-                    
-                    // Para compatibilidade
-                    displayValue: displayValue,
-                    normalizedStatus: normalizeStatus(statusValue)
-                };
-                
-                indicatorsMap.set(indicatorKey, convertedItem);
-            });
-            
-            return Array.from(indicatorsMap.values());
+            if (ultimoValido) {
+                displayValue = ultimoValido.valor;
+                lastPeriodLabel = ultimoValido.ano || ultimoValido.referencia || "Anterior";
+                isHistorical = true; // Marca como histórico para mudar a cor para cinza
+            } else {
+                displayValue = 0;
+                lastPeriodLabel = "";
+                isHistorical = false;
+            }
         }
 
+        // 3. Retorna o objeto formatado mantendo compatibilidade com o restante do código
+        const convertedItem = {
+            ...item,
+            displayValue: displayValue,
+            lastPeriodLabel: lastPeriodLabel,
+            isHistorical: isHistorical, // Campo essencial para o CSS dinâmico
+            normalizedStatus: normalizeStatus(item.Status)
+        };
+        
+        indicatorsMap.set(indicatorKey, convertedItem);
+    });
+    
+    return Array.from(indicatorsMap.values());
+}
         // FUNÇÕES AUXILIARES
         function formatValue(value, grandeza) {
             if (value === null || value === undefined || value === '' || isNaN(value)) return 'N/A';
@@ -9232,14 +9183,16 @@
     
     const s = status.toString().trim();
     
-    // Mapeamento para os nomes reais solicitados
-    if (s.includes('alcançada') || s.includes('atingida') || s.includes('Dentro do esperado')) {
-        return 'Meta 2025 atingida';
+    // Mapeamento rigoroso baseado no seu JSON
+    if (s === 'Meta 2025 alcançada' || s === 'Dentro do esperado') {
+        return 'Meta 2025 alcançada';
     }
-    if (s.includes('não alcançada') || s.includes('não atingida') || s.includes('Abaixo do esperado')) {
-        return 'Meta 2025 não atingida';
+    
+    if (s === 'Meta 2025 não alcançada' || s === 'Abaixo do esperado') {
+        return 'Meta 2025 não alcançada';
     }
-    if (s.includes('coleta')) {
+    
+    if (s.toLowerCase().includes('coleta')) {
         return 'Indicador em coleta';
     }
     
@@ -9249,11 +9202,32 @@
 function getStatusClass(status) {
     const normalized = normalizeStatus(status);
     switch (normalized) {
-        case 'Meta 2025 atingida': return 'status-positive';
-        case 'Meta 2025 não atingida': return 'status-negative';
-        case 'Indicador em coleta': return 'status-gray';
-        case 'Dados indisponíveis': return 'status-gray';
-        default: return 'status-gray';
+        case 'Meta 2025 alcançada': 
+            return 'status-positive'; // Verde
+        case 'Meta 2025 não alcançada': 
+            return 'status-negative'; // Vermelho
+        case 'Indicador em coleta': 
+        case 'Dados indisponíveis': 
+            return 'status-gray';     // Ambos em Cinza
+        default: 
+            return 'status-gray';
+    }
+}
+
+function getStatusClass(status) {
+    const s = status ? status.toString().trim() : "";
+    
+    switch (s) {
+        case 'Meta 2025 alcançada':
+            return 'status-positive'; // Verde
+        case 'Meta 2025 não alcançada':
+            return 'status-negative'; // Vermelho
+        case 'Indicador em coleta':
+            return 'status-gray';     // Cinza
+        case 'Dados indisponíveis':
+            return 'status-gray';     // Cinza
+        default:
+            return 'status-gray';
     }
 }
 
@@ -10004,7 +9978,7 @@ function renderObjectiveHeader(objective) {
                             
                             const formattedValue = formatValue(displayValue, indicator.GRANDEZA);
                             const statusClass = getStatusClass(indicator.Status);
-                            const displayStatus = normalizeStatus(indicator.Status);
+                            const displayStatus = indicator.Status || "Dados indisponíveis";
                             
                             if (selectedObjective.isGeneral) {
                                 return `
@@ -10059,198 +10033,141 @@ function renderObjectiveHeader(objective) {
             }
             
             container.innerHTML = filtersHTML + indicatorsHTML;
+        }function renderEstrategicosWithIntegratedFilters() {
+    if (!selectedObjective) return;
+    
+    const container = document.getElementById('estrategicos-container');
+    const responsaveis = getResponsaveisList(selectedObjective.estrategicos);
+    
+    // Filtros e Cabeçalho de filtros permanecem iguais...
+    let filterIndicatorsHTML = '';
+    const activeFilters = [];
+    if (activeStatusFilter) activeFilters.push(`Status: ${activeStatusFilter}`);
+    if (activeSuperintendenciaFilter) activeFilters.push(`Superintendência: ${activeSuperintendenciaFilter}`);
+    if (activeSubsecretariaFilter) activeFilters.push(`Subsecretaria: ${activeSubsecretariaFilter}`);
+    
+    if (activeFilters.length > 0) {
+        filterIndicatorsHTML = `
+            <div style="margin-bottom: 15px;">
+                <span class="status-filter-active">
+                    Filtros: ${activeFilters.join(', ')}
+                    <span class="clear-filter" onclick="clearAllFilters()">×</span>
+                </span>
+            </div>
+        `;
+    }
+    
+    let indicatorsToShow = selectedObjective.estrategicos;
+    if (activeStatusFilter) indicatorsToShow = indicatorsToShow.filter(i => normalizeStatus(i.Status) === activeStatusFilter);
+    if (activeSuperintendenciaFilter) indicatorsToShow = indicatorsToShow.filter(i => i.SUPINTENDÊNCIA?.trim() === activeSuperintendenciaFilter);
+    if (activeSubsecretariaFilter) indicatorsToShow = indicatorsToShow.filter(i => i.SUBSECRETARIA?.trim() === activeSubsecretariaFilter);
+
+    // MONTAGEM DOS CARDS COM A NOVA LÓGICA VISUAL
+    const indicatorsGridClass = selectedObjective.isGeneral ? 'general-indicators-grid' : 'indicator-list-view';
+    
+    let indicatorsHTML = `<div class="${indicatorsGridClass}">`;
+    
+    indicatorsToShow.forEach(indicator => {
+        const formattedValue = formatValue(indicator.displayValue, indicator.GRANDEZA);
+        const statusClass = getStatusClass(indicator.Status);
+        const displayStatus = normalizeStatus(indicator.Status);
+        
+        // --- LÓGICA DE COR E REFERÊNCIA ---
+        const valueColor = indicator.isHistorical ? '#94a3b8' : 'var(--color-primary)';
+        const referenceHTML = indicator.isHistorical ? 
+            `<div style="font-size: 10px; color: #94a3b8; font-weight: 500; margin-top: 2px;">Ref: ${indicator.lastPeriodLabel}</div>` : 
+            `<div style="font-size: 11px; color: var(--color-text-light);">${indicator["#"]}</div>`;
+
+        if (selectedObjective.isGeneral) {
+            indicatorsHTML += `
+                <div class="indicator-card" onclick="navigate('detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}')">
+                    <div style="display: flex; flex-direction: column; height: 100%;">
+                        <div style="margin-bottom: 8px;">
+                            <span class="status-badge ${statusClass}">${displayStatus}</span>
+                        </div>
+                        <h3 style="font-size: 13px; font-weight: 600; margin: 5px 0; line-height: 1.3; flex-grow: 1;">${indicator.INDICADORES}</h3>
+                        <div style="margin-top: auto;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                <div>
+                                    <div style="font-size: 18px; font-weight: 800; color: ${valueColor};">${formattedValue}</div>
+                                    ${referenceHTML}
+                                </div>
+                                <div style="font-size: 9px; color: var(--color-text-light); background: #f0f0f0; padding: 2px 6px; border-radius: 4px;">${indicator["OBJETIVO ESTRATÉGICO"] || "Geral"}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        } else {
+            indicatorsHTML += `
+                <div class="indicator-card" onclick="navigate('detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span class="status-badge ${statusClass}">${displayStatus}</span>
+                            <h3 style="font-size: 14px; font-weight: 600; margin: 5px 0;">${indicator.INDICADORES}</h3>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 18px; font-weight: 700; color: ${valueColor};">${formattedValue}</div>
+                            ${referenceHTML}
+                        </div>
+                    </div>
+                </div>`;
         }
+    });
+
+    indicatorsHTML += `</div>`;
+    
+    // Injeta os filtros e a lista no container
+    container.innerHTML = filterIndicatorsHTML + indicatorsHTML;
+}
 
         // ------------------------------------------------------------------
         // FUNÇÃO PARA RENDERIZAR INDICADORES TÁTICOS COM FILTROS INTEGRADOS
         // ------------------------------------------------------------------
         function renderTaticosWithIntegratedFilters() {
-            const container = document.getElementById('taticos-container');
-            const indicatorsToShow = selectedTaticosObjective ? selectedTaticosObjective.taticos : taticosIndicators;
-            const responsaveis = getResponsaveisList(indicatorsToShow);
-            
-            let filterIndicatorsHTML = '';
-            const activeFilters = [];
-            
-            if (taticosActiveSuperintendenciaFilter) {
-                activeFilters.push(`Superintendência: ${taticosActiveSuperintendenciaFilter}`);
-            }
-            if (taticosActiveSubsecretariaFilter) {
-                activeFilters.push(`Subsecretaria: ${taticosActiveSubsecretariaFilter}`);
-            }
-            
-            if (activeFilters.length > 0) {
-                filterIndicatorsHTML = `
-                    <div style="margin-bottom: 15px;">
-                        <span class="status-filter-active">
-                            Filtros: ${activeFilters.join(', ')}
-                            <span class="clear-filter" onclick="clearTaticosAllFilters()">×</span>
-                        </span>
-                    </div>
-                `;
-            }
-            
-            let activeFiltersSection = '';
-            if (taticosActiveSuperintendenciaFilter || taticosActiveSubsecretariaFilter) {
-                activeFiltersSection = `
-                    <div class="integrated-active-filters">
-                        <div style="font-size: 11px; font-weight: 600; color: var(--color-text-light); margin-bottom: 6px;">
-                            Filtros ativos:
-                        </div>
-                        ${taticosActiveSuperintendenciaFilter ? 
-                            `<span class="integrated-active-filter-tag">
-                                Superintendência: ${taticosActiveSuperintendenciaFilter}
-                                <span class="clear-filter" onclick="clearTaticosResponsaveisFilter()">×</span>
-                            </span>` : ''}
-                        ${taticosActiveSubsecretariaFilter ? 
-                            `<span class="integrated-active-filter-tag">
-                                Subsecretaria: ${taticosActiveSubsecretariaFilter}
-                                <span class="clear-filter" onclick="clearTaticosResponsaveisFilter()">×</span>
-                            </span>` : ''}
-                    </div>
-                `;
-            }
-            
-            const filtersHTML = `
-                <div class="integrated-filters">
-                    <div class="integrated-filters-row">
-                        <div class="integrated-filter-group">
-                            <label class="integrated-filter-label">Superintendência:</label>
-                            <select class="integrated-filter-select" id="taticos-integrated-superintendencia-filter">
-                                <option value="all">Todas as Superintendências</option>
-                                ${responsaveis.superintendencias.map(sup => 
-                                    `<option value="${sup}" ${taticosActiveSuperintendenciaFilter === sup ? 'selected' : ''}>${sup}</option>`
-                                ).join('')}
-                        </select>
-                        </div>
-                        
-                        <div class="integrated-filter-group">
-                            <label class="integrated-filter-label">Subsecretaria:</label>
-                            <select class="integrated-filter-select" id="taticos-integrated-subsecretaria-filter">
-                                <option value="all">Todas as Subsecretarias</option>
-                                ${responsaveis.subsecretarias.map(sub => 
-                                    `<option value="${sub}" ${taticosActiveSubsecretariaFilter === sub ? 'selected' : ''}>${sub}</option>`
-                                ).join('')}
-                            </select>
-                        </div>
-                        
-                        <div class="integrated-filter-actions">
-                            <button class="integrated-filter-button primary" onclick="applyTaticosResponsaveisFilter(
-                                document.getElementById('taticos-integrated-superintendencia-filter').value,
-                                document.getElementById('taticos-integrated-subsecretaria-filter').value
-                            )">
-                                Aplicar Filtro
-                            </button>
-                            <button class="integrated-filter-button secondary" onclick="clearTaticosResponsaveisFilter()">
-                                Limpar Filtros
-                            </button>
-                        </div>
-                    </div>
-                    
-                    ${activeFiltersSection}
-                </div>
-            `;
-            
-            let filteredIndicators = indicatorsToShow;
-            
-            if (taticosActiveSuperintendenciaFilter) {
-                filteredIndicators = filteredIndicators.filter(indicator => 
-                    indicator.SUPINTENDÊNCIA && 
-                    indicator.SUPINTENDÊNCIA.trim() === taticosActiveSuperintendenciaFilter
-                );
-            }
-            
-            if (taticosActiveSubsecretariaFilter) {
-                filteredIndicators = filteredIndicators.filter(indicator => 
-                    indicator.SUBSECRETARIA && 
-                    indicator.SUBSECRETARIA.trim() === taticosActiveSubsecretariaFilter
-                );
-            }
-            
-            let indicatorsHTML = '';
-            if (filteredIndicators.length === 0) {
-                indicatorsHTML = `
-                    <div class="no-results-message">
-                        <span class="material-symbols-outlined" style="font-size: 48px; color: var(--color-text-light); margin-bottom: 15px;">
-                            search_off
-                        </span>
-                        <h3 style="color: var(--color-text-dark); margin-bottom: 10px;">
-                            Nenhum indicador tático encontrado
-                        </h3>
-                        <p style="color: var(--color-text-light);">
-                            ${activeFilters.length > 0 ? 
-                                `Não há indicadores táticos com os filtros aplicados.` : 
-                                `Não há indicadores táticos disponíveis ${selectedTaticosObjective && !selectedTaticosObjective.isGeneral ? `para o objetivo "${selectedTaticosObjective.name}"` : ''}.`}
-                        </p>
-                        ${activeFilters.length > 0 ? 
-                            `<button onclick="clearTaticosAllFilters()" style="margin-top: 15px; padding: 8px 16px; background-color: var(--color-tactical); color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                Limpar todos os filtros
-                            </button>` : 
-                            ''
-                        }
-                    </div>
-                `;
-            } else {
-                indicatorsHTML = `
-                    ${filterIndicatorsHTML}
-                    <div class="general-indicators-grid" id="taticos-indicators-list">
-                        ${filteredIndicators.map(indicator => {
-                            const displayValue = indicator.displayValue !== undefined ? 
-                                indicator.displayValue : (indicator["VALOR ATUAL"] || 0);
-                            
-                            const formattedValue = formatValue(displayValue, indicator.GRANDEZA);
-                            
-                            const variation = calculateVariation(indicator);
-                            const variationClass = getVariationClass(variation);
-                            const variationIcon = getVariationIcon(variation);
-                            const variationText = variation.value !== 0 ? 
-                                `${variation.value > 0 ? '+' : ''}${formatVariation(variation.value)}` : '0%';
-                            
-                            return `
-                                <div class="indicator-card" onclick="navigate('detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}')">
-                                    <div style="display: flex; flex-direction: column; height: 100%;">
-                                        <div style="margin-bottom: 8px;">
-                                            <span class="variation-badge ${variationClass}">
-                                                ${variationIcon} <span class="variation-value">${variationText}</span>
-                                            </span>
-                                            <div style="font-size: 11px; color: var(--color-text-light); margin-top: 2px;">${indicator["#"]}</div>
-                                        </div>
-                                        
-                                        <h3 style="font-size: 13px; font-weight: 600; margin: 5px 0; line-height: 1.3; flex-grow: 1;">
-                                            ${indicator.INDICADORES}
-                                        </h3>
-                                        
-                                        <div style="margin-top: auto;">
-                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                                                <div style="font-size: 16px; font-weight: 700; color: var(--color-tactical);">${formattedValue}</div>
-                                                <div style="font-size: 10px; color: var(--color-primary); background-color: rgba(0, 61, 122, 0.1); padding: 2px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;">
-                                                    ${indicator["OBJETIVO ESTRATÉGICO"] || "Tático"}
-                                                </div>
-                                            </div>
-                                            
-                                            <div style="font-size: 10px; color: var(--color-text-light); margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0;">
-                                                <div>${indicator["FONTE DOS DADOS"]}</div>
-                                                <div style="margin-top: 3px; color: var(--color-primary);">
-                                                    ${indicator.SUPINTENDÊNCIA || ''} ${indicator.SUBSECRETARIA ? '/ ' + indicator.SUBSECRETARIA : ''}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                `;
-            }
-            
-            container.innerHTML = filtersHTML + indicatorsHTML;
-        }
+    const container = document.getElementById('taticos-container');
+    const indicatorsToShow = selectedTaticosObjective ? selectedTaticosObjective.taticos : taticosIndicators;
+    
+    // Filtros permanecem iguais...
+    let filteredIndicators = indicatorsToShow;
+    if (taticosActiveSuperintendenciaFilter) filteredIndicators = filteredIndicators.filter(i => i.SUPINTENDÊNCIA?.trim() === taticosActiveSuperintendenciaFilter);
+    if (taticosActiveSubsecretariaFilter) filteredIndicators = filteredIndicators.filter(i => i.SUBSECRETARIA?.trim() === taticosActiveSubsecretariaFilter);
+    
+    let indicatorsHTML = `<div class="general-indicators-grid">`;
+    
+    filteredIndicators.forEach(indicator => {
+        const formattedValue = formatValue(indicator.displayValue, indicator.GRANDEZA);
+        const variation = calculateVariation(indicator);
+        
+        // --- LÓGICA DE COR E REFERÊNCIA ---
+        const valueColor = indicator.isHistorical ? '#94a3b8' : 'var(--color-tactical)';
+        const referenceHTML = indicator.isHistorical ? 
+            `<div style="font-size: 10px; color: #94a3b8; font-weight: 500; margin-top: 2px;">Ref: ${indicator.lastPeriodLabel}</div>` : 
+            `<div style="font-size: 11px; color: var(--color-text-light);">${indicator["#"]}</div>`;
 
-        function updateHomeCounters() {
-            if (!estrategicosIndicators || !taticosIndicators) {
-                getObjectivesFromData();
-            }
-        }
+        indicatorsHTML += `
+            <div class="indicator-card" onclick="navigate('detalhe.html?indicador=${encodeURIComponent(indicator.INDICADORES)}')">
+                <div style="display: flex; flex-direction: column; height: 100%;">
+                    <div style="margin-bottom: 8px;">
+                        <span class="variation-badge ${getVariationClass(variation)}">
+                            ${getVariationIcon(variation)} <span class="variation-value">${formatVariation(variation.value)}</span>
+                        </span>
+                    </div>
+                    <h3 style="font-size: 13px; font-weight: 600; margin: 5px 0; line-height: 1.3; flex-grow: 1;">${indicator.INDICADORES}</h3>
+                    <div style="margin-top: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                            <div>
+                                <div style="font-size: 18px; font-weight: 800; color: ${valueColor};">${formattedValue}</div>
+                                ${referenceHTML}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    });
+
+    indicatorsHTML += `</div>`;
+    container.innerHTML = indicatorsHTML;
+}
 
         // ------------------------------------------------------------------
         // FUNÇÕES DE RENDERIZAÇÃO DE PÁGINAS
@@ -10434,8 +10351,8 @@ function renderTaticosStatusSummary() {
         // ------------------------------------------------------------------
         function renderStatusSummary(indicators) {
     const statusCounts = {
-        'Meta 2025 atingida': 0,
-        'Meta 2025 não atingida': 0,
+        'Meta 2025 alcançada': 0,
+        'Meta 2025 não alcançada': 0,
         'Indicador em coleta': 0,
         'Dados indisponíveis': 0
     };
@@ -10444,40 +10361,47 @@ function renderTaticosStatusSummary() {
         const status = normalizeStatus(indicator.Status);
         if (statusCounts.hasOwnProperty(status)) {
             statusCounts[status]++;
-        } else {
-            statusCounts['Dados indisponíveis']++;
         }
     });
 
     const totalGeral = indicators.length;
     const summarySection = document.getElementById('status-summary-section');
-    summarySection.innerHTML = ''; 
+    if (!summarySection) return;
     
+    summarySection.innerHTML = ''; 
     const container = document.createElement('div');
     container.className = 'status-summary-container';
 
-    const statusMap = [
-        { key: 'Meta 2025 atingida', label: 'Meta 2025 atingida', className: 'status-summary-positive' },
-        { key: 'Meta 2025 não atingida', label: 'Meta 2025 não atingida', className: 'status-summary-negative' },
-        { key: 'Indicador em coleta', label: 'Indicador em coleta', className: 'status-summary-gray' },
-        { key: 'Dados indisponíveis', label: 'Dados indisponíveis', className: 'status-summary-gray' },
-        { key: 'Total', label: 'Total Geral', className: 'status-summary-total' }
+    // Definição visual para cada card de status
+    const cardConfigs = [
+        { key: 'Meta 2025 alcançada', className: 'status-summary-positive' },
+        { key: 'Meta 2025 não alcançada', className: 'status-summary-negative' },
+        { key: 'Indicador em coleta', className: 'status-summary-gray' },
+        { key: 'Dados indisponíveis', className: 'status-summary-gray' }
     ];
 
-    statusMap.forEach(item => {
-        const count = item.key === 'Total' ? totalGeral : (statusCounts[item.key] || 0);
+    cardConfigs.forEach(config => {
+        const count = statusCounts[config.key];
         const percentage = totalGeral > 0 ? ((count / totalGeral) * 100).toFixed(1) : '0.0';
 
         container.innerHTML += `
-            <div class="status-summary-card ${item.className}" 
-                 onclick="${item.key !== 'Total' ? `applyStatusFilter('${item.key}')` : ''}" 
-                 style="cursor: ${item.key !== 'Total' ? 'pointer' : 'default'};">
+            <div class="status-summary-card ${config.className}" 
+                 onclick="applyStatusFilter('${config.key}')">
                 <div class="percentage-label">${percentage}%</div>
                 <div class="count">${count}</div>
-                <div class="label">${item.label}</div>
+                <div class="label">${config.key}</div>
             </div>
         `;
     });
+
+    // Card de Total Geral (sem filtro)
+    container.innerHTML += `
+        <div class="status-summary-card status-summary-total" style="cursor: default;">
+            <div class="percentage-label">100%</div>
+            <div class="count">${totalGeral}</div>
+            <div class="label">Total Geral</div>
+        </div>
+    `;
     
     summarySection.appendChild(container);
 }
