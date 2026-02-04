@@ -9196,40 +9196,66 @@
         }
 
         function getStatusClass(status, isButton = false) {
-            if (!status) return isButton ? 'status-gray-btn' : 'status-gray';
-            
-            const normalizedStatus = status.toString().trim();
-            
-            if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
-                normalizedStatus === 'Dados em Coleta' || normalizedStatus === 'Indicador em coleta' ||
-                normalizedStatus === 'Indicador em coleta') {
-                return isButton ? 'status-gray-btn' : 'status-gray';
-            }
-            
-            switch (normalizedStatus) {
-                case 'Dentro do esperado':
-                    return isButton ? 'status-hiperpositive-btn' : 'status-hiperpositive';
-                case 'Meta 2025 alcançada':
-                    return isButton ? 'status-positive-btn' : 'status-positive';
-                case 'Abaixo do esperado': 
-                    return isButton ? 'status-negative-btn' : 'status-negative';
-                default: 
-                    return isButton ? 'status-gray-btn' : 'status-gray';
-            }
-        }
+    if (!status || status === 0 || status === "") return isButton ? 'status-gray-btn' : 'status-gray';
+    
+    const normalizedStatus = status.toString().trim();
+    
+    // Lista de termos que devem ficar em CINZA
+    const grayTerms = [
+        'Dados em coleta', 
+        'INDICADOR EM COLETA', 
+        'Indicador em coleta', 
+        'Dados indisponíveis', 
+        'Dados Indisponíveis',
+        'nan'
+    ];
+    
+    if (grayTerms.includes(normalizedStatus)) {
+        return isButton ? 'status-gray-btn' : 'status-gray';
+    }
+    
+    switch (normalizedStatus) {
+        case 'Dentro do esperado':
+            return isButton ? 'status-hiperpositive-btn' : 'status-hiperpositive';
+        case 'Meta 2025 alcançada':
+            return isButton ? 'status-positive-btn' : 'status-positive';
+        case 'Meta 2025 não alcançada':
+        case 'Abaixo do esperado': 
+            return isButton ? 'status-negative-btn' : 'status-negative';
+        default: 
+            return isButton ? 'status-gray-btn' : 'status-gray';
+    }
+}
 
         function normalizeStatus(status) {
-            if (!status) return 'Dados em Coleta';
-            
-            const normalizedStatus = status.toString().trim();
-            
-            if (normalizedStatus === 'Dados em coleta' || normalizedStatus === 'INDICADOR EM COLETA' || 
-                normalizedStatus === 'Dados em Coleta' || normalizedStatus === 'Indicador em coleta') {
-                return 'Dados em Coleta';
-            }
-            
-            return normalizedStatus;
-        }
+    if (!status || status === "" || status === 0 || status === "nan") return 'Dados indisponíveis';
+    
+    const s = status.toString().trim();
+    
+    // Mapeamento para os nomes reais solicitados
+    if (s.includes('alcançada') || s.includes('atingida') || s.includes('Dentro do esperado')) {
+        return 'Meta 2025 atingida';
+    }
+    if (s.includes('não alcançada') || s.includes('não atingida') || s.includes('Abaixo do esperado')) {
+        return 'Meta 2025 não atingida';
+    }
+    if (s.includes('coleta')) {
+        return 'Indicador em coleta';
+    }
+    
+    return 'Dados indisponíveis';
+}
+
+function getStatusClass(status) {
+    const normalized = normalizeStatus(status);
+    switch (normalized) {
+        case 'Meta 2025 atingida': return 'status-positive';
+        case 'Meta 2025 não atingida': return 'status-negative';
+        case 'Indicador em coleta': return 'status-gray';
+        case 'Dados indisponíveis': return 'status-gray';
+        default: return 'status-gray';
+    }
+}
 
         // NOVA FUNÇÃO: Calcular variação para indicadores táticos
         function calculateVariation(indicator) {
@@ -10377,78 +10403,84 @@ function renderTaticosStatusSummary() {
         // FUNÇÃO DE CONTAGEM CORRIGIDA
         // ------------------------------------------------------------------
         function countIndicatorsByStatus(indicators) {
-            const counts = { 
-                'Dentro do esperado': 0, 
-                'Meta 2025 alcançada': 0,
-                'Abaixo do esperado': 0, 
-                'Dados em Coleta': 0 
-            };
-            
-            indicators.forEach(indicator => {
-                const status = normalizeStatus(indicator.Status);
-                
-                if (status === 'Dentro do esperado' || status === 'Meta 2025 alcançada' || status === 'Abaixo do esperado') {
-                    counts[status]++; 
-                } else if (status === 'Dados em Coleta') {
-                    counts['Dados em Coleta']++;
-                } else {
-                    counts['Dados em Coleta']++;
-                }
-            });
-
-            counts.Total = indicators.length;
-            return counts;
+    const counts = { 
+        'Dentro do esperado': 0, 
+        'Meta 2025 alcançada': 0,
+        'Abaixo do esperado': 0, 
+        'Dados em Coleta': 0 
+    };
+    
+    indicators.forEach(indicator => {
+        const status = normalizeStatus(indicator.Status);
+        
+        if (status === 'Dentro do esperado') {
+            counts['Dentro do esperado']++;
+        } else if (status === 'Meta 2025 alcançada') {
+            counts['Meta 2025 alcançada']++;
+        } else if (status === 'Abaixo do esperado' || status === 'Meta 2025 não alcançada') {
+            counts['Abaixo do esperado']++;
+        } else {
+            // Tudo que for "Dados em coleta", "Indisponível" ou vazio cai aqui
+            counts['Dados em Coleta']++;
         }
+    });
+
+    counts.Total = indicators.length;
+    return counts;
+}
 
         // ------------------------------------------------------------------
         // FUNÇÃO DE RESUMO DE STATUS
         // ------------------------------------------------------------------
         function renderStatusSummary(indicators) {
-            const statusCounts = countIndicatorsByStatus(indicators);
-            const totalGeral = statusCounts.Total;
+    const statusCounts = {
+        'Meta 2025 atingida': 0,
+        'Meta 2025 não atingida': 0,
+        'Indicador em coleta': 0,
+        'Dados indisponíveis': 0
+    };
 
-            const summarySection = document.getElementById('status-summary-section');
-            summarySection.innerHTML = ''; 
-            
-            const container = document.createElement('div');
-            container.className = 'status-summary-container';
-
-            const statusMap = [
-                { key: 'Dentro do esperado', label: 'Dentro do esperado', className: 'status-summary-hiperpositive' }, 
-                { key: 'Meta 2025 alcançada', label: 'Meta 2025 alcançada', className: 'status-summary-positive' },
-                { key: 'Abaixo do esperado', label: 'Abaixo do esperado', className: 'status-summary-negative' },
-                { key: 'Dados em Coleta', label: 'Dados em Coleta', className: 'status-summary-gray' },
-                { key: 'Total', label: 'Total', className: 'status-summary-total' },
-            ];
-
-            statusMap.forEach(item => {
-                const count = statusCounts[item.key] || 0;
-                let percentageHTML = '';
-                
-                if (totalGeral > 0 && item.key !== 'Total') {
-                    const percentage = ((count / totalGeral) * 100).toFixed(1); 
-                    percentageHTML = `<div class="percentage-label">${percentage}%</div>`;
-                }
-                
-                if (item.key === 'Total' && totalGeral > 0) {
-                    percentageHTML = `<div class="percentage-label">100.0%</div>`;
-                }
-
-                const clickAction = item.key !== 'Total' 
-                    ? `onclick="applyStatusFilter('${item.key}')"` 
-                    : '';
-
-                container.innerHTML += `
-                    <div class="status-summary-card ${item.className}" ${clickAction} style="cursor: ${item.key !== 'Total' ? 'pointer' : 'default'};">
-                        ${percentageHTML}
-                        <div class="count">${count}</div>
-                        <div class="label">${item.label}</div>
-                    </div>
-                `;
-            });
-            
-            summarySection.appendChild(container);
+    indicators.forEach(indicator => {
+        const status = normalizeStatus(indicator.Status);
+        if (statusCounts.hasOwnProperty(status)) {
+            statusCounts[status]++;
+        } else {
+            statusCounts['Dados indisponíveis']++;
         }
+    });
+
+    const totalGeral = indicators.length;
+    const summarySection = document.getElementById('status-summary-section');
+    summarySection.innerHTML = ''; 
+    
+    const container = document.createElement('div');
+    container.className = 'status-summary-container';
+
+    const statusMap = [
+        { key: 'Meta 2025 atingida', label: 'Meta 2025 atingida', className: 'status-summary-positive' },
+        { key: 'Meta 2025 não atingida', label: 'Meta 2025 não atingida', className: 'status-summary-negative' },
+        { key: 'Indicador em coleta', label: 'Indicador em coleta', className: 'status-summary-gray' },
+        { key: 'Dados indisponíveis', label: 'Dados indisponíveis', className: 'status-summary-gray' },
+        { key: 'Total', label: 'Total Geral', className: 'status-summary-total' }
+    ];
+
+    statusMap.forEach(item => {
+        const count = item.key === 'Total' ? totalGeral : (statusCounts[item.key] || 0);
+        const percentage = totalGeral > 0 ? ((count / totalGeral) * 100).toFixed(1) : '0.0';
+
+        container.innerHTML += `
+            <div class="status-summary-card ${item.className}" 
+                 onclick="${item.key !== 'Total' ? `applyStatusFilter('${item.key}')` : ''}" 
+                 style="cursor: ${item.key !== 'Total' ? 'pointer' : 'default'};">
+                <div class="percentage-label">${percentage}%</div>
+                <div class="count">${count}</div>
+                <div class="label">${item.label}</div>
+            </div>
+        `;
+    });
+    
+    summarySection.appendChild(container);
+}
 
         // ------------------------------------------------------------------
         // FUNÇÕES DE COLETA DE DADOS
