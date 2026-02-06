@@ -2803,7 +2803,7 @@
         "META 2026": 0.946,
         "VALOR 1": 0.951,
         "PERÍODO DE REFERÊNCIA DO ÚLTIMO RESULTADO COLETADO": "2026-12-25T00:00:00",
-        "Status": "Meta 2025 não alcançada",
+        "Status": "Indicador em Coleta",
         "Análise crítica do indicador": "Revisar meta",
         "REFERENCIAL DA META": "Considera o indicador de rendimento pactuado para o Ideb 2025 ",
         "DOUBLE CHECK": "ok",
@@ -9088,35 +9088,57 @@
         let lastPeriodLabel = "";
         let isHistorical = false;
         
-        // 1. Tentar obter o valor mais recente (VALOR_1)
-        const v1 = item.VALOR_1?.valor;
+        // 1. Tentar obter o valor de 2025 (VALOR_1)
+        // Opcional: Verifica tanto o objeto VALOR_1 quanto o campo legível "VALOR 1"
+        const v2025 = item.VALOR_1?.valor !== undefined ? item.VALOR_1.valor : item["VALOR 1"];
         
-        if (v1 !== undefined && v1 !== 0 && v1 !== "" && v1 !== null) {
-            displayValue = v1;
-            lastPeriodLabel = item.VALOR_1.ano || item.VALOR_1.periodo || "Atual";
-            isHistorical = false;
+        // Verificamos se o valor existe e não é considerado "vazio" (0, string vazia ou null)
+        if (v2025 !== undefined && v2025 !== 0 && v2025 !== "" && v2025 !== null) {
+            displayValue = v2025;
+            // Se for um objeto com ano definido, usa o ano, senão fixa 2025
+            lastPeriodLabel = item.VALOR_1?.ano || "2025";
+            isHistorical = false; // Cor normal (Azul/Destaque)
         } else {
-            // 2. FALLBACK: Se o VALOR_1 for zero/vazio, percorre do VALOR_2 ao VALOR_6
-            const historico = [item.VALOR_2, item.VALOR_3, item.VALOR_4, item.VALOR_5, item.VALOR_6];
-            const ultimoValido = historico.find(v => v && v.valor !== 0 && v.valor !== "" && v.valor !== null);
+            // 2. FALLBACK: Se 2025 estiver vazio, busca o valor de 2024 (VALOR_2)
+            const v2024 = item.VALOR_2?.valor !== undefined ? item.VALOR_2.valor : item["VALOR 2"];
             
-            if (ultimoValido) {
-                displayValue = ultimoValido.valor;
-                lastPeriodLabel = ultimoValido.ano || ultimoValido.referencia || "Anterior";
-                isHistorical = true; // Marca como histórico para mudar a cor para cinza
+            if (v2024 !== undefined && v2024 !== 0 && v2024 !== "" && v2024 !== null) {
+                displayValue = v2024;
+                lastPeriodLabel = item.VALOR_2?.ano || "2024";
+                isHistorical = true; // Ativa cor cinza no CSS
             } else {
-                displayValue = 0;
-                lastPeriodLabel = "";
-                isHistorical = false;
+                // 3. SEGUNDO FALLBACK: Busca no restante do histórico disponível (V3 a V6)
+                const historicoRestante = [
+                    { obj: item.VALOR_3, raw: item["VALOR 3"] },
+                    { obj: item.VALOR_4, raw: item["VALOR 4"] },
+                    { obj: item.VALOR_5, raw: item["VALOR 5"] },
+                    { obj: item.VALOR_6, raw: item["VALOR 6"] }
+                ];
+
+                const ultimoValido = historicoRestante.find(v => {
+                    const val = v.obj?.valor !== undefined ? v.obj.valor : v.raw;
+                    return val !== undefined && val !== 0 && val !== "" && val !== null;
+                });
+                
+                if (ultimoValido) {
+                    displayValue = ultimoValido.obj?.valor !== undefined ? ultimoValido.obj.valor : ultimoValido.raw;
+                    lastPeriodLabel = ultimoValido.obj?.ano || ultimoValido.obj?.referencia || "Anterior";
+                    isHistorical = true;
+                } else {
+                    // Se nada for encontrado, tenta o "Resultado Atual" da planilha
+                    displayValue = item["Resultado Atual"] || 0;
+                    lastPeriodLabel = "";
+                    isHistorical = false;
+                }
             }
         }
 
-        // 3. Retorna o objeto formatado mantendo compatibilidade com o restante do código
+        // Criar o objeto convertido mantendo compatibilidade com as funções de renderização
         const convertedItem = {
             ...item,
             displayValue: displayValue,
             lastPeriodLabel: lastPeriodLabel,
-            isHistorical: isHistorical, // Campo essencial para o CSS dinâmico
+            isHistorical: isHistorical, 
             normalizedStatus: normalizeStatus(item.Status)
         };
         
